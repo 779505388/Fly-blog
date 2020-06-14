@@ -1,0 +1,51 @@
+{% extends 'postBase/base.html' %}
+{% block title %}
+{{blog_name}} - 注册
+{% endblock title %}
+
+
+
+{% block css %}
+
+{% endblock css %}
+
+
+{% block content %}
+<div class="container" style=" max-width: 700px;background-color: white;padding:10px;">
+    <div class="container" style="width:100%">
+
+        <form class="form-horizontal" method="POST">
+            <div class="form-group">
+                <input name="email" type="email" class="form-control"  placeholder="邮箱地址">
+            </div>
+            <div class="form-group">
+                    <input name="username" type="text" class="form-control" placeholder="用户名">
+            </div>
+            <div class="form-group">
+                    <input name="password1" type="password" class="form-control" placeholder="密码">
+            </div>
+            <div class="form-group">
+                    <input name="password2" type="password" class="form-control" placeholder="确认密码">
+            </div>
+            <div class="form-group">
+                    <input name="github_adr" type="text" class="form-control" placeholder="Github地址">
+            </div>
+            <div class="form-group">
+                    <input name="bilibili_adr" type="text" class="form-control" placeholder="Bilibili地址">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-block">注册</button>
+            </div>
+            <div class="form-group">
+                <input type="hidden" name="csrf_token" value="{{csrf_token}}">
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}
+
+
+
+{% block js %}
+
+{% endblock js %}

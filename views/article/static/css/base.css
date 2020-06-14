@@ -1,0 +1,34 @@
+body {
+  background-color: rgb(247, 247, 247);
+  display: flex;
+  flex-flow: column;
+  min-height: 100vh;
+}
+#contentflex{
+  flex: 1;
+}
+.navbar {
+  background-color: white;
+  /* height: 60px; */
+}
+
+.footer {
+  width: 100%;
+  min-height: 150px;
+  background-color: white;
+  margin-top: 30px;
+
+  border-top: 2px solid rgb(133, 133, 133, 0.1);
+}
+
+.copyright {
+  margin-top: 30px;
+  font-size: 15px;
+  color: rgb(126, 126, 126);
+}
+
+.footer-link a img {
+  margin-top: 30px;
+  margin-left: 10px;
+  margin-right: 10px;
+}

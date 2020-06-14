@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+{% block title %}
+{{info.blogConfig.blogName}} - {{content.title}}
+{% endblock title %}
+
+
+
+{% block css %}
+<link rel="stylesheet" href="{{url_for('.static',filename='css/article.css')}}">
+<link rel="stylesheet" href="https://unpkg.com/editor.md@1.5.0/css/editormd.preview.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min.css">
+{% endblock css %}
+
+{% block navbar %}
+<li><a href="{{url_for('admin.blog_modify',url = url)}}">修改文章</a></li>
+{% endblock navbar %}
+
+{% block content %}
+
+<div class="article-content container ">
+  <div class="article-head " style="width: 100%;">
+    <h1 class="text-center">{{content.title}}</h1>
+    <div class="container" style="width: 100%;">
+      <span class="col-xs-12 col-sm-12 col-md-4 col-lg-4">发表时间：{{content.created|string()|truncate(13,end="")}}</span>
+      <span class="col-xs-12 col-sm-12 col-md-4 col-lg-4">文章分类：{{content.post_type}}</span>
+      <span class="col-xs-12 col-sm-12 col-md-4 col-lg-4">文章标签：{{content.tag}}</span>
+    </div>
+
+
+  </div>
+  <div class="markdown-body editormd-preview-container" style="width: 100%;overflow: hidden;">
+    {{content.template|safe()}}
+  </div>
+</div>
+<div id="comment">
+  <div class="container" style="max-width: 880px;">
+    <ul class="pager">
+      <li class="previous" :class="{disabled:newer}"><a :href="newPage">
+          <span aria-hidden="true">&larr;</span> Newer
+        </a></li>
+      <li class="next" :class="{disabled:older}">
+        <a :href="oldPage">Older <span aria-hidden="true">&rarr;</span></a>
+      </li>
+    </ul>
+  </div>
+  <div class="container" style="max-width: 880px;min-height:
+  100px;">
+    <modal @on-ok="commentCommit" title="欢迎回复本篇文章" width=600 v-model="commentModal" class-name="vertical-center-modal"
+      ok-text="回复">
+      <div>
+        <i-input v-model="commentContent" type="textarea" :rows="4" placeholder="快来评论吧！" />
+      </div>
+      <br>
+      <div>
+        <i-input v-model="guestName" placeholder="您的昵称（必填）" />
+      </div>
+      <br>
+      <div>
+        <i-input v-model="Email" placeholder="您的邮箱（必填）" />
+      </div>
+      <br>
+      <div>
+        <i-input v-model="webSite" placeholder="您的网站（可选）" />
+      </div>
+      <br>
+      <div>
+        <img id="verify_code" class="col-xs-4 col-sm-3 col-md-3 col-lg-3" src="/api/v1/captcha"
+          onclick="this.src='/api/v1/captcha?'+ Math.random()">
+        <i-input v-model.lazy='captcha' class="col-xs-8 col-sm-9 col-md-9 col-lg-9" placeholder="请输入验证码" type="text">
+      </div>
+      <br>
+    </modal>
+    <i-button @click="commentModal = true;parentComment()" long size="large">回复本篇文章</i-button>
+  </div>
+  <div class="container" style="max-width: 880px;min-height: 
+  100px;background-color: white;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.06), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 -1px 0.5px 0 rgba(0, 0, 0, 0.09);
+  margin-top: 30px;">
+    <div v-for="item in comments" :key="item.created">
+      <list size="large">
+        <list-item>
+          <list-item-meta :avatar=item.hash_email :title=item.guest_name :description=item.text />
+        </list-item>
+      </list>
+      <div style="left:50% ;" class="text-right">
+        <i-button icon="md-time" type="text" style="color: rgb(139, 139, 138);">
+          <i-time :time="item.created"></i-time>
+        </i-button>
+        <i-button icon="ios-text" type="text" @click="commentModal = true;ChildrenComment(item.id,item.guest_name)"
+          style="color: rgb(139, 139, 138);">回复
+        </i-button>
+      </div>
+      <div v-for="c_item in item.children_comment" :key="c_item.created">
+        <list border split size="small">
+          <list-item>
+            <list-item-meta :avatar="c_item.hash_email" :title="c_item.guest_name" :description="c_item.text" />
+          </list-item>
+
+          <div style="left:50% ;" class="text-right">
+            <i-button icon="md-time" type="text" style="color: rgb(139, 139, 138);">
+              <i-time :time="c_item.created"></i-time>
+            </i-button>
+            <i-button icon="ios-text" type="text"
+              @click="commentModal = true;ChildrenComment(item.id,c_item.guest_name)"
+              style="color: rgb(139, 139, 138);">回复
+            </i-button>
+          </div>
+        </list>
+
+      </div>
+      <Divider style="margin-bottom: 0px;margin-top: 0px;" />
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/prettify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min.js"></script>
+<script>
+  const vue = new Vue({
+    el: "#comment",
+    delimiters: ['{[', ']}'],
+    data: {
+      articleId: "{{content.id}}",
+      commentModal: false,
+      commentContent: "",
+      Email: "",
+      webSite: "",
+      guestName: "",
+      commentList: [],
+      type: "parent",
+      parent_id: null,
+      pageList: "{{pages}}",
+      newer: false,
+      older: false,
+      captcha: '',
+    },
+    mounted() {
+      this.articleId = this.articleId * 1
+      axios.get("{{url_for('article.comment')}}" + "?post_id=" + this.articleId)
+        .then((res) => {
+          this.commentList = res.data;
+        });
+      if (localStorage.guestName && localStorage.email) {
+        this.Email = localStorage.email;
+        this.guestName = localStorage.guestName;
+        this.webSite = localStorage.webSite
+      };
+
+    },
+    computed: {
+      comments() {
+        return this.commentList.map(item => {
+          item.hash_email = "https://fdn.geekzu.org/avatar/" + item.hash_email;
+          item.children_comment.map(item => {
+            item.hash_email = "https://fdn.geekzu.org/avatar/" + item.hash_email;
+            return item
+          })
+          return item
+        })
+      },
+      newPage() {
+        let pre = eval(this.pageList).indexOf(this.articleId) + 1;
+        if (pre === eval(this.pageList).length ) {
+          this.newer = true;
+          console.log(eval(this.pageList).length);
+          return "/article/" + this.articleId
+        };
+        console.log(eval(this.pageList)[pre])
+        return "/article/" + eval(this.pageList)[pre]
+      },
+      oldPage() {
+        let old = eval(this.pageList).indexOf(this.articleId)-1;
+        if (old === -1) {
+          this.older = true;
+          return "/article/" + this.articleId
+        };
+        return "/article/" + eval(this.pageList)[old]
+      }
+    },
+    methods: {
+      commentCommit() {
+        if (!this.commentContent && !this.Email && !this.guestName && !this.captcha) {
+          this.$Notice.error({
+            title: '回复内容有误！'
+          });
+          return false
+        }
+        localStorage.email = this.Email;
+        localStorage.guestName = this.guestName;
+        localStorage.webSite = this.webSite;
+        axios.post("{{url_for('article.comment')}}", {
+            guest_email: this.Email,
+            guest_name: this.guestName,
+            web_site: this.webSite,
+            text: this.commentContent,
+            post_id: this.articleId,
+            type: this.type,
+            parent_id: this.parent_id,
+            captcha: this.captcha
+          })
+          .then(res => {
+            console.log(res.data.error)
+            if (res.data.error) {
+              // 验证码错误！
+              this.$Notice.error({
+                title: '验证码错误！'
+              });
+              console.log(res.data.error)
+              return false
+            }
+            this.commentList = res.data
+          })
+      },
+      ChildrenComment(parent_id, name) {
+        this.type = "children";
+        this.parent_id = parent_id;
+        this.commentContent = "@" + name + ":";
+        console.log(name)
+      },
+      parentComment() {
+        this.commentContent = "";
+        this.type = "parent"
+      },
+
+    },
+    watch: {
+      commentList: {
+        handler(newValue, oldValue) {
+          console.log(newValue);
+
+        },
+        deep: true //对象内部属性的监听
+      }
+    }
+  })
+</script>
+
+{% endblock js %}

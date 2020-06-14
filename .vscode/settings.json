@@ -1,0 +1,5 @@
+{
+  "python.pythonPath": "/Users/gynl/opt/anaconda3/envs/flask/bin/python",
+  "python.linting.pylamaEnabled": true,
+  "python.linting.pylintEnabled": false
+}

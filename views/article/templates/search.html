@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}
+{{info.blogConfig.blogName}} - 搜索
+{% endblock title %}
+
+
+
+{% block css %}
+
+{% endblock css %}
+
+
+{% block content %}
+<div id="app" class="container" style="max-width: 880px">
+    <i-input v-model="search_content" placeholder="Enter something...">
+        <i-Button @click="searchClick()" type="primary" slot="append" icon="ios-search">搜索</i-Button>
+    </i-input>
+    <div style="margin-top: 25px">
+        <div style="margin-top: 15px" v-for="item in searchList" :key="item.created">
+            <list border style="background-color: rgb(249, 249, 249)">
+                <div class="container">
+                    <h4><a target="_blank" style="text-decoration: none" :href="item.id">{[item.title]}</a></p>
+                </div>
+            </list>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+
+
+{% block js %}
+<script>
+    const app = new Vue({
+        el: "#app",
+        delimiters: ['{[', ']}'],
+        data: {
+            search_content: "",
+            searchList: null
+        },
+        mounted() {
+            if (sessionStorage.search_content) {
+                this.search_content = sessionStorage.search_content;
+                axios.post("{{url_for('article.search')}}",
+                    {
+                        search_content: sessionStorage.search_content
+                    })
+                    .then(res => {
+                        res.data = res.data.map(item => {
+                            item.id = "/article/" + item.id
+                            return item
+                        })
+                        this.searchList = res.data
+                    })
+            }
+        },
+        methods: {
+            searchClick() {
+                if (!this.search_content) {
+                    this.$Message.warning("请输入搜索内容！");
+                    return false
+                };
+                axios.post("{{url_for('article.search')}}",
+                    {
+                        search_content: this.search_content
+                    })
+                    .then(res => {
+                        res.data = res.data.map(item => {
+                            item.id = "/article/" + item.id
+                            return item
+                        })
+                        this.searchList = res.data
+                        sessionStorage.search_content = this.search_content
+                    })
+            }
+        }
+    })
+</script>
+{% endblock js %}

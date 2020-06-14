@@ -1,0 +1,19 @@
+({
+  "login": {
+    "password": "123456",
+    "username": "admin",
+    "remember": "True or False"
+  }
+},
+{
+  "data": {
+    "article": {
+      "title": "aaaaaaaa",
+      "slug": "AAAA",
+      "user_id": 3,
+      "post_type": 2,
+      "text": "sdafafgegaegagag",
+      "template": "asfdafefag45"
+    }
+  }
+})

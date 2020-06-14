@@ -1,0 +1,97 @@
+{% extends 'layout.html' %}
+{% block css %}
+<link rel="stylesheet" href="https://unpkg.com/editor.md@1.5.0/css/editormd.min.css">
+<link href="https://cdn.bootcss.com/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput-typeahead.css" rel="stylesheet">
+<link rel="stylesheet" href="{{url_for('.static',filename='css/blog-write.css')}}">
+<link rel="stylesheet" href="{{url_for('.static',filename='css/bootstrap-tagsinput.css')}}">
+{% endblock css %}
+
+{% block title %}
+修改文章
+{% endblock title %}
+
+{% block content %}
+
+<form action="{{url_for('admin.blog_modify',url=url)}}" method="post" id="form-content">
+  <div class="panel panel-default article-panel">
+    <div class="panel-body">
+      文章详情
+    </div>
+    <div class="panel-footer">
+      <div class="form-group">
+        <label for="title">文章标题</label>
+        <input type="text" class="form-control" id="title" value="{{content.title}}" name="title" placeholder="请输入标题"
+          required>
+      </div>
+      <div class="form-group">
+        <label for="slug">内容概述</label>
+        <input type="text" class="form-control" id="slug" value="{{content.slug}}" name="slug" placeholder="请输入内容概述"
+          required>
+      </div>
+      <div class="form-group ">
+        <label for="url">自定义URL</label>
+        <input type="text" class="form-control" id="url" value="{{content.url_en}}" placeholder="建议使用英文" name="url">
+      </div>
+      <div class="form-group ">
+        <label for="image">文章图片</label>
+        <input type="text" class="form-control" value="{{content.image_url}}" id="image" placeholder="建议使用英文"
+          name="image">
+      </div>
+      <div class="form-group ">
+        <label for="tag">文章标签</label>
+        <input data-role="tagsinput" type="text" value="{{content.tag}}" class="form-control" id="tag"
+          placeholder="请输入标签,回车确定" name="tag">
+      </div>
+      <div class="form-group">
+        <label for="type">文章类型</label>
+        <select class="form-control " name="type" id='type' value="{{content.post_type}}" required>
+          <option value="学习的日常">学习的日常</option>
+          <option value="折腾的日常">思考的日常</option>
+          <option value="折腾的日常">折腾的日常</option>
+          <option value="吐槽的日常">吐槽的日常</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div id="layout" class="editor">
+    <div id="test-editormd">
+      <textarea name="editormd" id="editormd">{{content.text}}</textarea>
+    </div>
+    <textarea id="template" name="template" style=" display: none;"></textarea>
+  </div>
+  <input type="hidden" name="csrf_token" value="{{csrf_token}}">
+</form>
+<button class="btn btn-block submit-btn">提交文章</button>
+{% endblock content %}
+
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.min.js"></script>
+<script>
+  var testEditor;
+  testEditor = editormd("test-editormd", {
+    placeholder: '开始创作吧',
+    width: "90%",
+    height: 640,
+    syncScrolling: "single",
+    path: "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/",   //你的path路径（原资源文件中lib包在我们项目中所放的位置）
+    theme: "dark",//工具栏主题
+    previewTheme: "neat",//预览主题
+    editorTheme: "neat",//编辑主题
+    saveHTMLToTextarea: true,
+    emoji: true,
+    taskList: true,
+    tocm: true,         // Using [TOCM]
+    tex: true,                   // 开启科学公式TeX语言支持，默认关闭
+    flowChart: true,             // 开启流程图支持，默认关闭
+    sequenceDiagram: true,       // 开启时序/序列图支持，默认关闭,
+    toolbarIcons: function () {  //自定义工具栏，后面有详细介绍
+      return editormd.toolbarModes['full']; // full, simple, mini
+    },
+  });
+  $(".submit-btn").click(function () {
+    $("#template").val($(".markdown-body").html())
+    $("#form-content").submit()
+  })
+</script>
+{% endblock js %}

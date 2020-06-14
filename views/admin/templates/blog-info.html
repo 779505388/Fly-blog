@@ -1,0 +1,126 @@
+{% extends 'layout.html' %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('.static',filename='css/blog-info.css')}}">
+{% endblock css %}
+
+{% block title %}
+博客信息
+{% endblock title %}
+
+{% block content %}
+<div class="info-container text-center">
+  <div class="panel panel-default panel-success col-lg-6 col-md-6 col-sm-6 col-xs-12">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        CPU使用率
+      </h3>
+    </div>
+    <div class="panel-body">
+      <div id="indicatorContainer1"></div>
+      <div><span id="cpu-info"></span></div>
+    </div>
+  </div>
+
+  <div class="panel panel-default panel-success col-lg-6 col-md-6  col-sm-6 col-xs-12">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        物理内存
+      </h3>
+    </div>
+    <div class="panel-body">
+      <div id="indicatorContainer2"></div>
+      <div><span id="memory-info"></span></div>
+    </div>
+  </div>
+  <div class="panel panel-default panel-success col-lg-6 col-md-6  col-sm-6 col-xs-12">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        硬盘使用率
+      </h3>
+    </div>
+    <div class="panel-body">
+      <div id="indicatorContainer3"></div>
+      <div><span id="disk-info"></span></div>
+    </div>
+  </div>
+  <div class="panel panel-default panel-success col-lg-6 col-md-6  col-sm-6 col-xs-12">
+    <div class="panel-heading">
+      <h3 class="panel-title">
+        虚拟内存
+      </h3>
+    </div>
+    <div class="panel-body">
+      <div id="indicatorContainer4"></div>
+      <div><span id="swap-info"></span></div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block js %}
+<script src="{{ url_for('.static',filename='js/radialIndicator.min.js')}}"></script>
+<script>
+  var radialObj1 = radialIndicator('#indicatorContainer1', {
+    barColor: '#00FF00',
+    barWidth: 5,
+    initValue: 40,
+    percentage: true,
+    fontSize: 20,
+    displayNumber: true,
+  });
+  var radialObj2 = radialIndicator('#indicatorContainer2', {
+    barColor: '#00FF00',
+    barWidth: 5,
+    initValue: 40,
+    percentage: true,
+    fontSize: 20,
+    displayNumber: true,
+  });
+  var radialObj3 = radialIndicator('#indicatorContainer3', {
+    barColor: '#00FF00',
+    barWidth: 5,
+    initValue: 40,
+    percentage: true,
+    fontSize: 20,
+    displayNumber: true,
+  });
+  var radialObj4 = radialIndicator('#indicatorContainer4', {
+    barColor: '#00FF00',
+    barWidth: 5,
+    initValue: 40,
+    percentage: true,
+    fontSize: 20,
+    displayNumber: true,
+  });
+
+  function getData() {
+    $.ajax({
+      url: "{{url_for('admin.server_info')}}",
+      type: "post",
+      async: true,
+      success: function (result) {
+        console.log(result)
+        radialObj1.animate(result.cpu_percent);
+        radialObj2.animate(result.memory_percent);
+        radialObj3.animate(result.disk_percent);
+        radialObj4.animate(result.swap_percent);
+        $("#disk-info").html(
+          "<strong>" + result.disk_used + "G/" + result.disk_total + "G</strong>").show(),
+          $("#memory-info").html(
+            "<strong>" + result.memory_used + "G/" + result.memory_total + "G</strong>").show(),
+          $("#swap-info").html(
+            "<strong>" + result.swap_used + "G/" + result.swap_total + "G</strong>").show(),
+          $("#cpu-info").html(
+            "<strong> 核心数：" + result.cpu_count + "</strong>").show()
+      }
+    });
+  };
+  $(function () {
+    getData();
+    setInterval(function () {
+      getData();
+    }, 5000);
+  });
+</script>
+{% endblock js %}

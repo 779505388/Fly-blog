@@ -1,0 +1,14 @@
+{
+    "blogConfig": {
+        "PORT": "5000",
+        "blogName": "\u5c71\u5c45\u5ba2",
+        "domainName": "flask.gynl.xyz"
+    },
+    "userInfo": {
+        "BILIBILI": "https://www.bilibili.com",
+        "EMAIL": "779505388@gmail.com",
+        "GITHUB": "https://www.github.com",
+        "QQ": 779505388,
+        "ZHIHU": "https://www.zhihu.com"
+    }
+}

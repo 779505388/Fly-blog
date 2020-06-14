@@ -1,0 +1,185 @@
+{% extends 'layout.html' %}
+{% block css %}
+<link rel="stylesheet" href="{{url_for('.static',filename='css/blog-list.css')}}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/view-design@4.1.1/dist/styles/iview.css">
+{% endblock css %}
+
+{% block title %}
+文章评论
+{% endblock title %}
+
+
+{% block content %}
+<div id="app">
+    <div class="container">
+        <Tabs>
+            <Tab-Pane label="评论管理" icon="ios-chatbubbles">
+                <i-Table size="small" row-key="uuid" ref="selection" @on-selection-change="click" :columns="columns16"
+                    @on-select="click1" :data="listChange">
+                </i-Table>
+                <div>
+                    <Page :total="commentList.length" show-total @on-change="changePage" @on-page-size-change="listPage"
+                        show-elevator show-sizer />
+                </div>
+                <i-Button @click="deleteList()" type="error" long>DELETE</i-Button>
+            </Tab-Pane>
+        </Tabs>
+    </div>
+</div>
+{% endblock content %}
+
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/view-design@4.1.1/dist/iview.min.js"></script>
+<script src="https://cdn.bootcss.com/axios/0.19.0-beta.1/axios.min.js"></script>
+<script>
+    var app = new Vue({
+        delimiters: ['{[', ']}'],
+        el: "#app",
+        data: {
+            columns16: [
+                {
+                    type: 'selection',
+                    width: 60,
+                    align: 'center'
+                },
+                {
+                    title: 'ID',
+                    key: 'id',
+                },
+                {
+                    title: '文章ID',
+                    key: 'post_id',
+                }, {
+                    title: "父级评论",
+                    key: "parent_id"
+                },
+                {
+                    title: '时间',
+                    key: 'created',
+                    sortable: true
+                },
+                {
+                    title: '邮箱',
+                    key: 'guest_email'
+                },
+                {
+                    title: "姓名",
+                    key: "guest_name"
+                }, {
+                    title: "网站",
+                    key: "web_site"
+                }, {
+                    title: "内容",
+                    key: "text"
+                }
+            ],
+            commentList: [],
+            pageCounter: 1,
+            pageSize: 10,
+            selectList: "",
+            remList: [],
+            selectCode: [],
+            deletedList: []
+        },
+        created() {
+
+        },
+        mounted() {
+            axios.post("{{url_for('admin.blog_comment')}}")
+                .then(res => {
+                    console.log(res)
+                    this.commentList = res.data
+
+                });
+            this.remList[0] = ""
+        },
+        updated() {
+            // this.$refs.selection.objData[0]._isChecked = true;
+            if (this.remList[this.pageCounter]) {
+                this.remList[this.pageCounter].map(item => {
+                    for (let k in this.listChange) {
+                        k = k * 1;
+                        if (item.uuid === this.listChange[k].uuid) {
+                            this.$refs.selection.objData[k]._isChecked = true;
+                        }
+                    }
+                })
+            }
+        },
+        methods: {
+            click(selection, row) {
+                console.log(selection);
+                this.selectList = selection;
+                // console.log(this.$refs.selection.objData);
+                // this.remList[this.pageCounter] = this.selectList;
+                this.remList.splice(this.pageCounter, 1, this.selectList)
+            },
+            click1(selection, row) {
+                // console.log(selection, row)
+
+            },
+            changePage(index) {
+
+                this.pageCounter = index;
+                if (this.remList[this.pageCounter]) {
+                    this.remList[this.pageCounter].map(item => {
+                        for (let k in this.listChange) {
+                            k = k * 1;
+                            if (item.id === this.listChange[k].id) {
+                                this.$refs.selection.objData[2]._isChecked = true;
+                            }
+                        }
+                    })
+                }
+            },
+            listPage(index) {
+                this.pageSize = index;
+                this.remList = []
+            },
+            deleteList() {
+                if (this.deletedList.length === 0 || this.remList.length == 0) {
+                    this.$Message.error('请选中删除项！');
+
+                    return false;
+                };
+                axios.delete("{{url_for('admin.blog_comment')}}",
+                    { data: { delete_list: this.deletedList } })
+                    .then(res => {
+                        this.remList = [];
+                        // this.deletedList = [];
+                        this.commentList = res.data.data;
+                        this.$Notice.info({
+                            title: '消息内容',
+                            desc: false ? '' : "成功：" + res.data.status.success + ";" + "失败:" + res.data.status.error
+                        });
+
+                    })
+            }
+        },
+        computed: {
+            listChange() {
+                return this.commentList.slice(
+                    (this.pageCounter - 1) * this.pageSize,
+                    this.pageCounter * this.pageSize
+                );
+            },
+
+        },
+        watch: {
+            remList: {
+                handler(newValue, oldValue) {
+                    this.deletedList = [];
+                    oldValue.map(item => {
+                        for (let i of item) {
+                            this.deletedList.push(i)
+                        }
+                    });
+
+                }
+            },
+            deep: true
+        }
+    })
+</script>
+{% endblock js %}

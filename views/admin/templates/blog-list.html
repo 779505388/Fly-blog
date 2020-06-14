@@ -1,0 +1,111 @@
+{% extends 'layout.html' %}
+{% block css %}
+<link rel="stylesheet" href="{{url_for('.static',filename='css/blog-list.css')}}">
+{% endblock css %}
+
+{% block title %}
+文章列表
+{% endblock title %}
+
+
+{% block content %}
+<div id="app">
+  <div class="list-container">
+    <div class="panel panel-default main-panel ">
+      <div class="panel-body">
+        <h2 class="text-center">文章列表</h2>
+      </div>
+      <div class="panel-footer">
+
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover table-condensed table-bordered">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>文章标题</th>
+              <th>修改时间</th>
+              <th>文章分类</th>
+              <th>文章标签</th>
+              <th>文章操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in artcleList">
+              <th scope="row">{[item.id]}
+                <input @click="deleteClick(item.id)" type="checkbox">
+              </th>
+              <td>{[item.title]}</td>
+              <td>{[item.modified]}</td>
+              <td>{[item.post_type]}</td>
+              <td>{[item.tag]}</td>
+              <td>
+                <a :href="'/admin/blog-modify/'+item.id" class="btn btn-sm btn-primary">修改</a>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+      <button class="btn btn-sm btn-danger btn-block" @click="deleteArticle">删除选中</button>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/axios/0.19.0-beta.1/axios.min.js"></script>
+<script>
+  var app = new Vue({
+    delimiters: ['{[', ']}'],
+    el: "#app",
+    data: {
+      artcleList: null,
+      deleteList: []
+    },
+    created() {
+      axios
+        .post("{{url_for('admin.blog_list')}}")
+        .then(response => (
+          this.artcleList = response.data
+        ))
+        .catch(function (error) { // 请求失败处理
+          console.log(error);
+        });
+    },
+    updated() {
+      for (let item of this.artcleList) {
+        item.selected = false
+      }
+    },
+    methods: {
+      deleteClick(id) {
+
+        if (this.deleteList.indexOf(id) === -1) {
+          this.deleteList.push(id)
+          console.log("添加")
+        } else {
+          this.deleteList.splice(this.deleteList.indexOf(id), 1)
+          console.log("删除")
+        }
+      },
+      deleteArticle() {
+        axios
+          .post("{{url_for('admin.blog_delete')}}",
+            {
+              "article": this.deleteList
+            }
+          )
+          .then(response => (
+            this.artcleList = response.data
+          ))
+          .catch(function (error) { // 请求失败处理
+            console.log(error);
+          });
+        this.deleteList = []
+      }
+    }
+  })
+</script>
+{% endblock js %}

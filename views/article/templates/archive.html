@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block css %}
+<link rel="stylesheet" href="{{url_for('.static',filename='css/archive.css')}}">
+{% endblock css %}
+
+{% block title %}
+{{info.blogConfig.blogName}} - 归档
+{% endblock title %}
+
+{% block content %}
+<div id="app">
+  <div class="container" style="max-width: 890px;">
+    <div v-for="(item,index) in dataTime" :key="index">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 @click="lsitClick(item)" style="cursor: pointer;">{[item]}</h3>
+        </div>
+        <div class="panel-body"></div>
+        <div v-if="item == listClass" class="list-container container" @click="lsitClick(item)">
+          <timeline>
+            <timeline-item v-for="(itemlist,index) in articleList" :key="itemlist.created">
+              <p class="time">
+                <i-time :time="itemlist.created"></i-time>
+              </p>
+              <p class="content"> <a style="display: block;text-decoration: none;"
+                  :href="'/article/'+itemlist.id">{[itemlist.title]}</a></p>
+            </timeline-item>
+          </timeline>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block js %}
+
+<script src="{{url_for('.static',filename='js/archive.js')}}"></script>
+<script>
+  const vue = new Vue({
+    el: "#app",
+    delimiters: ['{[', ']}'],
+    data: {
+      startTime: "{{startTime|string()|truncate(7,end='')}}",
+      endTime: "{{ endTime|string()|truncate(7,end='')}}",
+      dataTime: [],
+      listClass: null,
+      articleList: []
+    },
+    mounted(){
+      
+    },
+    methods: {
+      lsitClick(item) {
+        this.listClass = item;
+        axios
+          .post("{{url_for('article.archive')}}", {
+            "start": this.listClass,
+            "end": getEnd(this.dataTime, item)
+          })
+          .then(res => {
+            this.articleList = res.data
+          })
+          .catch(function (error) { // 请求失败处理
+            console.log(error);
+          });
+          
+      },
+    },
+    created() {
+      this.dataTime = allDate(this.startTime, this.endTime);
+    },
+    updated() {
+    }
+  })
+
+
+
+</script>
+{% endblock js %}

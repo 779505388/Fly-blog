@@ -1,0 +1,97 @@
+/* @import url("") */
+* {
+  margin: 0px;
+  padding: 0px;
+  list-style: none;
+  text-decoration: none;
+}
+.sidebar {
+  position: fixed;
+  left: -190px;
+  width: 190px;
+  height: 100vh;
+  background-color: #042331;
+  transition: all 0.5s ease;
+}
+.sidebar header {
+  font-size: 22px;
+  color: white;
+  text-align: center;
+  line-height: 70px;
+  background-color: #063146;
+  user-select: none;
+}
+.sidebar ul a {
+  display: block;
+  height: 100%;
+  width: 100%;
+  line-height: 65px;
+  font-size: 20px;
+  color: white;
+  padding-left: 40px;
+  box-sizing: border-box;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 0px solid black;
+}
+.sidebar ul li:hover a {
+  padding-left: 50px;
+  text-decoration: none;
+}
+.sidebar ul a img {
+  margin-right: 5px;
+  /* transform: translateY(10px); */
+}
+label {
+  display: contents;
+}
+#check {
+  display: none;
+}
+label #checkbtn,
+label #checkcancel {
+  position: fixed;
+  cursor: pointer;
+  background-color: #042331;
+  border-radius: 3px;
+  z-index: 99;
+}
+label #checkbtn {
+  left: 15px;
+  top: 20px;
+  font-size: 20px;
+  color: white;
+  padding: 6px 12px;
+  transition: all 0.5s;
+}
+label #checkcancel {
+  z-index: 9;
+  left: -165px;
+  top: 17px;
+  font-size: 30px;
+  color: #0a5275;
+  padding: 4px 9px;
+  transition: all 0.5s ease;
+}
+#check:checked ~ .sidebar {
+  left: 0;
+}
+#check:checked ~ label #checkbtn {
+  left: 250px;
+  opacity: 0;
+  pointer-events: none;
+}
+#check:checked ~ label #checkcancel {
+  left: 145px;
+}
+#check:checked ~ .main {
+  /* right: 190px; */
+  /* float: 190px; */
+  width: calc(100% - 200px);
+  transform: translateX(190px);
+  transition: all 0.5s ease;
+}
+.main {
+  /* right: 0px; */
+  /* height: 100%; */
+  transition: all 0.5s;
+}

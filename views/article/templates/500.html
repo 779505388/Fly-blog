@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<!--
+	Dimension by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+
+<head>
+	<title>抱歉，服务器发生错误！</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="{{url_for('article.static',filename='css/404.css')}}" />
+	<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+	<link href="https://cdn.bootcss.com/font-awesome/5.10.2/css/all.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+	<!-- Wrapper -->
+	<div id="wrapper">
+
+		<!-- Header -->
+		<header id="header">
+			<div class="content">
+				<div class="inner">
+					<h1>404</h1>
+					<p>
+						<!--[-->对不起，你要找的这个页面突然不见了。不过，放心，一切都在我的掌控之中，不会跑多远！
+						<!--]-->
+					</p>
+				</div>
+			</div>
+			<nav>
+				<ul>
+					<li><a href="{{url_for('article.home')}}">首页</a></li>
+					<!-- <li><a href="#">博客</a></li> -->
+					<li><a href="#">联系</a></li>
+					<li><a href="{{url_for('article.about')}}">关于</a></li>
+					<!--<li><a href="#elements">Elements</a></li>-->
+				</ul>
+			</nav>
+		</header>
+
+		<!-- Main -->
+
+
+		<!-- Footer -->
+		<footer id="footer">
+			<p class="copyright">&copy; Untitled. Design: <a href="https://404.life">404.LIFE</a>.</p>
+		</footer>
+
+	</div>
+
+	<!-- BG -->
+	<div id="bg" style="background-size: cover;
+            width: 100%;
+            height: 100%;
+            background-position: center center;
+            background-position-x: center;
+            background-position-y: center;
+            background-image:url({{url_for('article.static',filename='images/bj_2.png')}});"></div>
+
+	<!-- Scripts -->
+	<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+	<script src="{{url_for('article.static',filename='js/404.js')}}"></script>
+
+</body>
+
+</html>

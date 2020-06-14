@@ -1,0 +1,70 @@
+.main-content {
+  max-width: 850px;
+  min-height: 400px;
+  margin-top: 50px;
+}
+.article-content {
+  width: 100%;
+  min-height: 425px;
+  background-color: white;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.12),
+    0 3px 1px -2px rgba(0, 0, 0, 0.06), 0 1px 5px 0 rgba(0, 0, 0, 0.12),
+    0 -1px 0.5px 0 rgba(0, 0, 0, 0.09);
+  margin-top: 40px;
+}
+.article-image {
+  height: 275px;
+  width: 100%;
+  display: flex;
+  box-sizing: border-box;
+  padding: 24.72px;
+  background-size: cover;
+  cursor: pointer;
+  flex-grow: 1;
+  flex-direction: row;
+  align-items: flex-end;
+}
+.article-image p a {
+  color: white;
+  text-decoration: none;
+  font-size: 34px;
+  line-height: 40px;
+  font-weight: 400;
+  margin: 0;
+  text-shadow: 1px 1px 8px rgb(63, 63, 63);
+}
+.article-text {
+  padding: 1.5pc 1pc;
+  width: 100%;
+  min-height: auto;
+  color: rgb(114, 114, 114);
+}
+.article-text span {
+  margin-left: 7px;
+}
+.article-text span a {
+  text-decoration: none;
+}
+.article-text span a:hover {
+  color: #5cadff;
+}
+.article-info {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  width: 100%;
+  position: relative;
+}
+.article-info-left {
+  padding: 1pc 1pc;
+  /* position: relative; */
+  float: left;
+  height: 100%;
+}
+.article-info-right {
+  padding: 1pc 1pc;
+  /* position: relative; */
+  float: right;
+  height: 100%;
+}
+.article-info-right p {
+  line-height: 13px;
+}
