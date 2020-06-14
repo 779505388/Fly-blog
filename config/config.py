@@ -11,11 +11,11 @@ class DevConfig():
     JSON_AS_ASCII = False
     RESTFUL_JSON = dict(ensure_ascii=False)
     INFO = read_json()
-    USERNAME = "root"
-    PASSWORD = "740125lhs"
+    USERNAME = "Your Name"
+    PASSWORD = "Your Password"
     HOST = "127.0.0.1"
     PORT = "3306"
-    DB = "flask"
+    DB = "DataBase Name"
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8'.format(
         USERNAME, PASSWORD, HOST, PORT, DB
     )
@@ -30,4 +30,4 @@ class DevConfig():
     MSEARCH_INDEX_NAME = 'whoosh_index'
     WHOOSH_BASE = 'whoosh_index'
     MSEARCH_ENABLE = True
-    TEMPLATES_AUTO_RELOAD = True  # 刷新模板
+    
