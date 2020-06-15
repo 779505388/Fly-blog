@@ -287,7 +287,7 @@ def interval_job():
 
 @scheduler.task('interval', id='do_job_1', seconds=1800)
 def job1():
-    date = requests.get("http://127.0.0.1:5000/interval/")
+    date = requests.get("http://127.0.0.1:8080/interval/")
     print(date)
     # 循环任务，每30min秒循环一次
 
