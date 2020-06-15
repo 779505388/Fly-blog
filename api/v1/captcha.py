@@ -1,5 +1,5 @@
 from flask_restplus import Namespace, Resource
-from flask import jsonify,make_response,session
+from flask import jsonify, make_response, session
 from .. import *
 from io import BytesIO
 import random
@@ -45,7 +45,7 @@ class imageCode():
         # 新图片对象
         im = Image.new('RGB', (width, height), 'white')
         # 字体
-        font = ImageFont.truetype("../views/article/static/Arial.ttf",40)
+        font = ImageFont.truetype("./views/article/static/Arial.ttf", 40)
         # draw对象
         draw = ImageDraw.Draw(im)
         # 绘制字符串

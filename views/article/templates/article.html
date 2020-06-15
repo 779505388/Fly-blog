@@ -136,8 +136,10 @@
       newer: false,
       older: false,
       captcha: '',
+      captchaImg: ''
     },
     mounted() {
+      this.captchaImg = document.getElementById('verify_code')
       this.articleId = this.articleId * 1
       axios.get("{{url_for('article.comment')}}" + "?post_id=" + this.articleId)
         .then((res) => {
@@ -163,7 +165,7 @@
       },
       newPage() {
         let pre = eval(this.pageList).indexOf(this.articleId) + 1;
-        if (pre === eval(this.pageList).length ) {
+        if (pre === eval(this.pageList).length) {
           this.newer = true;
           console.log(eval(this.pageList).length);
           return "/article/" + this.articleId
@@ -172,7 +174,7 @@
         return "/article/" + eval(this.pageList)[pre]
       },
       oldPage() {
-        let old = eval(this.pageList).indexOf(this.articleId)-1;
+        let old = eval(this.pageList).indexOf(this.articleId) - 1;
         if (old === -1) {
           this.older = true;
           return "/article/" + this.articleId
@@ -182,9 +184,27 @@
     },
     methods: {
       commentCommit() {
-        if (!this.commentContent && !this.Email && !this.guestName && !this.captcha) {
+        if (!this.commentContent) {
           this.$Notice.error({
-            title: '回复内容有误！'
+            title: '请填写内容！'
+          });
+          return false
+        }
+        if (!this.Email) {
+          this.$Notice.error({
+            title: '邮箱填写有误！'
+          });
+          return false
+        }
+        if (!this.guestName ) {
+          this.$Notice.error({
+            title: '用户名未填写！'
+          });
+          return false
+        }
+        if (!this.captcha) {
+          this.$Notice.error({
+            title: '验证码未填写！'
           });
           return false
         }
@@ -202,13 +222,13 @@
             captcha: this.captcha
           })
           .then(res => {
-            console.log(res.data.error)
+            this.captchaImg.click()
             if (res.data.error) {
               // 验证码错误！
               this.$Notice.error({
                 title: '验证码错误！'
               });
-              console.log(res.data.error)
+
               return false
             }
             this.commentList = res.data
