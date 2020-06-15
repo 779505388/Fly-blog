@@ -1,3 +1,7 @@
    *.js linguist-language=Vue
+<<<<<<< HEAD
 
    *.html linguist-language=python
+=======
+   *.html linguist-language=python
+>>>>>>> ee929d681b20cfbc13e2237eac6a355182a62dee
