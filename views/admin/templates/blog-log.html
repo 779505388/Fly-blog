@@ -1,0 +1,61 @@
+{% extends 'layout.html' %}
+
+{% block css %}
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+{% endblock css %}
+
+{% block title %}
+博客日志
+{% endblock title %}
+
+{% block content %}
+<div id='app'>
+  <div class="container">
+    <v-card>
+    <v-data-table
+    :headers="headers"
+    :items="colData"
+    :items-per-page="10"
+    
+  ></v-data-table>
+</v-card>
+  </div>
+</div>
+{% endblock content %}
+
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+<script src="https://cdn.bootcss.com/axios/0.19.0-beta.1/axios.min.js"></script>
+<script>
+  var app = new Vue({
+    delimiters: ['{[', ']}'],
+    vuetify: new Vuetify(),
+    el: "#app",
+    data: {
+      headers: [{
+        text: '日志内容(保留15天)',
+        value: 'log'
+      }],
+      colData: []
+    },
+    created() {
+      axios
+        .post("{{url_for('admin.blog_log')}}")
+        .then(response => (
+          response.data.data.map(i => {
+            this.colData.push({
+              log: i
+            })
+          })
+        ))
+        .catch(function (error) { // 请求失败处理
+          console.log(error);
+        });
+    }
+  })
+</script>
+{% endblock js %}

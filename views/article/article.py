@@ -22,6 +22,7 @@ article = Blueprint("article", __name__,
 @article.route("/home/")
 @article.route("/")
 def home():
+
     info = current_app.config.get("INFO")
     page = request.args.get("page", type=int, default=1)
     page_content = 10
@@ -73,11 +74,14 @@ def login():
                     session.permanent = True
                     current_app.permanent_session_lifetime = timedelta(
                         minutes=24*60*7)
+                current_app.logger.info("登陆博客成功")
                 return redirect(url_for("admin.blog_info"))
             else:
+                current_app.logger.info("登陆博客失败")
                 return redirect(url_for("article.login"))
         else:
             # 密码或者用户名错误
+            current_app.logger.info("登陆博客失败")
             return redirect(url_for("article.login"))
 
 
@@ -124,12 +128,14 @@ def sitemap():
 @article.app_errorhandler(404)
 # 404错误
 def server_404(e):
+    current_app.logger.info("404错误")
     return render_template("404.html"), 404
 
 
 @article.app_errorhandler(500)
 # 500错误
 def server_500(e):
+    current_app.logger.info("500错误")
     return render_template("500.html"), 500
 
 
@@ -138,6 +144,7 @@ def server_500(e):
 @login_required
 # 退出登录
 def logout():
+    current_app.logger.info("退出登陆")
     session.clear()
     return redirect(url_for("article.home"))
 
@@ -196,6 +203,7 @@ def comment():
     else:
         data = request.get_json()
         if session.get('imageCode').upper() != data.get('captcha').upper():
+            current_app.logger.info("评论验证码不正确")
             return jsonify({"error": "验证码错误"})
         if data.get("type") == "parent":
             p_comment = ParentComment(guest_email=data.get("guest_email"),
@@ -223,8 +231,10 @@ def comment():
                                          "text": comment.text,
                                          "id": comment.id,
                                          "children_comment": children_list})
+                current_app.logger.info("父级评论成功")
                 return jsonify(comment_list)
             else:
+                current_app.logger.info("父级评论失败")
                 return jsonify("提交评论错误")
         elif data.get("type") == "children":
             c_comment = ChildrenCommet(guest_email=data.get("guest_email"),
@@ -253,8 +263,10 @@ def comment():
                                          "text": comment.text,
                                          "id": comment.id,
                                          "children_comment": children_list})
+                current_app.logger.info("子级评论成功")                         
                 return jsonify(comment_list)
         else:
+            current_app.logger.info("评论类型错误")
             return jsonify({"error":"评论类型错误"})
         print(request.get_json())
         return jsonify(request.get_json())

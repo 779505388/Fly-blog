@@ -3,7 +3,7 @@ from flask import url_for, render_template, Blueprint, request, session,\
 from flask_wtf.csrf import generate_csrf
 from models.Content import Content
 from models.Commet import ParentComment, ChildrenCommet
-from tool import get_server_info, login_required
+from tool import get_server_info, login_required, sys_name
 admin = Blueprint("admin", __name__,
                   template_folder="../../views/admin/templates/",
                   static_folder="../../views/admin/static/",
@@ -39,11 +39,14 @@ def blog_write():
                               text=text, template=template
                               )
             if content.save():
+                current_app.logger.info("发布文章成功")
                 return redirect(url_for("article.home"))
             else:
+                current_app.logger.info("发布文章失败")
                 return "错误", 302
 
         else:
+            current_app.logger.info("csrf_token不正确")
             return "错误", 302
     csrf_token = generate_csrf()
     session['blog_post_csrf_token'] = csrf_token
@@ -94,8 +97,11 @@ def blog_modify(url):
             content.image_url = image_url
             content.template = template
             if content.updata():
+                current_app.logger.info("文章修改成功")
                 return redirect(url_for("article.post", url=url))
+
             else:
+                current_app.logger.info("文章修改失败")
                 return "错误", 302
 
         else:
@@ -120,6 +126,7 @@ def blog_delete():
             data_list = []
             for data in content_list:
                 data_list.append(data.to_json())
+            current_app.logger.info("文章删除成功")
             return jsonify(data_list)
         return jsonify({"ok": "ok"})
 # 删除文章
@@ -138,6 +145,7 @@ def blog_set():
             print(data)
             write_json(data)
             current_app.config["INFO"] = data
+            current_app.logger.info("博客配置修改成功")
             return jsonify(data)
         else:
 
@@ -219,7 +227,23 @@ def blog_comment():
                          "guest_name": comment.guest_name,
                          "post_id": comment.post_id,
                          "uuid": comment.uuid})
+        current_app.logger.info("评论删除成功")
         return jsonify({"data": data, "status": status})
+
+
+@admin.route('/admin/log/', methods=['GET', 'POST'])
+@login_required
+# 博客日志
+def blog_log():
+    if request.method == "GET":
+        return render_template('blog-log.html', **locals())
+    else:
+        logData = []
+        path = 'FlyBlog.log'
+        with open(path, "r") as f:
+            for line in f:
+                logData.append(line)
+        return jsonify({'data': logData})
 
 
 @admin.route('/admin/server-info/', methods=['POST'])
