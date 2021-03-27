@@ -3,13 +3,15 @@
 
 基于Flask + Vue 构建的博客应用
 
-网站 [光阴逆旅](https://flask.gynl.xyz/)
+web: [光阴逆旅](https://flask.gynl.xyz/)
 
 # 博客图片
 
-![1](https://raw.githubusercontent.com/779505388/Fly-blog/master/example/QQ20200614-230114.png)
+![1](https://raw.githubusercontent.com/779505388/Fly-blog/master/example/20210327-213348.png)
 
-![2](https://raw.githubusercontent.com/779505388/Fly-blog/master/example/QQ20200614-230138.png)
+![2](https://raw.githubusercontent.com/779505388/Fly-blog/master/example/%E6%88%AA%E5%B1%8F2021-03-27%E4%B8%8B%E5%8D%889.35.52.png)
+![3](https://raw.githubusercontent.com/779505388/Fly-blog/master/example/%E6%88%AA%E5%B1%8F2021-03-27%E4%B8%8B%E5%8D%889.37.42.png)
+![4](https://raw.githubusercontent.com/779505388/Fly-blog/master/example/%E6%88%AA%E5%B1%8F2021-03-27%E4%B8%8B%E5%8D%889.37.59.png)
 
 # 使用方法
 
@@ -33,32 +35,17 @@ python3 manage.py upgrade
 
 ## 运行
 
-` python3 service.py `
+` python3 serve.py `
 
 ## 注册账户
+
 
  发送 json `ip:8080/api/v1/register/`
 
 ``` javascript
+//token=>在api/v1/token.py设置
 
 {"token":"123456789","register":{"mail":"","username":"","password":""}}
 
 ```
 
-# 已完成功能
-
-1. 文章发布、修改、删除
-
-2. 评论发布、删除
-
-3. 回复验证码
-
-4. 归档
-
-5. 文章搜索
-
-6. 日志查看
-
-# 待完成功能
-
- 关于页面设置
