@@ -1,261 +1,299 @@
 {% extends 'base.html' %}
 {% block title %}
-{{info.blogConfig.blogName}} - {{content.title}}
+{{getInfo().blogConfig.blogName}} - {{content.title}}
 {% endblock title %}
 
 
 
 {% block css %}
 <link rel="stylesheet" href="{{url_for('.static',filename='css/article.css')}}">
-<link rel="stylesheet" href="https://unpkg.com/editor.md@1.5.0/css/editormd.preview.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min.css">
+<link rel="stylesheet" href="https://unpkg.com/editor.md@1.5.0/css/editormd.min.css">
 {% endblock css %}
 
-{% block navbar %}
-<li><a href="{{url_for('admin.blog_modify',url = url)}}">修改文章</a></li>
-{% endblock navbar %}
 
 {% block content %}
 
-<div class="article-content container ">
-  <div class="article-head " style="width: 100%;">
-    <h1 class="text-center">{{content.title}}</h1>
-    <div class="container" style="width: 100%;">
-      <span class="col-xs-12 col-sm-12 col-md-4 col-lg-4">发表时间：{{content.created|string()|truncate(13,end="")}}</span>
-      <span class="col-xs-12 col-sm-12 col-md-4 col-lg-4">文章分类：{{content.post_type}}</span>
-      <span class="col-xs-12 col-sm-12 col-md-4 col-lg-4">文章标签：{{content.tag}}</span>
+<div class="article-content">
+
+  <div class="mdui-card">
+
+
+    <!-- 卡片的媒体内容，可以包含图片、视频等媒体内容，以及标题、副标题 -->
+    <div class="mdui-card-media">
+      <img class="mdui-img-fluid blog-img lazy" style="width: 100%;height: 259px;"
+        src="https://cdn.jsdelivr.net/npm/typecho_joe_theme@4.3.5/assets/img/lazyload.jpg"
+        data-original="{% if content.image_url %}{{content.image_url}}{% else %}{{getInfo().blogConfig.IMAGE}}{% endif %}" />
+      <div class="mdui-card-media-covered">
+        <div class="mdui-card-primary">
+          <div class="mdui-card-primary-title">{{content.title}}</div>
+        </div>
+      </div>
+      <!-- 卡片中可以包含一个或多个菜单按钮 -->
+    </div>
+    <!-- 卡片头部，包含头像、标题、副标题 -->
+    <div class="mdui-card-header">
+      <img class="mdui-card-header-avatar" src="{{getInfo().blogConfig.AVATAR}}4c2438980628fb7f544281db606d34b0" />
+      <div class="mdui-card-header-title">山中客</div>
+      <div class="mdui-card-header-subtitle">发表时间：{{content.created|string()|truncate(13,end="")}}</div>
+      <div class="mdui-card-menu">
+        <button id="share" class="mdui-btn mdui-btn-icon "><i class="mdui-icon material-icons ">share</i></button>
+      </div>
+    </div>
+    <div class="mdui-divider"></div>
+    <!-- 卡片的内容 -->
+    <div class="mdui-card-content">
+
+      <div class="editormd-preview-container" id="editormd-preview-container" style="width: auto; padding: 0px;">
+        {{content.template|safe()}}
+      </div>
     </div>
 
+    <div class="mdui-divider"></div>
+
+
+    <div style="margin: 6px;">
+      {% for tag in content.tags %}
+      <div class="mdui-chip ">
+        <a style="color: #0a69b6;" href="{{url_for('article.tag',url=tag.name)}}"><span
+            class="mdui-chip-title">{{tag.name}}</span></a>
+      </div>
+      {% endfor %}
+    </div>
 
   </div>
-  <div class="markdown-body editormd-preview-container" style="width: 100%;overflow: hidden;">
-    {{content.template|safe()}}
-  </div>
-</div>
-<div id="comment">
-  <div class="container" style="max-width: 880px;">
-    <ul class="pager">
-      <li class="previous" :class="{disabled:newer}"><a :href="newPage">
-          <span aria-hidden="true">&larr;</span> Newer
-        </a></li>
-      <li class="next" :class="{disabled:older}">
-        <a :href="oldPage">Older <span aria-hidden="true">&rarr;</span></a>
-      </li>
-    </ul>
-  </div>
-  <div class="container" style="max-width: 880px;min-height:
-  100px;">
-    <modal @on-ok="commentCommit" title="欢迎回复本篇文章" width=600 v-model="commentModal" class-name="vertical-center-modal"
-      ok-text="回复">
-      <div>
-        <i-input v-model="commentContent" type="textarea" :rows="4" placeholder="快来评论吧！" />
-      </div>
-      <br>
-      <div>
-        <i-input v-model="guestName" placeholder="您的昵称（必填）" />
-      </div>
-      <br>
-      <div>
-        <i-input v-model="Email" placeholder="您的邮箱（必填）" />
-      </div>
-      <br>
-      <div>
-        <i-input v-model="webSite" placeholder="您的网站（可选）" />
-      </div>
-      <br>
-      <div>
-        <img id="verify_code" class="col-xs-4 col-sm-3 col-md-3 col-lg-3" src="/api/v1/captcha"
-          onclick="this.src='/api/v1/captcha?'+ Math.random()">
-        <i-input v-model.lazy='captcha' class="col-xs-8 col-sm-9 col-md-9 col-lg-9" placeholder="请输入验证码" type="text">
-      </div>
-      <br>
-    </modal>
-    <i-button @click="commentModal = true;parentComment()" long size="large">回复本篇文章</i-button>
-  </div>
-  <div class="container" style="max-width: 880px;min-height: 
-  100px;background-color: white;box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.06), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 -1px 0.5px 0 rgba(0, 0, 0, 0.09);
-  margin-top: 30px;">
-    <div v-for="item in comments" :key="item.created">
-      <list size="large">
-        <list-item>
-          <list-item-meta :avatar=item.hash_email :title=item.guest_name :description=item.text />
-        </list-item>
-      </list>
-      <div style="left:50% ;" class="text-right">
-        <i-button icon="md-time" type="text" style="color: rgb(139, 139, 138);">
-          <i-time :time="item.created"></i-time>
-        </i-button>
-        <i-button icon="ios-text" type="text" @click="commentModal = true;ChildrenComment(item.id,item.guest_name)"
-          style="color: rgb(139, 139, 138);">回复
-        </i-button>
-      </div>
-      <div v-for="c_item in item.children_comment" :key="c_item.created">
-        <list border split size="small">
-          <list-item>
-            <list-item-meta :avatar="c_item.hash_email" :title="c_item.guest_name" :description="c_item.text" />
-          </list-item>
 
-          <div style="left:50% ;" class="text-right">
-            <i-button icon="md-time" type="text" style="color: rgb(139, 139, 138);">
-              <i-time :time="c_item.created"></i-time>
-            </i-button>
-            <i-button icon="ios-text" type="text"
-              @click="commentModal = true;ChildrenComment(item.id,c_item.guest_name)"
-              style="color: rgb(139, 139, 138);">回复
-            </i-button>
+  <div style="margin-top: 20px;">
+    <a class="mdui-btn mdui-btn-raised" {% if nextPage %} href="{{url_for('article.post',url=nextPage)}}" {% else %}
+      disabled {% endif%}><i class="mdui-icon material-icons">keyboard_arrow_left</i>newer</a>
+    <a class="mdui-btn mdui-float-right mdui-btn-raised" {% if prevPage %}
+      href="{{url_for('article.post',url=prevPage)}}" {% else %} disabled {% endif%}>older<i
+        class="mdui-icon material-icons">keyboard_arrow_right</i></a>
+  </div>
+
+
+  <div class="comment-container mdui-card" style="padding:10px;margin-top: 20px;">
+    <p id="review-btn" style="font-weight: 600;cursor: pointer;"><i class="fas fa-comments"></i> 评论</p>
+    <div id="valine_container" class="valine_thread v" data-class="v">
+      <div class="vpanel">
+        <div class="vwrap">
+          <div class="vheader item3 mdui-container-fluid">
+            <input class="mdui-col-lg-4 mdui-col-md-4 mdui-col-sm-4 mdui-col-xs-12 vinput" name="nick" placeholder="昵称"
+              class="vnick vinput" type="text">
+            <input class="mdui-col-lg-4 mdui-col-md-4 mdui-col-sm-4 mdui-col-xs-12 vinput" name="mail" placeholder="邮箱"
+              class="vmail vinput" type="email">
+            <input class="mdui-col-lg-4 mdui-col-md-4 mdui-col-sm-4 mdui-col-xs-12 vinput" name="link"
+              placeholder="网址(http://)" class="vlink vinput" type="text">
+            <input style="display: none;" name="parent" type="text">
+            <input style="display: none;" name="articleId" value="{{content.id}}" type="text">
+            <input style="display: none;" name="parent_uuid" type="text">
+            <input style="display: none;" name="parent_name" type="text">
           </div>
-        </list>
+          <div class="vedit mdui-col-lg-12 mdui-col-md-12 mdui-col-sm-12 mdui-col-xs-12">
+            <textarea id="veditor" class="veditor vinput" placeholder="想对我说些什么呢"
+              style="overflow: hidden; overflow-wrap: break-word; resize: none; height: 123px;width: 100%;padding-left: 0px;padding-right: 0px;"></textarea>
+            <div class="vrow">
+              <div class="vcol vcol-60 status-bar"></div>
 
+            </div>
+          </div>
+          <div class="vrow mdui-container-fluid" style="margin-top: 7px;">
+            <div class="mdui-col-lg-4 mdui-col-md-4 mdui-col-sm-4 mdui-col-xs-6" style="height:50px">
+              <img id="captcha" style="float: left;height: 36px;margin-top: 5px;cursor: pointer;" src="/api/v1/captcha/"
+                alt="验证图片" srcset="">
+            </div>
+            <input class="mdui-col-lg-4 mdui-col-md-4 mdui-col-sm-4 mdui-col-xs-6 vinput" name="captcha"
+              placeholder="验证码" style="margin-top: 5px;" class="vnick vinput" type="text">
+            <div class="vcol vcol-70 text-right mdui-col-lg-4 mdui-col-md-4 mdui-col-sm-4 mdui-col-xs-12"><button
+                type="button" title="Cmd|Ctrl+Enter" style="margin-top: 5px;"
+                class="vsubmit vbtn mdui-float-right mdui-btn-block">提交</button></div>
+          </div>
+          <div style="display:none;" class="vmark"></div>
+        </div>
       </div>
-      <Divider style="margin-bottom: 0px;margin-top: 0px;" />
+      <div class="vcount" style="display: block;"><span class="vnum">{{comment_mun}}</span> 评论</div>
+      <div class="vload-top text-center" style="display:none;"><i class="vspinner" style="width:30px;height:30px;"></i>
+      </div>
+      <div class="vcards">
+
+        {% for comment in comment_data %}
+        <div class="vcard" id="{{comment.uuid}}"><img class="vimg"
+            src="{{getInfo().blogConfig.AVATAR}}{{comment.hash_email}}">
+          <div class="vh">
+            <div class="vhead"><a class="vnick" rel="nofollow" href="{{comment.link}}"
+                target="_blank">{{comment.nick}}</a>
+              <span class="vsys">{{comment.agent}}</span> <span class="vsys">Windows 10.0</span></div>
+            <div class="vmeta"><span class="vtime">{{comment.created}}</span><span class="vat">回复</span></div>
+            <div class="vcontent">
+              <p>
+                {{comment.text}}
+              </p>
+            </div>
+            <div class="vreply-wrapper"></div>
+            <div class="vquote">
+              {% for i in comment.c_comment_data %}
+              <div class="vcard" id="{{i.uuid}}"><img class="vimg"
+                  src="https://gravatar.loli.net/avatar/{{i.hash_email}}">
+                <div class="vh">
+                  <div class="vhead">
+                    <a class="vnick" rel="nofollow" href="{{i.link}}">{{i.nick}}</a>
+                    <span class="vsys">Edge 87.0.664.75</span>
+                    <span class="vsys">Windows
+                      10.0</span>
+                  </div>
+                  <div class="vmeta">
+                    <span class="vtime">{{i.created}}</span>
+                    <span class="vat">回复</span>
+                  </div>
+                  <div class="vcontent">
+                    <p><a href="#{{i.parent_uuid}}">@{{i.parent_name}}</a> ,
+                      {{i.text}}
+                    </p>
+                  </div>
+                  <div class="vreply-wrapper"></div>
+                  <div class="vquote"></div>
+                </div>
+              </div>
+              {% endfor %}
+
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="vload-bottom text-center" style="display: none;"><i class="vspinner"
+          style="width:30px;height:30px;"></i></div>
+      <div class="vempty" style="display:none;"></div>
+      <div class="vpower txt-right">仿 <a href="https://valine.js.org" target="_blank">Valine</a><br> </div>
     </div>
   </div>
 </div>
+
 {% endblock content %}
 
 
 {% block js %}
-<script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/prettify.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/marked.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/prettify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/raphael@2.3.0/raphael.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/underscore.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/sequence-diagram.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/flowchart.min.js"> </script>
+<script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/jquery.flowchart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.min.js"></script>
 <script>
-  const vue = new Vue({
-    el: "#comment",
-    delimiters: ['{[', ']}'],
-    data: {
-      articleId: "{{content.id}}",
-      commentModal: false,
-      commentContent: "",
-      Email: "",
-      webSite: "",
-      guestName: "",
-      commentList: [],
-      type: "parent",
-      parent_id: null,
-      pageList: "{{pages}}",
-      newer: false,
-      older: false,
-      captcha: '',
-      captchaImg: ''
-    },
-    mounted() {
-      this.captchaImg = document.getElementById('verify_code')
-      this.articleId = this.articleId * 1
-      axios.get("{{url_for('article.comment')}}" + "?post_id=" + this.articleId)
-        .then((res) => {
-          this.commentList = res.data;
-        });
-      if (localStorage.guestName && localStorage.email) {
-        this.Email = localStorage.email;
-        this.guestName = localStorage.guestName;
-        this.webSite = localStorage.webSite
-      };
-
-    },
-    computed: {
-      comments() {
-        return this.commentList.map(item => {
-          item.hash_email = "https://fdn.geekzu.org/avatar/" + item.hash_email;
-          item.children_comment.map(item => {
-            item.hash_email = "https://fdn.geekzu.org/avatar/" + item.hash_email;
-            return item
-          })
-          return item
-        })
-      },
-      newPage() {
-        let pre = eval(this.pageList).indexOf(this.articleId) + 1;
-        if (pre === eval(this.pageList).length) {
-          this.newer = true;
-          console.log(eval(this.pageList).length);
-          return "/article/" + this.articleId
-        };
-        console.log(eval(this.pageList)[pre])
-        return "/article/" + eval(this.pageList)[pre]
-      },
-      oldPage() {
-        let old = eval(this.pageList).indexOf(this.articleId) - 1;
-        if (old === -1) {
-          this.older = true;
-          return "/article/" + this.articleId
-        };
-        return "/article/" + eval(this.pageList)[old]
-      }
-    },
-    methods: {
-      commentCommit() {
-        if (!this.commentContent) {
-          this.$Notice.error({
-            title: '请填写内容！'
-          });
-          return false
-        }
-        if (!this.Email) {
-          this.$Notice.error({
-            title: '邮箱填写有误！'
-          });
-          return false
-        }
-        if (!this.guestName ) {
-          this.$Notice.error({
-            title: '用户名未填写！'
-          });
-          return false
-        }
-        if (!this.captcha) {
-          this.$Notice.error({
-            title: '验证码未填写！'
-          });
-          return false
-        }
-        localStorage.email = this.Email;
-        localStorage.guestName = this.guestName;
-        localStorage.webSite = this.webSite;
-        axios.post("{{url_for('article.comment')}}", {
-            guest_email: this.Email,
-            guest_name: this.guestName,
-            web_site: this.webSite,
-            text: this.commentContent,
-            post_id: this.articleId,
-            type: this.type,
-            parent_id: this.parent_id,
-            captcha: this.captcha
-          })
-          .then(res => {
-            this.captchaImg.click()
-            if (res.data.error) {
-              // 验证码错误！
-              this.$Notice.error({
-                title: '验证码错误！'
-              });
-
-              return false
-            }
-            this.commentList = res.data
-          })
-      },
-      ChildrenComment(parent_id, name) {
-        this.type = "children";
-        this.parent_id = parent_id;
-        this.commentContent = "@" + name + ":";
-        console.log(name)
-      },
-      parentComment() {
-        this.commentContent = "";
-        this.type = "parent"
-      },
-
-    },
-    watch: {
-      commentList: {
-        handler(newValue, oldValue) {
-          console.log(newValue);
-
-        },
-        deep: true //对象内部属性的监听
-      }
-    }
+  $(document).ready(() => {
+    $('input[name="nick"]').val(localStorage.getItem('nick'))
+    $('input[name="mail"]').val(localStorage.getItem('mail'))
+    $('input[name="link"]').val(localStorage.getItem('link'))
+      var Editor = editormd.markdownToHTML("editormd-preview-container", {
+      tocm: true, // Using [TOCM]
+      tex: true, // 开启科学公式TeX语言支持，默认关闭
+      flowChart: true, // 开启流程图支持，默认关闭
+      sequenceDiagram: true,
+      htmlDecode: "style,script,iframe",
+      taskList: true,
   })
+ 
+  })
+
+  
 </script>
+<script>
+ 
+$('.vat').click(function () {
+    let comment = ($(this).parent().parent().children('.vreply-wrapper')[0]);
+    $(comment).append($('.vwrap')[0])
+    let nick = ($(this).parent().parent().children('.vhead').children('.vnick').html());
+    $('#veditor').attr('placeholder', '@ ' + nick);
+    $('input[name="parent"]').val(null)
+    $('input[name="captcha"]').val(null)
+    $('#veditor').val(null)
+    $('input[name="parent_uuid"]').val($(this).parent().parent().parent().attr('id'));
+    $('input[name="parent_name"]').val($(this).parent().parent().children('.vhead').children('.vnick').html());
+})
+
+$('.vsubmit').click(function () {
+    console.log('asdsa');
+    let type = 'review'
+    let parentId = $('input[name="parent"]').val()
+    let nick = $('input[name="nick"]').val()
+    let mail = $('input[name="mail"]').val()
+    let link = $('input[name="link"]').val()
+    let captcha = $('input[name="captcha"]').val()
+    let text = $('#veditor').val()
+    let parent_uuid = $('input[name="parent_uuid"]').val()
+    let parent_name = $('input[name="parent_name"]').val()
+    let articleId = $('input[name="articleId"]').val()
+    if (!nick) {
+        mdui.snackbar({
+            message: '昵称为空',
+            position: 'right-top'
+        });
+        return false
+    }
+    if (!mail) {
+        mdui.snackbar({
+            message: '邮箱为空',
+            position: 'right-top'
+        });
+        return false
+    }
+    if (!text) {
+        mdui.snackbar({
+            message: '回复内容为空',
+            position: 'right-top'
+        });
+        return false
+    }
+    if (!captcha) {
+        mdui.snackbar({
+            message: '验证码为空',
+            position: 'right-top'
+        });
+        return false
+    }
+    let data = {
+        nick,
+        mail,
+        link,
+        text,
+        captcha,
+        type,
+        parentId,
+        articleId,
+        parent_name,
+        parent_uuid
+    }
+
+    $.post("/comment/", data, function (data, status)  {
+        if(data.status ==='success') {
+            localStorage.setItem('nick', nick);
+            localStorage.setItem('mail', mail);
+            localStorage.setItem('link', link);
+            location.reload();
+        }else{
+            mdui.snackbar({
+                message: data.message,
+                position: 'right-top'
+            })
+        }
+    });
+})
+
+$('#captcha').click(()=>{
+    $('#captcha').attr("src", '/api/v1/captcha/');
+})
+
+$('#review-btn').click(()=>{
+    $('.vpanel')[0].append($('.vwrap')[0])
+    $('#veditor').attr('placeholder', '想对我说些什么呢');
+    $('input[name="parent"]').val(null)
+    $('input[name="captcha"]').val(null)
+    $('#veditor').val(null)
+    $('input[name="parent_uuid"]').val(null);
+    $('input[name="parent_name"]').val(null);
+})
+</script>
+
 
 {% endblock js %}

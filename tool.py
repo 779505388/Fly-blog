@@ -1,9 +1,12 @@
 from functools import wraps
 from flask import url_for, redirect, request,\
-    session, jsonify
+    session, jsonify, current_app
 import hashlib
 import psutil
 import platform
+from models.Content import Category, Article
+from models.Commet import Comment
+import calendar
 # import sys
 # import os
 
@@ -54,3 +57,51 @@ def get_server_info():
 def sys_name():
     # 判断系统类型
     return platform.system()
+
+
+def get_month_range(start_day, end_day):
+    # 处理日期
+    months = (end_day.year - start_day.year) * \
+        12 + end_day.month - start_day.month
+    month_range = ['%s-%s' % (start_day.year + mon//12, mon % 12+1)
+                   for mon in range(start_day.month-1, start_day.month + months)]
+    return month_range
+
+
+def getCategory():
+    data = Category.query.all()
+    names = []
+    for i in data:
+        names.append(i.name)
+    return names
+
+
+def get_month_days(time):
+    """
+    根据年份，月份信息显示此月份天数
+    :param year: 年份：
+    :param month: 月份（1～12）：
+    :return: 当月天数
+    """
+    a = time.split('-')
+    year = int(a[0])
+    month = int(a[1])
+    if month > 12 or month <= 0:
+        return -1
+    if month == 2:
+        return 29 if year % 4 == 0 and year % 100 != 0 or year % 400 == 0 else 28
+
+    if month in (4, 6, 9, 11):
+        return 30
+    else:
+        return 31
+
+
+def getItem():
+    articleNum = Article.query.count()
+    commentNum = Comment.query.count()
+    return {"articleNum": articleNum, 'commentNum': commentNum}
+
+
+def getInfo():
+    return current_app.config.get("INFO")

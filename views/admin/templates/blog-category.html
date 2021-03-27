@@ -1,0 +1,182 @@
+{% extends 'layout.html' %}
+{% block css %}
+<link rel="stylesheet" href="https://unpkg.com/editor.md@1.5.0/css/editormd.min.css">
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+{% endblock css %}
+
+{% block title %}
+文章分类管理
+{% endblock title %}
+
+{% block content %}
+<div id="app">
+  <v-app>
+    <v-main>
+      <v-card class="mx-auto" max-width="1000">
+        <v-card-title class="text-center justify-center py-6">
+          <h1 class="">标签管理</h1>
+          <v-btn class="float-right" block color="blue lighten-1" outlined @click='addCategory'>
+            添加文章分类
+          </v-btn>
+        </v-card-title>
+        <v-chip v-for='item in categorys' :key='item.id' v-if="true" class="ma-2" close color="green" outlined
+          @click:close="deleteCategory(item)" @click='editCategory(item)'>
+          {[item.name]}
+        </v-chip>
+      </v-card>
+
+      <v-dialog v-model="addDialog" width="500">
+
+        <v-card>
+          <v-card-title class="headline grey lighten-2">
+            添加文章分类
+          </v-card-title>
+
+          <v-card-text>
+            <v-text-field v-model='category'></v-text-field>
+          </v-card-text>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" text @click="addDialog = false">
+              取消
+            </v-btn>
+            <v-btn color="primary" text @click="addDialog = false;postCategory()">
+              保存
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog v-model="editDialog" width="500">
+
+        <v-card>
+          <v-card-title class="headline grey lighten-2">
+            修改文章分类
+          </v-card-title>
+
+          <v-card-text>
+            <v-text-field v-model='editData.name'></v-text-field>
+          </v-card-text>
+
+          <v-divider></v-divider>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" text @click="editDialog = false">
+              取消
+            </v-btn>
+            <v-btn color="primary" text @click="editDialog = false;putCateory()">
+              保存
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <v-snackbar top right :color='snackbarColor' v-model="snackbar" :timeout="1700">
+        {[snackbarText ]}
+      </v-snackbar>
+    </v-main>
+  </v-app>
+</div>
+
+{% endblock content %}
+
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+
+<script>
+  new Vue({
+    delimiters: ['{[', ']}'],
+    el: '#app',
+    vuetify: new Vuetify(),
+    data: () => ({
+      csrftoken: "{{csrf_token()}}",
+      categorys: [],
+      addDialog: false,
+      editDialog: false,
+      category: '',
+      editData: {},
+      snackbar: false,
+      snackbarColor: '',
+      snackbarText: ''
+    }),
+
+    computed: {
+
+    },
+    mounted() {
+      this.getCategory()
+    },
+    watch: {
+
+    },
+
+    created() {
+
+    },
+
+    methods: {
+      getCategory() {
+        axios.get('{{url_for("admin.blog_category_handle")}}').then(
+          res => {
+            this.categorys = res.data
+          }
+        )
+      },
+      editCategory(item) {
+        this.editDialog = true
+        this.editData = JSON.parse(JSON.stringify(item))
+      },
+      putCateory() {
+        axios.put('{{url_for("admin.blog_category_handle")}}', {
+          category: this.editData
+        }, {
+          headers: {
+            'X-CSRFToken': this.csrftoken,
+          },
+        }).then(res => {
+          console.log(res.data);
+          if (res.data.status === "success") {
+            this.categorys = res.data.data
+            this.snackbar = true
+            this.snackbarText = res.data.message
+            this.snackbarColor = res.data.status
+          } else {
+            this.snackbar = true
+            this.snackbarText = res.data.message
+            this.snackbarColor = res.data.status
+          }
+        });
+      },
+      addCategory() {
+        this.addDialog = true
+      },
+      postCategory() {
+        axios.post('{{url_for("admin.blog_category_handle")}}', {
+          category: this.category
+        }, {
+          headers: {
+            'X-CSRFToken': this.csrftoken,
+          },
+        }).then(res => {
+          console.log(res.data);
+          this.categorys = res.data
+        });
+      },
+      deleteCategory(item) {
+        console.log(item);
+      }
+    },
+
+  })
+</script>
+{% endblock js %}

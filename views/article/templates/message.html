@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+{% block title %}
+{{info.blogConfig.blogName}} - 留言
+{% endblock title %}
+
+
+
+{% block css %}
+<link rel="stylesheet" href="{{url_for('.static',filename='css/message.css')}}">
+
+{% endblock css %}
+
+
+{% block content %}
+
+<div class="article-content">
+
+  <div class="mdui-card">
+
+
+    <!-- 卡片的媒体内容，可以包含图片、视频等媒体内容，以及标题、副标题 -->
+    <div class="mdui-card-media">
+      <img class="mdui-img-fluid blog-img lazy" style="width: 100%;height: 259px;"
+        src="https://cdn.jsdelivr.net/npm/typecho_joe_theme@4.3.5/assets/img/lazyload.jpg"
+        data-original="{{getInfo().blogConfig.IMAGE}}" />
+      <div class="mdui-card-media-covered">
+        <div class="mdui-card-primary">
+          <div class="mdui-card-primary-title">留言</div>
+        </div>
+      </div>
+      <!-- 卡片中可以包含一个或多个菜单按钮 -->
+    </div>
+    <!-- 卡片头部，包含头像、标题、副标题 -->
+    <div class="mdui-card-header">
+      <img class="mdui-card-header-avatar" src="https://fdn.geekzu.org/avatar/4c2438980628fb7f544281db606d34b0" />
+      <div class="mdui-card-header-title">山中客</div>
+      <div class="mdui-card-header-subtitle">发表时间：</div>
+      <div class="mdui-card-menu">
+        <button id="share" class="mdui-btn mdui-btn-icon "><i class="mdui-icon material-icons ">share</i></button>
+      </div>
+    </div>
+    <div class="mdui-divider"></div>
+    <!-- 卡片的内容 -->
+    <div class="mdui-card-content">
+
+      <div class=" editormd-preview-container" style="width: auto; padding: 0px;">
+        <p style="color: rgb(102, 102, 102);">欢迎你的来访，请遵守相关法律法规，文明灌水，谢谢合作！</p>
+
+        <div class="mdui-typo">
+          <p style="color: rgb(102, 102, 102);">如果想要添加友情链接，请按照如下格式：</p>
+          <blockquote style="background-color: rgb(240, 240, 240);">
+            <p>网站名称：</p>
+            <p>网站地址：</p>
+            <p>网站说明：</p>
+            <p>网站图标</p>
+          </blockquote>
+        </div>
+      </div>
+    </div>
+
+    <div class="mdui-divider"></div>
+
+
+  </div>
+
+  <div class="mdui-dialog" id="commen-dialog">
+    <div class="mdui-dialog-title">回复</div>
+    <div class="review-container">
+      <div class="review-box">
+        <form action="" method="post">
+          <div class="mdui-container-fluid">
+            <div
+              class="mdui-color-theme-200 mdui-textfield mdui-textfield-floating-label mdui-col-lg-4 mdui-col-md-4 mdui-col-sm-4 mdui-col-xs-12">
+              <label class="mdui-textfield-label ">昵称（必填）</label>
+              <input class="mdui-textfield-input" type="text" />
+            </div>
+            <div
+              class="mdui-textfield mdui-textfield-floating-label  mdui-col-lg-4 mdui-col-md-4 mdui-col-sm-4 mdui-col-xs-12">
+              <label class="mdui-textfield-label">邮箱（必填）</label>
+              <input class="mdui-textfield-input" type="email" />
+            </div>
+            <div
+              class="mdui-textfield mdui-textfield-floating-label  mdui-col-lg-4 mdui-col-md-4 mdui-col-sm-4 mdui-col-xs-12">
+              <label class="mdui-textfield-label">网站（https://）</label>
+              <input class="mdui-textfield-input" type="text" />
+            </div>
+            <div class="mdui-textfield mdui-col-lg-12 mdui-col-md-12 mdui-col-sm-12 mdui-col-xs-12">
+              <textarea class="mdui-textfield-input" rows="4" placeholder="留言内容"></textarea>
+            </div>
+
+          </div>
+        </form>
+      </div>
+    </div>
+    <button class="mdui-btn mdui-ripple" mdui-dialog-cancel>cancel</button>
+    <button class="mdui-btn mdui-ripple" mdui-dialog-confirm>erase</button>
+  </div>
+</div>
+
+
+<div class="comment-container mdui-card" style="padding:10px;margin-top: 20px;">
+  <p id="review-btn" style="font-weight: 600;cursor: pointer;"><i class="fas fa-comments"></i> 评论</p>
+  <div id="valine_container" class="valine_thread v" data-class="v">
+    <div class="vpanel">
+      <div class="vwrap">
+        <div class="vheader item3 mdui-container-fluid">
+          <input class="mdui-col-lg-4 mdui-col-md-4 mdui-col-sm-4 mdui-col-xs-12 vinput" name="nick" placeholder="昵称"
+            class="vnick vinput" type="text">
+          <input class="mdui-col-lg-4 mdui-col-md-4 mdui-col-sm-4 mdui-col-xs-12 vinput" name="mail" placeholder="邮箱"
+            class="vmail vinput" type="email">
+          <input class="mdui-col-lg-4 mdui-col-md-4 mdui-col-sm-4 mdui-col-xs-12 vinput" name="link"
+            placeholder="网址(http://)" class="vlink vinput" type="text">
+          <input style="display: none;" name="parent" type="text">
+          <input style="display: none;" name="articleId" value="" type="text">
+          <input style="display: none;" name="parent_uuid" type="text">
+          <input style="display: none;" name="parent_name" type="text">
+        </div>
+        <div class="vedit mdui-col-lg-12 mdui-col-md-12 mdui-col-sm-12 mdui-col-xs-12">
+          <textarea id="veditor" class="veditor vinput" placeholder="想对我说些什么呢"
+            style="overflow: hidden; overflow-wrap: break-word; resize: none; height: 123px;width: 100%;padding-left: 0px;padding-right: 0px;"></textarea>
+          <div class="vrow">
+            <div class="vcol vcol-60 status-bar"></div>
+
+          </div>
+        </div>
+        <div class="vrow mdui-container-fluid" style="margin-top: 7px;">
+          <div class="mdui-col-lg-4 mdui-col-md-4 mdui-col-sm-4 mdui-col-xs-6" style="height:50px">
+            <img id="captcha" style="float: left;height: 36px;margin-top: 5px;cursor: pointer;" src="/api/v1/captcha/"
+              alt="验证图片" srcset="">
+          </div>
+          <input class="mdui-col-lg-4 mdui-col-md-4 mdui-col-sm-4 mdui-col-xs-6 vinput" name="captcha"
+            placeholder="验证码" style="margin-top: 5px;" class="vnick vinput" type="text">
+          <div class="vcol vcol-70 text-right mdui-col-lg-4 mdui-col-md-4 mdui-col-sm-4 mdui-col-xs-12"><button
+              type="button" title="Cmd|Ctrl+Enter" style="margin-top: 5px;"
+              class="vsubmit vbtn mdui-float-right mdui-btn-block">提交</button></div>
+        </div>
+        <div style="display:none;" class="vmark"></div>
+      </div>
+    </div>
+    <div class="vcount" style="display: block;"><span class="vnum">{{comment_mun}}</span> 评论</div>
+    <div class="vload-top text-center" style="display:none;"><i class="vspinner" style="width:30px;height:30px;"></i>
+    </div>
+    <div class="vcards">
+
+      {% for comment in comment_data %}
+      <div class="vcard" id="{{comment.uuid}}"><img class="vimg"
+          src="https://gravatar.loli.net/avatar/{{comment.hash_email}}">
+        <div class="vh">
+          <div class="vhead"><a class="vnick" rel="nofollow" href="{{comment.link}}"
+              target="_blank">{{comment.nick}}</a>
+            <span class="vsys">{{comment.agent}}</span> <span class="vsys">Windows 10.0</span></div>
+          <div class="vmeta"><span class="vtime">{{comment.created}}</span><span class="vat">回复</span></div>
+          <div class="vcontent">
+            <p>
+              {{comment.text}}
+            </p>
+          </div>
+          <div class="vreply-wrapper"></div>
+          <div class="vquote">
+            {% for i in comment.c_comment_data %}
+            <div class="vcard" id="{{i.uuid}}"><img class="vimg"
+                src="{{getInfo().blogConfig.AVATAR}}{{i.hash_email}}">
+              <div class="vh">
+                <div class="vmeta">
+                  <span class="vtime">{{i.created}}</span>
+                  <span class="vat">回复</span>
+                </div>
+                <div class="vcontent">
+                  <p><a href="#{{i.parent_uuid}}">@{{i.parent_name}}</a> ,
+                    {{i.text}}
+                  </p>
+                </div>
+                <div class="vreply-wrapper"></div>
+                <div class="vquote"></div>
+              </div>
+            </div>
+            {% endfor %}
+
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="vload-bottom text-center" style="display: none;"><i class="vspinner"
+        style="width:30px;height:30px;"></i></div>
+    <div class="vempty" style="display:none;"></div>
+    <div class="vpower txt-right">仿 <a href="https://valine.js.org" target="_blank">Valine</a><br>    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+
+{% block js %}
+<script src="{{url_for('.static',filename='js/message.js')}}"></script>
+<script>
+   $(document).ready(()=>{
+    $('input[name="nick"]').val(localStorage.getItem('nick'))
+    $('input[name="mail"]').val(localStorage.getItem('mail'))
+    $('input[name="link"]').val(localStorage.getItem('link'))
+    console.log(localStorage.getItem('link'));
+  })
+</script>
+{% endblock js %}

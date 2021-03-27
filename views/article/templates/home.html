@@ -1,102 +1,53 @@
 {% extends 'base.html' %}
 {% block title %}
-{{info.blogConfig.blogName}} - 首页
+{{getInfo().blogConfig.blogName}} - 首页
 {% endblock title %}
 
 {% block css %}
 <link rel="stylesheet" href="{{url_for('.static',filename='css/home.css')}}">
-<style>
-  .pagination-container {
-    display: -webkit-flex;
-    -webkit-flex-direction: row;
-    -webkit-justify-content: center;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-  }
-</style>
+
 {% endblock css %}
 
 
 
 {% block content %}
-<div id="app">
-  {% for content in contents %}
-  <div class="container main-content">
-    <div class="article-content">
-      <div class="article-image" {% if content.image_url %} style="background-image:url({{content.image_url}})"
-        {% endif %}>
-        <p>
-          <a style="color: white;text-decoration: none;text-shadow: 1px 1px 8px rgb(63, 63, 63);"
-            href="{{url_for('article.post',url=content.id)}}">{{content.title}}</a>
-        </p>
-      </div>
-      <div class="article-text">{{content.slug}}<span><a
-            href="{{url_for('article.post',url=content.id)}}">阅读更多</a></span>
-      </div>
-      <div class="article-info">
-        <div class="article-info-left col-xs-6 col-sm-6 col-md-6">
-          <div>
-            <avatar src="https://fdn.geekzu.org/avatar/4c2438980628fb7f544281db606d34b0"
-              style="height: 50px;width:50px;" alt="..." class="img-circle ">
-            </avatar>
-          </div>
-          <div>
 
-          </div>
-        </div>
-        <div class="article-info-right col-xs-6 col-sm-6 col-md-6 text-right">
-          <p><a href="{{url_for('article.category',category=content.post_type)}}"
-              style="text-decoration: none;">{{content.post_type}}</a></p>
-          <p>
-            <i-time time="{{content.created}}"></i-time>
-          </p>
-        </div>
+{% for content in contents %}
+
+
+
+<div class="mdui-card blog-container">
+  <div class="mdui-card-media">
+    <a href="{{url_for('article.post',url=content.url_en)}}">
+      <img class="mdui-img-fluid blog-img lazy"
+      src="https://cdn.jsdelivr.net/npm/typecho_joe_theme@4.3.5/assets/img/lazyload.jpg"
+      data-original="{% if content.image_url %}{{content.image_url}}{% else %}{{getInfo().blogConfig.IMAGE}}{% endif %}" />
+    <div class="mdui-card-media-covered">
+      <div class="mdui-card-primary">
+        <div class="mdui-card-primary-title">{{content.title}}</div>
+        <div class="mdui-card-primary-subtitle">{{content.slug}}</div>
       </div>
     </div>
-
-
-
+    </a>
   </div>
+  <div class="mdui-card-actions">
+    <button class="mdui-btn mdui-ripple" disabled><i class="mdui-icon material-icons">access_time</i>{{content.created}}</button>
+    <a class=" mdui-ripple a-category" ">{{content.category}}</a>
+        <a href="{{url_for('article.post',url=content.url_en)}}" class=" mdui-btn mdui-ripple mdui-ripple read-more-btn ">阅读更多</a>
+  </div>
+    </div>
   {% endfor %}
-  <back-top></back-top>
-</div>
-<div class="container pagination-container" style="width: 100%">
-  {{ pagination.links }}
-</div>
+
+  
+
 {% endblock content %}
 
 
+{% block pagination %}
+{% include '/include/pagination.html' ignore missing %}
+{% endblock pagination %}
+
+
 {% block js %}
-<script>
-  const app = new Vue({
-    el: "#app",
-    delimiters: ['{[', ']}'],
-    data: {
-      test: 111,
-      images: ["https://pro.gynl.xyz/2020/02/13/c4d3bfff8ddc9.png",
-        "https://pro.gynl.xyz/2020/02/13/ffd308276e504.png",
-        "https://pro.gynl.xyz/2020/02/13/2c7537bb34eca.png",
-        "https://pro.gynl.xyz/2020/02/13/0de679bca7b4d.png",
-        "https://pro.gynl.xyz/2020/02/13/dab4c9a77c197.png",
-        "https://pro.gynl.xyz/2020/02/13/ffa70c127def6.png",
-        "https://pro.gynl.xyz/2020/02/13/08f92fdd66eb6.png",
-        "https://pro.gynl.xyz/2020/02/13/9708696674528.png",
-        "https://pro.gynl.xyz/2020/02/13/2e91b6b38d4c7.png",
-        "https://pro.gynl.xyz/2020/02/13/6199be88ec46e.png",
-        "https://pro.gynl.xyz/2020/02/13/b713404051c66.png",
-        "https://pro.gynl.xyz/2020/02/13/9a61416e78844.png"
-      ],
-      articleImage: document.getElementsByClassName("article-image")
-    },
-    mounted() {
-      for (let i of this.articleImage) {
-        if (window.getComputedStyle(i, null).getPropertyValue("background-image") === "none") {
-          let index = parseInt(Math.random() * (this.images.length - 1));
-          i.style.backgroundImage = `url(${this.images[index]})`;
-        }
-      }
-    }
-  })
-</script>
+
 {% endblock js %}

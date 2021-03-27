@@ -3,30 +3,49 @@
 {{info.blogConfig.blogName}} - 分类：{{category}}
 {% endblock title %}
 
-
-
 {% block css %}
+<link rel="stylesheet" href="{{url_for('.static',filename='css/home.css')}}">
 
 {% endblock css %}
 
 
+
 {% block content %}
-<div class="mian-container container"
-   style="max-width: 790px; background-color:white;
-box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12);margin-bottom: 25px;">
-   <h2 class="text-center">分类：<strong>{{category}}</strong> </h2>
-</div>
-<div class="mian-container container" style="max-width: 790px; background-color:white;
-box-shadow: 0 2px 2px 0 rgba(0,0,0,.14), 0 3px 1px -2px rgba(0,0,0,.2), 0 1px 5px 0 rgba(0,0,0,.12)">
-   {% for content in contents %}
-   <div class="container" style="width: 100%;margin-bottom: 10px;margin-top: 10px;">
-      <span class="col-sm-2" style="color:gray;"> {{content.created|string()|truncate(13,end='')}}</span>
-      <a class="col-sm-10" href="{{url_for('article.post',url = content.id)}}">{{content.title}}</a>
-   </div>
-   {% endfor %}
-</div>
+
+{% for content in contents %}
+
+
+
+<div class="mdui-card blog-container">
+  <div class="mdui-card-media">
+    <a href="{{url_for('article.post',url=content.id)}}">
+      <img class="mdui-img-fluid blog-img lazy"
+      src="https://cdn.jsdelivr.net/npm/typecho_joe_theme@4.3.5/assets/img/lazyload.jpg"
+      data-original="https://pro.gynl.xyz/2020/02/13/9708696674528.png" />
+    <div class="mdui-card-media-covered">
+      <div class="mdui-card-primary">
+        <div class="mdui-card-primary-title">{{content.title}}</div>
+        <div class="mdui-card-primary-subtitle">{{content.slug}}</div>
+      </div>
+    </div>
+    </a>
+  </div>
+  <div class="mdui-card-actions">
+    <button class="mdui-btn mdui-ripple" disabled><i class="mdui-icon material-icons">access_time</i>{{content.created}}</button>
+    <a class=" mdui-ripple a-category" ">{{content.post_type}}</a>
+        <a href="{{url_for('article.post',url=content.id)}}" class=" mdui-btn mdui-ripple mdui-ripple read-more-btn ">阅读更多</a>
+  </div>
+    </div>
+  {% endfor %}
+
+  
+
 {% endblock content %}
 
+
+{% block pagination %}
+{% include '/include/pagination.html' ignore missing %}
+{% endblock pagination %}
 
 
 {% block js %}

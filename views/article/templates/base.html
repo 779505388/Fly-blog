@@ -1,115 +1,205 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
+<!doctype html>
+<html lang="zh-cmn-Hans">
 
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" />
+  <meta name="renderer" content="webkit" />
+  <meta name="force-rendering" content="webkit" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
-	<title>
-		{% block title %}
+  <!-- MDUI CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@1.0.1/dist/css/mdui.min.css"
+    integrity="sha384-cLRrMq39HOZdvE0j6yBojO4+1PrHfB7a9l5qLcmRm/fiWXYY+CndJPmyu5FV/9Tw" crossorigin="anonymous" />
+  <link rel="stylesheet" href="{{url_for('.static',filename='css/base.css')}}">
+  <script>
+    /* 判断是否是ie浏览器 */
+    function detectIE() {
+      var ua = window.navigator.userAgent;
+      var msie = ua.indexOf('MSIE ');
+      if (msie > 0) {
+        return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+      }
+      var trident = ua.indexOf('Trident/');
+      if (trident > 0) {
+        var rv = ua.indexOf('rv:');
+        return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+      }
+      var edge = ua.indexOf('Edge/');
+      if (edge > 0) {
+        return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+      }
+      return false;
+    }
+    if (detectIE() !== false) {
+      alert('当前站点不支持IE浏览器，请切换其他浏览器！')
+      location.href = "https://baidu.com"
+    }
+  </script>
 
-		{% endblock title %}
-	</title>
+  <title>
+    {% block title %}
 
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/view-design@4.0.2/dist/styles/iview.css">
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="{{url_for('.static',filename='css/base.css')}}">
-	{% block css %}
+    {% endblock title %}
+  </title>
+  {% block css %}
 
-	{% endblock css %}
+  {% endblock css %}
 </head>
 
-<body>
-	<div id="contentflex">
-		<nav class="navbar navbar-default">
-			<div class="container">
-				<!-- Brand and toggle get grouped for better mobile display -->
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-						data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-						<span class="sr-only">Toggle navigation</span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-						<span class="icon-bar"></span>
-					</button>
-					<a class="navbar-brand" href="{{url_for('article.home')}}">光阴逆旅</a>
-				</div>
-	
-				<!-- Collect the nav links, forms, and other content for toggling -->
-				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-					<ul class="nav navbar-nav">
-						<li><a href="{{url_for('article.home')}}">首页 </a></li>
-						<li><a href="{{url_for('article.archive')}}">归档</a></li>
-						<li><a href="{{url_for('article.search')}}">搜索</a></li>
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-								aria-expanded="false">分类 <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li><a href="{{url_for('article.category',category='思考的日常')}}">思考的日常</a></li>
-								<li><a href="{{url_for('article.category',category='学习的日常')}}">学习的日常</a></li>
-								<li><a href="{{url_for('article.category',category='吐槽的日常')}}">吐槽的日常</a></li>
-								<li><a href="{{url_for('article.category',category='折腾的日常')}}">折腾的日常</a></li>
-							</ul>
-						</li>
-					</ul>
-	
-					<ul class="nav navbar-nav navbar-right">
-						{% if session.username %}
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-								aria-expanded="false">欢迎回来，{{session.username}} <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li><a href="{{url_for('admin.blog_info')}}">博客信息</a></li>
-								<li><a href="{{url_for('admin.blog_write')}}">创作文章</a></li>
-								{% block navbar %}
-	
-								{% endblock navbar %}
-								<li><a href="#">博客LOG</a></li>
-								<li role="separator" class="divider"></li>
-								<li><a href="{{url_for('article.logout')}}">退出登录</a></li>
-							</ul>
-						</li>
-						{% else %}
-						<li><a href="{{url_for('article.login')}}">登录</a></li>
-						{% endif %}
-						<li><a href="{{url_for('article.about')}}">关于</a></li>
-					</ul>
-				</div><!-- /.navbar-collapse -->
-			</div><!-- /.container-fluid -->
-		</nav>
-		{% block content %}
-	
-		{% endblock content %}
-	</div>
-	<div class="footer" id="footer">
-		<div class="container footer-link text-center col-xs-12 col-sm-12 col-md-4 col-lg-4">
-			<a target="_blank" href="{{info.userInfo.BILIBILI}}"><img
-					src="{{url_for('.static',filename='image/bilibili.svg')}}" title=""></a>
-			<a target="_blank" href="mailto:{{info.userInfo.EMAIL}}"><img
-					src="{{url_for('.static',filename='image/email.svg')}}" title=""></a>
-			<a target="_blank" href="{{info.userInfo.GITHUB}}"><img src="{{url_for('.static',filename='image/github.svg')}}"
-					title=""></a>
-			<a target="_blank" href="{{info.userInfo.ZHIHU}}"><img src="{{url_for('.static',filename='image/zhihu.svg')}}"
-					title=""></a>
-		</div>
-		<div class="container footer-info text-center col-xs-12 col-sm-12 col-md-4 col-lg-4">
-			<div class="copyright">Copyright ©2020
-				光阴逆旅 </div>
-		</div>
-		<div class="container footer-data text-center col-xs-12 col-sm-12 col-md-4 col-lg-4">
-			<div class="copyright">Power By FlyBlog</div>
-		</div>
-	</div>
-	<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/view-design@4.0.2/dist/iview.min.js"></script>
-	<script src="https://cdn.bootcss.com/axios/0.19.0-beta.1/axios.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
-	
-	{% block js %}
+<body class="mdui-color-theme-400
+">
+  <div id='blog-content'>
+    <div class="mdui-progress" id="top">
+      <div class="mdui-progress-determinate" style="width: 0%;"></div>
+    </div>
+    <button style="display: none;" id="back-top-btn"
+      class="mdui-btn mdui-btn-icon mdui-ripple mdui-color-light-blue-accent"><i
+        class="mdui-icon material-icons">keyboard_arrow_up</i></button>
+    <button id="drawer-btn" class="mdui-btn mdui-btn-icon mdui-ripple "><i
+        class="mdui-icon material-icons">menu</i></button>
+    <div class="mdui-drawer mdui-color-white mdui-drawer-close" id="drawer">
+      <ul class="mdui-list "  mdui-collapse="{accordion: true}">
+        <div>
+          <a href="{{url_for('article.login')}}">
+            <img class="mdui-img-circle mdui-center" src="{{getInfo().blogConfig.AVATAR}}4c2438980628fb7f544281db606d34b0"
+            alt="头像" srcset="">
+          </a>
+          <div>
 
-	{% endblock js %}
+          </div>
+        </div>
+        <div class="webinfo">
+          <div class="item" title="累计文章数" style="border-right:  1px solid rgb(192, 192, 192);">
+            <span class="num">{{getItem().articleNum}}</span>
+            <span>文章数</span>
+          </div>
+          <div class="item" title="累计评论数">
+            <span class="num">{{getItem().commentNum}}</span>
+            <span>评论量</span>
+          </div>
+
+        </div>
+        <div class="list-web">
+          <div class="list-item">
+            <a class=" " href="{{getInfo().blogConfig.GITHUB}}"><i class="fa fa-github  fa-2x" aria-hidden="true"></i></a>
+          </div>
+          <div class="list-item">
+            <a class=""><i class="fa fa-envelope-o fa-2x" aria-hidden="true"></i></a>
+          </div>
+          <div class="list-item">
+            <a class="mdui-btn mdui-btn-icon mdui-color-theme-accent mdui-ripple"><i
+                class="mdui-icon material-icons">add</i></a>
+          </div>
+          <div class="list-item">
+            <a class="mdui-btn mdui-btn-icon mdui-color-theme-accent mdui-ripple"><i
+                class="mdui-icon material-icons">add</i></a>
+          </div>
+
+        </div>
+        <li class="mdui-divider"></li>
+        <li class="mdui-list-item mdui-ripple">
+          <i class="mdui-list-item-icon mdui-icon material-icons">home</i>
+            <a href="{{url_for('article.home')}}" class="mdui-list-item-content">首页</a>
+          
+        </li>
+        <li class="mdui-list-item mdui-ripple">
+          <i class="mdui-list-item-icon mdui-icon material-icons">inbox</i>
+          <a href="{{url_for('article.archive')}}" class="mdui-list-item-content">归档</a>
+        </li>
+        <li class="mdui-list-item mdui-ripple">
+          <i class="mdui-list-item-icon mdui-icon material-icons">insert_link</i>
+          <a href="{{url_for('article.py_link')}}" class="mdui-list-item-content">友链</a>
+        </li>
+        <li class="mdui-list-item mdui-ripple">
+          <i class="mdui-list-item-icon mdui-icon material-icons">feedback</i>
+          <a href="{{url_for('article.message')}}" class="mdui-list-item-content">留言</a>
+        </li>
+        <li class="mdui-list-item mdui-ripple">
+          <i class="mdui-list-item-icon mdui-icon material-icons">format_quote</i>
+          <div class="mdui-list-item-content">说说</div>
+        </li>
+        <li class="mdui-list-item mdui-ripple">
+          <i class="mdui-list-item-icon mdui-icon material-icons">label_outline</i>
+          <a class="mdui-list-item-content" href="{{url_for('article.tags')}}">标签</a>
+        </li>
+        <li class="mdui-collapse-item ">
+          <div class="mdui-collapse-item-header mdui-list-item mdui-ripple">
+            <i class="mdui-list-item-icon mdui-icon material-icons">apps</i>
+            <div class="mdui-list-item-content">分类</div>
+            <i class="mdui-collapse-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
+          </div>
+          <ul class="mdui-collapse-item-body mdui-list mdui-list-dense">
+            {% for i in getCategory() %}
+              <a class="mdui-list-item mdui-ripple" href="{{url_for('article.category',category=i)}}"> {{i}} </a>
+            {% endfor %}
+          </ul>
+        </li>
+        <li class="mdui-divider"></li>
+        <li class="mdui-list-item mdui-ripple">
+          <i class="mdui-list-item-icon mdui-icon material-icons">info_outline</i>
+          <div class="mdui-list-item-content">关于</div>
+        </li>
+      </ul>
+    </div>
+
+
+    <div class="aricle-item">
+      {% block content %}
+
+      {% endblock content %}
+
+
+    </div>
+
+  </div>
+{% block pagination %}
+
+{% endblock pagination %}
+  <div class=" mdui-container-fluid footer mdui-shadow-3">
+    <div class="mdui-col-xs-12 mdui-col-sm-4 mdui-col-md-4 mdui-col-lg-4 mdui-col-xl-4 "></div>
+    <div class="mdui-col-xs-12 mdui-col-sm-4 mdui-col-md-4 mdui-col-lg-4 mdui-col-xl-4 ">
+      <div class="copyright mdui-text-center">Copyright ©2021
+        光阴逆旅 </div>
+    </div>
+    <div class="mdui-col-xs-12 mdui-col-sm-4 mdui-col-md-4 mdui-col-lg-4 mdui-col-xl-4">
+      <div class="copyright mdui-text-center">
+        <div>Power By <a style="text-decoration: none;
+          color: rgb(15, 54, 226);" href="https://github.com/779505388/Fly-blog">FlyBlog</a></div>
+        <div style="margin-top: 10px;">Theme - <a href="" target="_blank" ">Material</a></div>
+              </div>
+             
+            </div>
+        </div>
+        <script src=" https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"> </script> <script
+            src=" https://cdn.jsdelivr.net/npm/mdui@1.0.1/dist/js/mdui.min.js"
+            integrity="sha384-gCMZcshYKOGRX9r6wbDrvF+TcCCswSHFucUzUPwka+Gr+uHgjlYvkABr95TCOz3A" crossorigin="anonymous">
+            </script>
+            <script src="https://cdn.bootcdn.net/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js">
+            </script>
+
+            <script>
+              var inst = new mdui.Drawer('#drawer', {
+                overlay: true
+              });
+              $('#drawer-btn').click(() => {
+                inst.toggle();
+                console.log('aaa');
+              })
+              //图片懒加载
+              $(function () {
+                $("img.lazy").lazyload({
+                  threshold: 20,
+                  effect: "fadeIn"
+                });
+              })
+            </script>
+            {% block js %}
+
+            {% endblock js %}
+            <script src="{{url_for('.static',filename='js/base.js')}}"></script>
 </body>
 
 </html>

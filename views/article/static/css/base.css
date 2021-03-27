@@ -1,34 +1,95 @@
-body {
+body{
   background-color: rgb(247, 247, 247);
   display: flex;
   flex-flow: column;
   min-height: 100vh;
+  scroll-behavior:smooth;
 }
-#contentflex{
+#blog-content{
   flex: 1;
 }
-.navbar {
-  background-color: white;
-  /* height: 60px; */
+.mdui-progress{
+  position: fixed;
+  z-index: 9;
+}
+.aricle-item{
+  max-width: 825px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 4px;
+  padding-right: 4px;
+
+}
+#drawer-btn{
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 9;
+  color: rgb(46, 112, 211);
+}
+#drawer-btn i{
+  z-index: 10;
+}
+#back-top-btn{
+  position: fixed;
+  bottom: 45px;
+  right: 10px;
+  z-index: 9;
+  
+}
+#back-top-btn i{
+  color: rgb(233, 233, 233);
+}
+.webinfo{
+  margin-top: 5px;
+  width: 100%;
+  padding-bottom: 20px;
+  display: flex;
+  align-items: center;
+  
+}
+.webinfo .item{
+  width: 0;
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: rgb(114, 112, 112);
+  font-size: 12px;
+}
+.webinfo .item .num {
+  max-width: 70px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+  font-size: 22px;
+  color: rgb(51, 51, 51);
+  margin-bottom: 3px;
+
+}
+.list-web{
+  display: flex;
+  align-items: center;
+}
+.list-web .list-item{
+  width: 0;
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.footer {
+.footer{
   width: 100%;
   min-height: 150px;
   background-color: white;
   margin-top: 30px;
-
-  border-top: 2px solid rgb(133, 133, 133, 0.1);
 }
-
-.copyright {
-  margin-top: 30px;
-  font-size: 15px;
-  color: rgb(126, 126, 126);
-}
-
-.footer-link a img {
-  margin-top: 30px;
-  margin-left: 10px;
-  margin-right: 10px;
+.copyright{
+  color: rgb(122, 122, 122);
+  margin-top: 40px;
+  font-size:17px ;
 }

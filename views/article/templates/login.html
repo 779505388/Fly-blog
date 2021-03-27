@@ -11,19 +11,23 @@
 
 
 {% block content %}
-<div class="container" style=" margin-top: 80px;
+<div class="mdui-center mdui-shadow-3" style=" margin-top: 80px;
 max-width: 500px;
 background-color: white;
-padding: 10px;
-box-shadow: 4px 6px rgb(206, 205, 205,0.4);">
+padding: 10px;">
     <div class="container" style="width:100%">
 
         <form class="form-horizontal" method="POST">
+           
+            <div class="mdui-textfield">
+                <label class="mdui-textfield-label">邮箱地址</label>
+                <input name="email" type="email"  class="mdui-textfield-input" required/>
+              </div>
+              <div class="mdui-textfield">
+                <label class="mdui-textfield-label">密码</label>
+                <input name="password" type="password"  class="mdui-textfield-input" required/>
+              </div>
             <div class="form-group">
-                <input name="email" type="email" class="form-control" placeholder="邮箱地址" required>
-            </div>
-            <div class="form-group">
-                <input name="password" type="password" class="form-control" placeholder="密码" required>
                 <div class="checkbox">
                     <label>
                         <input type="checkbox" value="remember" name="remember"> 记住登录
@@ -32,10 +36,7 @@ box-shadow: 4px 6px rgb(206, 205, 205,0.4);">
             </div>
 
             <div class="form-group">
-                <button type="submit" class="btn btn-block btn-info">登录</button>
-            </div>
-            <div class="form-group">
-                <input type="hidden" name="csrf_token" value="">
+                <button type="submit" class="mdui-btn mdui-btn-block mdui-btn-raised">登录</button>
             </div>
         </form>
     </div>

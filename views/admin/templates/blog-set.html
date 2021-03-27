@@ -1,165 +1,101 @@
 {% extends 'layout.html' %}
 {% block css %}
-<link rel="stylesheet" href="https://unpkg.com/vuejs-dialog@1.4.1/dist/vuejs-dialog.min.css">
-<style>
-  .message {
-    top: 50%;
-    position: fixed;
-    transform: translate(-50%, -50%);
-    left: 50%;
-    background-color: rgb(99, 99, 99, .75);
-    color: white;
-    padding: 15px;
-    font-size: 25px;
-  }
-</style>
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 {% endblock css %}
 
-
 {% block title %}
-
+博客设置
 {% endblock title %}
 
 {% block content %}
-<div class=" text-center">
-  <div class="panel panel-default" id="app">
-    <cpn v-show="isShow"></cpn>
-    <div class="panel-body">
-      <h1>博客设置</h1>
-    </div>
-    <div class="panel-footer"></div>
-    <div class="container">
-      <div class="form-group">
-        <label for="blog-name">博客名字</label>
-        <input type="text" class="form-control" v-model="blogName" id="blog-name" placeholder="博客名字">
-      </div>
-      <div class="form-group">
-        <label for="zhihu">知乎地址</label>
-        <input type="text" class="form-control" v-model="ZHIHU" id="zhihu" placeholder="知乎地址">
-      </div>
-      <div class="form-group">
-        <label for="github">Git地址</label>
-        <input type="text" class="form-control" v-model="GITHUB" id="github" placeholder="Git地址">
-      </div>
-      <div class="form-group">
-        <label for="email">电子邮箱</label>
-        <input type="text" class="form-control" v-model="EMAIL" id="email" placeholder="电子邮箱">
-      </div>
-      <div class="form-group">
-        <label for="bilibili">B站地址</label>
-        <input type="text" class="form-control" v-model="BILIBILI" id="bilibili" placeholder="B站地址">
-      </div>
-      <div class="form-group">
-        <label for="QQ">QQ账号</label>
-        <input type="text" class="form-control" v-model="QQ" id="QQ" placeholder="QQ账号">
-      </div>
-      <div class="form-group">
-        <label for="blog-port">博客端口</label>
-        <input type="text" class="form-control" v-model="PORT" id="blog-port" placeholder="博客端口">
-      </div>
-      <div class="form-group">
-        <label for="blog-server">博客域名</label>
-        <input type="text" class="form-control" v-model="domainName" id="blog-server" placeholder="博客域名">
-      </div>
-      <button class="btn btn-sm btn-block btn-primary" @click="clickUpdata">提交修改</button>
-    </div>
-  </div>
-  <template id="cpn">
-    <div class="message">
-      <div style="padding: 20px;">
-        {[message]}
-      </div>
-    </div>
-  </template>
+<div id="app">
+  <v-app>
+    <v-main>
+      <v-card class="mx-auto" max-width="1000">
+        <v-img class="white--text align-end" height="200px" src="https://cdn.vuetifyjs.com/images/cards/docks.jpg">
+          <v-card-title>修改博客配置</v-card-title>
+        </v-img>
+
+        <v-card-subtitle class="pb-0"></v-card-subtitle>
+
+        <v-card-text class="text--primary">
+          <v-text-field  clearable hint='博客的名字' v-model='blogName' placeholder="博客名" :rules="rules"></v-text-field>
+          <v-text-field  clearable  hint='域名，生成站点地图' v-model='domain' placeholder="域名" :rules="rules"></v-text-field>
+          <v-text-field  clearable  hint='显示的文章数目' v-model.number='articleNum' placeholder="显示文章数" :rules="rules"></v-text-field>
+          <v-text-field  clearable hint='用户邮箱'  v-model='email' placeholder="邮箱"></v-text-field>
+          <v-text-field  clearable hint='GitHub' v-model='github' placeholder="Gitgub"></v-text-field>
+          <v-text-field  clearable hint='avatar头像的代理接口' v-model='avatar' placeholder="头像代理接口"></v-text-field>
+          <v-text-field  clearable hint='默认随机图片接口' v-model='image' placeholder="随机图片接口"></v-text-field>
+
+        </v-card-actions>
+      </v-card>
+    </v-main>
+  </v-app>
 </div>
+
 {% endblock content %}
 
 {% block js %}
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script src="https://cdn.bootcss.com/axios/0.19.0-beta.1/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+
 <script>
-  const cpn = Vue.extend({
-    template: "#cpn",
+  new Vue({
     delimiters: ['{[', ']}'],
-    data() {
-      return {
-        message: "修改成功！"
-      }
-    },
-    methods: {
-    }
-  })
-  const app = new Vue({
-    components: {
-      cpn
-    },
-    delimiters: ['{[', ']}'],
-    el: "#app",
-    data: {
-      infoData: null,
-      blogName: null,
-      domainName: null,
-      PORT: null,
-      BILIBILI: null,
-      ZHIHU: null,
-      QQ: null,
-      GITHUB: null,
-      EMAIL: null,
-      POSTDATA: null,
-      isShow: false
-    },
-    created() {
-      axios
-        .post("{{url_for('admin.blog_set')}}")
-        .then(response => (
-          console.log(response.data),
-          this.infoData = response.data,
-          this.blogName = this.infoData.blogConfig.blogName,
-          this.domainName = this.infoData.blogConfig.domainName,
-          this.PORT = this.infoData.blogConfig.PORT,
-          this.BILIBILI = this.infoData.userInfo.BILIBILI,
-          this.ZHIHU = this.infoData.userInfo.ZHIHU,
-          this.QQ = this.infoData.userInfo.QQ,
-          this.GITHUB = this.infoData.userInfo.GITHUB,
-          this.EMAIL = this.infoData.userInfo.EMAIL
-        ))
-        .catch(function (error) { // 请求失败处理
-          console.log(error);
-        });
-    },
-    updated() {
+    el: '#app',
+    vuetify: new Vuetify(),
+    data: () => ({
+      csrftoken: "{{csrf_token()}}",
+      rules: [
+        value => !!value || '必填！',
+      ],
+      blogName:'',
+      domain:'',
+      articleNum:'',
+      email:'',
+      github:'',
+      avatar:'',
+      image:''
+    }),
+
+    computed: {
 
     },
+    mounted() {
+      this.getConfig()
+    },
+    watch: {
+
+    },
+
+    created() {
+
+    },
+
     methods: {
-      dialogShow() {
-        this.isShow = true;
-        setTimeout(() => {
-          this.isShow = false;
-        }, 1200)
+      getConfig() {
+        //获取博客配置
+        axios.post('{{url_for("admin.blog_set")}}', {}, {
+          headers: {
+            'X-CSRFToken': this.csrftoken,
+          },
+        }).then(res => {
+          console.log(res);
+          this.blogName = res.data.blogConfig.blogName
+          this.articleNum= res.data.blogConfig.articleItem
+          this.avatar= res.data.blogConfig.AVATAR
+          this.image= res.data.blogConfig.IMAGE
+          this.domain = res.data.blogConfig.domainName
+          this.email= res.data.userInfo.EMAIL
+          this.github= res.data.userInfo.GITHUB
+
+        });
       },
-      clickUpdata() {
-        this.POSTDATA = this.infoData,
-          this.POSTDATA.blogConfig.blogName = this.blogName,
-          this.POSTDATA.blogConfig.domainName = this.domainName,
-          this.POSTDATA.blogConfig.PORT = this.PORT,
-          this.POSTDATA.userInfo.BILIBILI = this.BILIBILI,
-          this.POSTDATA.userInfo.ZHIHU = this.ZHIHU,
-          this.POSTDATA.userInfo.QQ = this.QQ,
-          this.POSTDATA.userInfo.GITHUB = this.GITHUB,
-          this.POSTDATA.userInfo.EMAIL = this.EMAIL,
-          axios
-            .post("{{url_for('admin.blog_set')}}", this.POSTDATA)
-            .then(response => (
-              console.log(response.data),
-              this.isShow = true,
-              setTimeout(() => {
-                this.isShow = false;
-              }, 1200)
-            ))
-            .catch(function (error) { // 请求失败处理
-              console.log(error);
-            });
-      }
+
     }
   })
 </script>

@@ -1,6 +1,9 @@
 {% extends 'layout.html' %}
 {% block css %}
-<link rel="stylesheet" href="{{url_for('.static',filename='css/blog-list.css')}}">
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
 {% endblock css %}
 
 {% block title %}
@@ -10,97 +13,126 @@
 
 {% block content %}
 <div id="app">
-  <div class="list-container">
-    <div class="panel panel-default main-panel ">
-      <div class="panel-body">
-        <h2 class="text-center">文章列表</h2>
-      </div>
-      <div class="panel-footer">
-
-      </div>
-      <div class="table-responsive">
-        <table class="table table-hover table-condensed table-bordered">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>文章标题</th>
-              <th>修改时间</th>
-              <th>文章分类</th>
-              <th>文章标签</th>
-              <th>文章操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="item in artcleList">
-              <th scope="row">{[item.id]}
-                <input @click="deleteClick(item.id)" type="checkbox">
-              </th>
-              <td>{[item.title]}</td>
-              <td>{[item.modified]}</td>
-              <td>{[item.post_type]}</td>
-              <td>{[item.tag]}</td>
-              <td>
-                <a :href="'/admin/blog-modify/'+item.id" class="btn btn-sm btn-primary">修改</a>
-              </td>
-            </tr>
-
-          </tbody>
-        </table>
-      </div>
-      <button class="btn btn-sm btn-danger btn-block" @click="deleteArticle">删除选中</button>
-    </div>
-  </div>
+  <v-app>
+    <v-main>
+      <v-data-table :headers="headers" :items="artcleList" item-key="id" class="elevation-1">
+        <template v-slot:item.handle="{ item }">
+          <v-icon small class="mr-2" @click='editArticle(item)'>
+            mdi-pencil
+          </v-icon>
+          <v-icon small @click='deleteArticle(item)'>
+            mdi-delete
+          </v-icon>
+        </template>
+      </v-data-table>
+      <v-snackbar top right :color='snackbarColor' v-model="snackbar" :timeout="timeout">
+        {[snackbarText ]}
+      </v-snackbar>
+    </v-main>
+  </v-app>
 </div>
 {% endblock content %}
 
 {% block js %}
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script src="https://cdn.bootcss.com/axios/0.19.0-beta.1/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
 <script>
   var app = new Vue({
     delimiters: ['{[', ']}'],
     el: "#app",
+    vuetify: new Vuetify(),
     data: {
-      artcleList: null,
-      deleteList: []
+      csrftoken: "{{csrf_token()}}",
+      artcleList: [],
+      deleteList: [],
+      headers: [{
+          text: 'ID',
+          align: 'start',
+          sortable: false,
+          value: 'id',
+        },
+        {
+          text: '标题',
+          value: 'title'
+        },
+        {
+          text: '内容概述',
+          value: 'slug'
+        },
+        {
+          text: '内容',
+          value: 'text'
+        },
+        {
+          text: '英文地址',
+          value: 'url_en'
+        },
+        {
+          text: '修改时间',
+          value: 'modified'
+        }, {
+          text: '操作',
+          value: 'handle',
+          sortable: false
+        }
+      ],
+      snackbar: false,
+      snackbarText: '',
+      timeout: 1700,
+      snackbarColor: ''
     },
     created() {
       axios
-        .post("{{url_for('admin.blog_list')}}")
-        .then(response => (
-          this.artcleList = response.data
-        ))
+        .post("{{url_for('admin.blog_list')}}", {}, {
+          headers: {
+            'X-CSRFToken': this.csrftoken,
+          }
+        })
+        .then(res => {
+          this.artcleList = res.data
+        })
         .catch(function (error) { // 请求失败处理
           console.log(error);
         });
     },
     updated() {
-      for (let item of this.artcleList) {
-        item.selected = false
-      }
+
     },
     methods: {
-      deleteClick(id) {
+      editArticle(item) {
+        console.log(item);
+        window.location.href = "/admin/blog-modify/" + item.id
 
-        if (this.deleteList.indexOf(id) === -1) {
-          this.deleteList.push(id)
-          console.log("添加")
-        } else {
-          this.deleteList.splice(this.deleteList.indexOf(id), 1)
-          console.log("删除")
-        }
       },
-      deleteArticle() {
+      deleteArticle(item) {
         axios
-          .post("{{url_for('admin.blog_delete')}}",
-            {
-              "article": this.deleteList
+          .delete("{{url_for('admin.blog_list')}}", {
+            data: {
+              "article": [item]
+            },
+            headers: {
+              'X-CSRFToken': this.csrftoken,
             }
-          )
-          .then(response => (
-            this.artcleList = response.data
-          ))
+
+          })
+          .then(response => {
+            if (response.data.status === "success") {
+              this.artcleList = response.data.data
+              this.snackbar = true
+              this.snackbarColor = response.data.status
+              this.snackbarText = response.data.message
+            } else {
+              this.snackbar = true
+              this.snackbarColor = response.data.status
+              this.snackbarText = response.data.message
+            }
+          })
           .catch(function (error) { // 请求失败处理
+
+            this.snackbar = true
+            this.snackbarColor = 'error'
+            this.snackbarText = error
             console.log(error);
           });
         this.deleteList = []

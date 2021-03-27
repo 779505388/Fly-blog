@@ -1,5 +1,4 @@
 {% extends 'layout.html' %}
-
 {% block css %}
 <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
@@ -12,49 +11,68 @@
 {% endblock title %}
 
 {% block content %}
-<div id='app'>
-  <div class="container">
-    <v-card>
-    <v-data-table
-    :headers="headers"
-    :items="colData"
-    :items-per-page="10"
-    
-  ></v-data-table>
-</v-card>
-  </div>
+<div id="app">
+  <v-app>
+    <v-main>
+      <v-card class="mx-auto" max-width='900'>
+        <v-data-table :headers="headers" :items="logs" :items-per-page="10" class="elevation-1"></v-data-table>
+      </v-card>
+    </v-main>
+  </v-app>
 </div>
+
 {% endblock content %}
 
 {% block js %}
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
-<script src="https://cdn.bootcss.com/axios/0.19.0-beta.1/axios.min.js"></script>
+
 <script>
-  var app = new Vue({
+  new Vue({
     delimiters: ['{[', ']}'],
+    el: '#app',
     vuetify: new Vuetify(),
-    el: "#app",
-    data: {
+    data: () => ({
+      csrftoken: "{{csrf_token()}}",
+      logs: [],
       headers: [{
-        text: '日志内容(保留15天)',
-        value: 'log'
-      }],
-      colData: []
+        text: '日志内容',
+        align: 'start',
+        sortable: false,
+        value: 'value',
+      }, ]
+    }),
+
+    computed: {
+
     },
+    mounted() {
+      this.getLog()
+    },
+    watch: {
+
+    },
+
     created() {
-      axios
-        .post("{{url_for('admin.blog_log')}}")
-        .then(response => (
-          response.data.data.map(i => {
-            this.colData.push({
-              log: i
+
+    },
+
+    methods: {
+      getLog() {
+        axios.post('{{url_for("admin.blog_log")}}', {}, {
+          headers: {
+            'X-CSRFToken': this.csrftoken,
+          },
+        }).then(res => {
+          for (let i of res.data.data) {
+            this.logs.push({
+              value: i
             })
-          })
-        ))
-        .catch(function (error) { // 请求失败处理
-          console.log(error);
+          }
         });
+      },
+
     }
   })
 </script>
