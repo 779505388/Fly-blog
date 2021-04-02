@@ -203,21 +203,23 @@ def blog_delete():
 # 删除文章
 
 
-@admin.route("/admin/blog-set/", methods=["GET", "POST"])
+@admin.route("/admin/blog-set/", methods=["GET", "POST","PUT"])
 # 博客设置
 @login_required
 def blog_set():
     if request.method == "GET":
         return render_template("blog-set.html")
-    else:
-        # from config.rw_json import write_json
-        # data = request.get_json()
-        # print(data)
-        # write_json(data)
-        # current_app.config["INFO"] = data
-        # current_app.logger.info("博客配置修改成功")
-        # return jsonify(data)
+    elif request.method == "POST":
+
         data = current_app.config["INFO"]
+        return jsonify(data)
+    elif request.method == "PUT":
+        from config.rw_json import write_json
+        data = request.get_json().get('data')
+        print(data)
+        write_json(data)
+        current_app.config["INFO"] = data
+        current_app.logger.info("博客配置修改成功")
         return jsonify(data)
 
 

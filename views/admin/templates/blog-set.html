@@ -22,15 +22,21 @@
         <v-card-subtitle class="pb-0"></v-card-subtitle>
 
         <v-card-text class="text--primary">
-          <v-text-field  clearable hint='博客的名字' v-model='blogName' placeholder="博客名" :rules="rules"></v-text-field>
-          <v-text-field  clearable  hint='域名，生成站点地图' v-model='domain' placeholder="域名" :rules="rules"></v-text-field>
-          <v-text-field  clearable  hint='显示的文章数目' v-model.number='articleNum' placeholder="显示文章数" :rules="rules"></v-text-field>
-          <v-text-field  clearable hint='用户邮箱'  v-model='email' placeholder="邮箱"></v-text-field>
-          <v-text-field  clearable hint='GitHub' v-model='github' placeholder="Gitgub"></v-text-field>
-          <v-text-field  clearable hint='avatar头像的代理接口' v-model='avatar' placeholder="头像代理接口"></v-text-field>
-          <v-text-field  clearable hint='默认随机图片接口' v-model='image' placeholder="随机图片接口"></v-text-field>
+          <v-text-field clearable hint='博客的名字' v-model='blogName' placeholder="博客名" :rules="rules"></v-text-field>
+          <v-text-field clearable hint='域名，生成站点地图' v-model='domain' placeholder="域名" :rules="rules"></v-text-field>
+          <v-text-field clearable hint='显示的文章数目' v-model.number='articleNum' placeholder="显示文章数" :rules="rules">
+          </v-text-field>
+          <v-text-field clearable hint='用户邮箱' v-model='email' placeholder="邮箱"></v-text-field>
+          <v-text-field clearable hint='GitHub' v-model='github' placeholder="Gitgub"></v-text-field>
+          <v-text-field clearable hint='avatar头像的代理接口' v-model='avatar' placeholder="头像代理接口"></v-text-field>
+          <v-text-field clearable hint='默认随机图片接口' v-model='image' placeholder="随机图片接口"></v-text-field>
 
-        </v-card-actions>
+
+          <v-btn block color="blue lighten-1" @click='putConfig' text>
+            提交修改
+          </v-btn>
+          </v-card-actions>
+
       </v-card>
     </v-main>
   </v-app>
@@ -53,13 +59,14 @@
       rules: [
         value => !!value || '必填！',
       ],
-      blogName:'',
-      domain:'',
-      articleNum:'',
-      email:'',
-      github:'',
-      avatar:'',
-      image:''
+      blogName: '',
+      domain: '',
+      articleNum: '',
+      email: '',
+      github: '',
+      avatar: '',
+      image: '',
+      data: []
     }),
 
     computed: {
@@ -86,16 +93,41 @@
         }).then(res => {
           console.log(res);
           this.blogName = res.data.blogConfig.blogName
-          this.articleNum= res.data.blogConfig.articleItem
-          this.avatar= res.data.blogConfig.AVATAR
-          this.image= res.data.blogConfig.IMAGE
+          this.articleNum = res.data.blogConfig.articleItem
+          this.avatar = res.data.blogConfig.AVATAR
+          this.image = res.data.blogConfig.IMAGE
           this.domain = res.data.blogConfig.domainName
-          this.email= res.data.userInfo.EMAIL
-          this.github= res.data.userInfo.GITHUB
-
+          this.email = res.data.userInfo.EMAIL
+          this.github = res.data.userInfo.GITHUB
+          this.data = res.data
         });
       },
-
+      putConfig() {
+        //提交博客配置
+        this.data.blogConfig.blogName = this.blogName
+        this.data.blogConfig.articleItem = this.articleNum
+        this.data.blogConfig.AVATAR = this.avatar
+        this.data.blogConfig.IMAGE = this.image
+        this.data.blogConfig.domainName = this.domain
+        this.data.userInfo.EMAIL = this.email
+        this.data.userInfo.GITHUB = this.github
+        axios.put('{{url_for("admin.blog_set")}}', {
+          data: this.data
+        }, {
+          headers: {
+            'X-CSRFToken': this.csrftoken,
+          },
+        }).then(res => {
+          this.blogName = res.data.blogConfig.blogName
+          this.articleNum = res.data.blogConfig.articleItem
+          this.avatar = res.data.blogConfig.AVATAR
+          this.image = res.data.blogConfig.IMAGE
+          this.domain = res.data.blogConfig.domainName
+          this.email = res.data.userInfo.EMAIL
+          this.github = res.data.userInfo.GITHUB
+          this.data = res.data
+        })
+      }
     }
   })
 </script>
