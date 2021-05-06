@@ -21,7 +21,7 @@ Flask-APScheduler==1.11.0
 Flask-Bcrypt==0.7.1
 Flask-Caching==1.7.2
 Flask-CKEditor==0.4.3
-Flask-Cors==3.0.8
+Flask-Cors==3.0.9
 Flask-HTTPAuth==3.3.0
 Flask-Login==0.4.1
 Flask-Migrate==2.5.2
