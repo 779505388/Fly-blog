@@ -1,0 +1,147 @@
+{% extends 'layout.html' %}
+{% block css %}
+
+{% endblock css %}
+
+{% block title %}
+标签管理
+{% endblock title %}
+
+{% block content %}
+<v-card class="mx-auto pa-3" max-width="1000">
+  <div class="text-start v-card--material__heading mb-n6 v-sheet theme--dark elevation-6 green accent-3
+    pa-7" style="width: 100%;top: -40px;position: relative;">
+    <div class="display-2 font-weight-light"> 标签管理 </div>
+    <div class="subtitle-1 font-weight-light"> Edit tag </div>
+    <!---->
+  </div>
+  <v-chip v-for='item in tags' :key='item.id' v-if="true" class="ma-2" close color="green" outlined
+    @click:close="deleteCategory(item)" @click='editTag(item)'>
+    {[item.name]}
+  </v-chip>
+</v-card>
+
+<v-dialog v-model="editDialog" width="500">
+
+  <v-card>
+    <v-card-title class="headline grey lighten-2">
+      修改文章标签
+    </v-card-title>
+
+    <v-card-text>
+      <v-text-field v-model='editData.name'></v-text-field>
+    </v-card-text>
+
+    <v-divider></v-divider>
+
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn color="primary" text @click="editDialog = false">
+        取消
+      </v-btn>
+      <v-btn color="primary" text @click="editDialog = false;putTag()">
+        保存
+      </v-btn>
+    </v-card-actions>
+  </v-card>
+</v-dialog>
+
+<v-snackbar top right :color='snackbarColor' v-model="snackbar" :timeout="1700">
+  {[snackbarText ]}
+</v-snackbar>
+{% endblock content %}
+
+{% block js %}
+
+
+<script>
+  new Vue({
+    delimiters: ['{[', ']}'],
+    el: '#app',
+    vuetify: new Vuetify(),
+    data: () => ({
+      csrftoken: "{{csrf_token()}}",
+      drawer: false,
+      tags: [],
+      addDialog: false,
+      editDialog: false,
+      category: '',
+      editData: {},
+      snackbar: false,
+      snackbarColor: '',
+      snackbarText: ''
+    }),
+
+    computed: {
+
+    },
+    mounted() {
+      this.getTag()
+    },
+    watch: {
+
+    },
+
+    created() {
+
+    },
+
+    methods: {
+      getTag() {
+        axios.post('{{url_for("admin.blog_tag")}}', {}, {
+          headers: {
+            'X-CSRFToken': this.csrftoken,
+          },
+        }).then(
+          res => {
+            this.tags = res.data
+          }
+        )
+      },
+      editTag(item) {
+        this.editDialog = true
+        this.editData = JSON.parse(JSON.stringify(item))
+      },
+      putTag() {
+        axios.put('{{url_for("admin.blog_tag")}}', {
+          tag: this.editData
+        }, {
+          headers: {
+            'X-CSRFToken': this.csrftoken,
+          },
+        }).then(res => {
+          console.log(res.data);
+          if (res.data.status === "success") {
+            this.tags = res.data.data
+            this.snackbar = true
+            this.snackbarText = res.data.message
+            this.snackbarColor = res.data.status
+          } else {
+            this.snackbar = true
+            this.snackbarText = res.data.message
+            this.snackbarColor = res.data.status
+          }
+        });
+      },
+      addTag() {
+        this.addDialog = true
+      },
+      deleteCategory(item) {
+        console.log(item);
+        var flag = confirm('确定删除标签？')
+        if (flag) {
+          axios.delete('{{url_for("admin.blog_tag")}}', {
+            data: item,
+            headers: {
+              'X-CSRFToken': this.csrftoken,
+            },
+          }).then(res => {
+            console.log(res.data);
+            this.tags = res.data.data
+          });
+        }
+      }
+    }
+  })
+</script>
+{% endblock js %}

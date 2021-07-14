@@ -1,0 +1,178 @@
+{% extends 'layout.html' %}
+{% block css %}
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+{% endblock css %}
+
+{% block title %}
+文章评论
+{% endblock title %}
+
+
+{% block content %}
+<div id="app">
+    <v-app>
+        <v-main>
+            <v-data-table v-model="selected" :headers="headers" :items="desserts" item-key="id" show-select
+                class="elevation-1">
+            </v-data-table>
+            <v-btn block color="secondary" @click='deleteList' dark>删除（{[itemMun]}）</v-btn>
+            <v-snackbar top right :color='snackbarColor' v-model="snackbar" :timeout="timeout">
+                {[snackbarText ]}
+            </v-snackbar>
+        </v-main>
+    </v-app>
+</div>
+{% endblock content %}
+
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+<script>
+    var app = new Vue({
+        delimiters: ['{[', ']}'],
+        el: "#app",
+        vuetify: new Vuetify(),
+        data: {
+            csrftoken: "{{csrf_token()}}",
+            selected: [],
+            headers: [{
+                    text: 'ID',
+                    align: 'start',
+                    sortable: false,
+                    value: 'id',
+                },
+                {
+                    text: '姓名',
+                    value: 'guest_name'
+                },
+                {
+                    text: '回复内容',
+                    value: 'text'
+                },
+                {
+                    text: '文章ID',
+                    value: 'post_id'
+                },
+                {
+                    text: '邮箱地址',
+                    value: 'guest_email'
+                },
+                {
+                    text: '网址',
+                    value: 'web_site'
+                },
+            ],
+            desserts: [
+
+            ],
+            snackbar: false,
+            snackbarText: '',
+            timeout: 1700,
+            snackbarColor: ''
+        },
+        created() {
+
+        },
+        mounted() {
+            axios.post("{{url_for('admin.blog_comment')}}", {}, {
+                    headers: {
+                        'X-CSRFToken': this.csrftoken,
+                    }
+                })
+                .then(res => {
+                    console.log(res)
+                    this.desserts = res.data
+
+                });
+        },
+        updated() {
+            // this.$refs.selection.objData[0]._isChecked = true;
+
+        },
+        methods: {
+            click(selection, row) {
+                console.log(selection);
+                this.selectList = selection;
+                // console.log(this.$refs.selection.objData);
+                // this.remList[this.pageCounter] = this.selectList;
+                this.remList.splice(this.pageCounter, 1, this.selectList)
+            },
+            click1(selection, row) {
+                // console.log(selection, row)
+
+            },
+            changePage(index) {
+
+                this.pageCounter = index;
+                if (this.remList[this.pageCounter]) {
+                    this.remList[this.pageCounter].map(item => {
+                        for (let k in this.listChange) {
+                            k = k * 1;
+                            if (item.id === this.listChange[k].id) {
+                                this.$refs.selection.objData[2]._isChecked = true;
+                            }
+                        }
+                    })
+                }
+            },
+            listPage(index) {
+                this.pageSize = index;
+                this.remList = []
+            },
+            deleteList() {
+                if (this.selected.length === 0) {
+                    this.snackbar = true
+                    this.snackbarText = '请选择删除目标！'
+                    this.snackbarColor = 'error'
+                    return false;
+                };
+                axios.delete("{{url_for('admin.blog_comment')}}", {
+                        data: {
+                            delete_list: this.selected
+                        },
+                        headers: {
+                            'X-CSRFToken': this.csrftoken,
+                        }
+
+                    })
+                    .then(res => {
+                        this.selected = []
+                        this.desserts = res.data.data
+                        this.snackbar = true
+                        this.snackbarText = '删除成功！'
+                        this.snackbarColor = 'success'
+                    }).catch(res => {
+                        this.snackbar = true
+                        this.snackbarText = '删除失败！'
+                        this.snackbarColor = 'error'
+                    })
+            }
+        },
+        computed: {
+            itemMun() {
+                return this.selected.length
+            }
+
+        },
+        watch: {
+            remList: {
+                handler(newValue, oldValue) {
+                    this.deletedList = [];
+                    oldValue.map(item => {
+                        for (let i of item) {
+                            this.deletedList.push(i)
+                        }
+                    });
+
+                }
+            },
+            deep: true
+        }
+    })
+</script>
+{% endblock js %}

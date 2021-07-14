@@ -1,144 +1,129 @@
 {% extends 'layout.html' %}
-
 {% block css %}
-<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
 {% endblock css %}
 
-
-
 {% block title %}
-博客友链管理
+友链管理
 {% endblock title %}
 
-
-
 {% block content %}
-<div id="app">
-    <v-app>
-        <v-main>
-            <v-data-table :headers="headers" :items="desserts" sort-by="calories" class="elevation-1">
-                <template v-slot:top>
-                    <v-toolbar flat color="white">
-                        <v-toolbar-title>友链管理</v-toolbar-title>
-                        <v-divider class="mx-4" inset vertical></v-divider>
+<v-data-table :headers="headers" :items="desserts" sort-by="calories" class="elevation-1">
+    <template v-slot:top>
+        <v-toolbar flat color="white">
+            <v-toolbar-title>友链管理</v-toolbar-title>
+            <v-divider class="mx-4" inset vertical></v-divider>
+            <v-spacer></v-spacer>
+            <v-dialog v-model="editDialog" max-width="500px">
+                <v-card>
+                    <v-card-title>
+                        <span class="headline">{{ formTitle }}</span>
+                    </v-card-title>
+
+                    <v-card-text>
+                        <v-container>
+                            <v-row>
+                                <v-col cols="12">
+                                    <v-text-field v-model="editItemData.name" label="博客名称" single-line>
+                                    </v-text-field>
+                                </v-col>
+                                <v-col cols="12">
+                                    <v-text-field v-model="editItemData.link" label="网址" single-line>
+                                    </v-text-field>
+                                </v-col>
+                                <v-col cols="12">
+                                    <v-text-field v-model="editItemData.avatar" label="头像" single-line>
+                                    </v-text-field>
+                                </v-col>
+                                <v-col cols="12">
+                                    <v-text-field v-model="editItemData.brief" label="简介" single-line>
+                                    </v-text-field>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </v-card-text>
+
+                    <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-dialog v-model="editDialog" max-width="500px">
-                            <v-card>
-                                <v-card-title>
-                                    <span class="headline">{{ formTitle }}</span>
-                                </v-card-title>
-
-                                <v-card-text>
-                                    <v-container>
-                                        <v-row>
-                                            <v-col cols="12">
-                                                <v-text-field v-model="editItemData.name" label="博客名称" single-line>
-                                                </v-text-field>
-                                            </v-col>
-                                            <v-col cols="12">
-                                                <v-text-field v-model="editItemData.link" label="网址" single-line>
-                                                </v-text-field>
-                                            </v-col>
-                                            <v-col cols="12">
-                                                <v-text-field v-model="editItemData.avatar" label="头像" single-line>
-                                                </v-text-field>
-                                            </v-col>
-                                            <v-col cols="12">
-                                                <v-text-field v-model="editItemData.brief" label="简介" single-line>
-                                                </v-text-field>
-                                            </v-col>
-                                        </v-row>
-                                    </v-container>
-                                </v-card-text>
-
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn color="blue darken-1" text @click="editDialog=!editDialog">取消</v-btn>
-                                    <v-btn color="blue darken-1" text @click="putEditItem();editDialog=!editDialog">修改
-                                    </v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
-                        <v-dialog v-model="dialog" max-width="500px">
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">添加友链</v-btn>
-                            </template>
-                            <v-card>
-                                <v-card-title>
-                                    <span class="headline">{{ formTitle }}</span>
-                                </v-card-title>
-
-                                <v-card-text>
-                                    <v-container>
-                                        <v-row>
-                                            <v-col cols="12">
-                                                <v-text-field v-model="blogData.name" label="博客名称" single-line>
-                                                </v-text-field>
-                                            </v-col>
-                                            <v-col cols="12">
-                                                <v-text-field v-model="blogData.link" label="网址" single-line>
-                                                </v-text-field>
-                                            </v-col>
-                                            <v-col cols="12">
-                                                <v-text-field v-model="blogData.avatar" label="头像" single-line>
-                                                </v-text-field>
-                                            </v-col>
-                                            <v-col cols="12">
-                                                <v-text-field v-model="blogData.brief" label="简介" single-line>
-                                                </v-text-field>
-                                            </v-col>
-                                        </v-row>
-                                    </v-container>
-                                </v-card-text>
-
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn color="blue darken-1" text @click="close">取消</v-btn>
-                                    <v-btn color="blue darken-1" text @click="save">保存</v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
-                    </v-toolbar>
+                        <v-btn color="blue darken-1" text @click="editDialog=!editDialog">取消</v-btn>
+                        <v-btn color="blue darken-1" text @click="putEditItem();editDialog=!editDialog">修改
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+            <v-dialog v-model="dialog" max-width="500px">
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">添加友链</v-btn>
                 </template>
-                <template v-slot:item.actions="{ item }">
-                    <v-icon small class="mr-2" @click="editItem(item);editDialog=!editDialog">
-                        mdi-pencil
-                    </v-icon>
-                    <v-icon small @click="deleteItem(item)">
-                        mdi-delete
-                    </v-icon>
-                </template>
+                <v-card>
+                    <v-card-title>
+                        <span class="headline">{{ formTitle }}</span>
+                    </v-card-title>
 
-            </v-data-table>
+                    <v-card-text>
+                        <v-container>
+                            <v-row>
+                                <v-col cols="12">
+                                    <v-text-field v-model="blogData.name" label="博客名称" single-line>
+                                    </v-text-field>
+                                </v-col>
+                                <v-col cols="12">
+                                    <v-text-field v-model="blogData.link" label="网址" single-line>
+                                    </v-text-field>
+                                </v-col>
+                                <v-col cols="12">
+                                    <v-text-field v-model="blogData.avatar" label="头像" single-line>
+                                    </v-text-field>
+                                </v-col>
+                                <v-col cols="12">
+                                    <v-text-field v-model="blogData.brief" label="简介" single-line>
+                                    </v-text-field>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </v-card-text>
 
-            <div class="text-center">
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="blue darken-1" text @click="close">取消</v-btn>
+                        <v-btn color="blue darken-1" text @click="save">保存</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+        </v-toolbar>
+    </template>
+    <template v-slot:item.actions="{ item }">
+        <v-icon small class="mr-2" @click="editItem(item);editDialog=!editDialog">
+            mdi-pencil
+        </v-icon>
+        <v-icon small @click="deleteItem(item)">
+            mdi-delete
+        </v-icon>
+    </template>
 
-                <v-snackbar v-model="snackbar" :timeout="timeout" top right :color='snackBarColor'>
-                    {[ snackBarText ]}
+</v-data-table>
 
-                </v-snackbar>
-            </div>
-        </v-main>
-    </v-app>
+<div class="text-center">
+
+    <v-snackbar v-model="snackbar" :timeout="timeout" top right :color='snackBarColor'>
+        {[ snackBarText ]}
+
+    </v-snackbar>
 </div>
+
 {% endblock content %}
 
-
-
 {% block js %}
-<script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+
+
 <script>
     new Vue({
         delimiters: ['{[', ']}'],
         el: '#app',
         vuetify: new Vuetify(),
         data: () => ({
-            csrftoken: "{{ csrf_token() }}",
+            csrftoken: "{{csrf_token()}}",
+            drawer: false,
             dialog: false,
             editDialog: false,
             editItemData: {},
@@ -207,7 +192,6 @@
         },
 
         methods: {
-
             editItem(item) {
                 this.editItemData = item
             },
@@ -280,8 +264,7 @@
                 });
                 this.close()
             },
-        },
+        }
     })
 </script>
-
 {% endblock js %}

@@ -5,8 +5,8 @@ from models.Content import Article, Tag, Category
 from models.User import User
 from models.Commet import Comment
 from models.Other import PyLink
-from datetime import datetime
-from tool import login_required, sys_name, get_month_range, get_month_days
+from datetime import datetime, time,timezone
+from tool import login_required, sys_name, get_month_range, get_month_days, Md5
 from extension import scheduler, search, csrf
 import requests
 import os
@@ -35,7 +35,7 @@ def home():
     contents = Article.query.order_by(Article.created.desc()).slice(start, end)
     articles = []
     for c in contents:
-        category = c.category[0].name
+        category = c.category[0].name if len(c.category.all()) > 0 else '未分类'
         data = {'category': category, "url_en": c.url_en,
                 'created': c.created, 'slug': c.slug, 'title': c.title}
         articles.append(data)
@@ -148,36 +148,62 @@ def post(url):
 # 登录
 def login():
     if session.get("username"):
-        return redirect(url_for('admin.blog_info'))
-    info = current_app.config.get("INFO")
+        return redirect(url_for('admin.blog_dashboard'))
     if request.method == "GET":
         return render_template("login.html", **locals())
     else:
-        email = request.form.get("email")
-        password = request.form.get("password")
-        user = User.query.filter(User.mail == email).first()
+        data = request.get_json().get('data')
+        user = User.query.filter(User.mail == data.get('email')).first()
         if user:
-
-            if user.check_password(password):
+            if user.check_password(data.get('password')):
                 session['username'] = user.showName
                 session['email'] = user.mail
                 session['user_id'] = user.id
                 session['type'] = 'admin'
                 session['commet_name'] = user.showName
                 session['commet_email'] = user.mail
-                if request.form.get("remember"):
+                if data.get("remember"):
                     session.permanent = True
                     current_app.permanent_session_lifetime = timedelta(
                         minutes=24*60*7)
                 current_app.logger.info("登陆博客成功")
-                return redirect(url_for("admin.blog_info"))
+                return jsonify({'status': "success",
+                                "message": '登陆成功，欢迎回来！'})
             else:
-                current_app.logger.info("登陆博客失败")
-                return redirect(url_for("article.login"))
+                current_app.logger.info("登陆博客失败-密码错误")
+                return jsonify({'status': "error",
+                                "message": '密码或者用户名错误！'})
         else:
             # 密码或者用户名错误
-            current_app.logger.info("登陆博客失败")
-            return redirect(url_for("article.login"))
+            current_app.logger.info("登陆博客失败-户名错误")
+            return jsonify({'status': "error",
+                            "message": '密码或者用户名错误！'})
+
+
+@article.route("/register/", methods=["GET", "POST"])
+# 注册
+def register():
+    info = current_app.config["INFO"]
+    if request.method == "GET":
+        return render_template('register.html')
+    elif request.method == "POST":
+        if info.get('blogConfig').get('register'):
+            data = request.get_json().get('data')
+            user = User(username=data.get('username'), mail=data.get(
+                'email'), password=data.get('password'))
+            if user.save_on():
+                info['other']['email'] = Md5(data.get('email'))
+                # 修改email的hash
+                from config.rw_json import write_json
+                write_json(info)
+                return jsonify({'status': "success",
+                                "message": '注册成功……即将转跳！'})
+            else:
+                return jsonify({'status': "error",
+                                "message": '注册注册失败！'})
+        else:
+            return jsonify({'status': "error",
+                            "message": '已经关闭注册！'})
 
 
 @article.route("/category/<category>/")
@@ -212,7 +238,6 @@ def robots():
     else:
         path = "../views/article/static"
     return send_from_directory(path, 'robots.txt')
-    # return "aaa"
 
 
 @article.route("/sitemap.xml/")
@@ -365,10 +390,29 @@ def job1():
     # 循环任务，每30min秒循环一次
 
 
-@article.route("/search/", methods=["GET", "POST"])
-def search():
+@article.route("/search/<keyword>", methods=["GET", "POST"])
+def search(keyword):
     if request.method == "GET":
         info = current_app.config.get("INFO")
+        print(keyword)
+        page = request.args.get("page", type=int, default=1)
+        page_content = info.get('blogConfig').get('articleItem')
+        total = Article.query.msearch(keyword).count()
+        start = (page-1)*page_content
+        end = start + page_content
+        pagination = Article.query.msearch(keyword).order_by(Article.created.desc()).paginate(
+        page, per_page=page_content, error_out=False)
+        contents = Article.query.msearch(keyword).order_by(
+            Article.created.desc()).slice(start, end)
+        
+        articles = []
+        for c in contents:
+            category = c.category[0].name if len(c.category.all()) > 0 else '未分类'
+            data = {'category': category, "url_en": c.url_en,
+                    'created': c.created, 'slug': c.slug, 'title': c.title}
+            articles.append(data)
+        contents = articles
+        print(contents)
         return render_template("search.html", **locals())
     else:
         keyword = request.get_json()
@@ -389,7 +433,7 @@ def tags():
     # 标签云
     info = current_app.config.get("INFO")
     tags = Tag.query.all()
-    return render_template("tag.html", **locals())
+    return render_template("tags.html", **locals())
 
 
 @article.route("/tag/<url>", methods=["GET"])
@@ -405,8 +449,14 @@ def tag(url):
     pagination = articleData.order_by(Article.created.desc()).paginate(
         page, per_page=pageItem, error_out=False)
     contents = articleData.order_by(Article.created.desc()).slice(start, end)
-    print(contents)
-    return render_template("home.html", **locals())
+    articles = []
+    for c in contents:
+        category = c.category[0].name if len(c.category.all()) > 0 else '未分类'
+        data = {'category': category, "url_en": c.url_en,
+                'created': c.created, 'slug': c.slug, 'title': c.title}
+        articles.append(data)
+    contents = articles
+    return render_template("tag.html", **locals())
 
 
 @article.route("/py-link/")

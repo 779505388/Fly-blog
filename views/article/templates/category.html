@@ -31,7 +31,7 @@
     </a>
   </div>
   <div class="mdui-card-actions">
-    <button class="mdui-btn mdui-ripple" disabled><i class="mdui-icon material-icons">access_time</i>{{content.created}}</button>
+    <button class="mdui-btn mdui-ripple" disabled><i class="mdui-icon material-icons">access_time</i>{{moment(content.created).format('YYYY-M-D, H:mm')}}</button>
     <a class=" mdui-ripple a-category" ">{{content.post_type}}</a>
         <a href="{{url_for('article.post',url=content.id)}}" class=" mdui-btn mdui-ripple mdui-ripple read-more-btn ">阅读更多</a>
   </div>

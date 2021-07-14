@@ -1,4 +1,5 @@
 from functools import wraps
+import re
 from flask import url_for, redirect, request,\
     session, jsonify, current_app
 import hashlib
@@ -7,6 +8,7 @@ import platform
 from models.Content import Category, Article
 from models.Commet import Comment
 import calendar
+from datetime import datetime, timezone
 # import sys
 # import os
 
@@ -42,10 +44,10 @@ def get_server_info():
         'cpu_percent': test2,
         'cpu_count': psutil.cpu_count(),
         'memory_percent': round((memory.used/memory.total)*100, 3),
-        'memory_total': round(memory.total/1024**3, 2),
-        'memory_used': round(memory.used/1024**3, 2),
-        'disk_total': round(disk.total/1024**3, 2),
-        'disk_used': round(disk.used/1024**3, 2),
+        'memory_total': str(round(memory.total/1024**3, 2)),
+        'memory_used': str(round(memory.used/1024**3, 2)),
+        'disk_total': str(round(disk.total/1024**3, 2)),
+        'disk_used': str(round(disk.used/1024**3, 2)),
         'disk_percent': ((disk.used/disk.total)*100),
         'swap_percent': (swap.used/2)*100,
         'swap_total': round(swap.total/1024**3, 2),
@@ -105,3 +107,40 @@ def getItem():
 
 def getInfo():
     return current_app.config.get("INFO")
+
+
+def get_cur_month_start():
+    # 获取当前月的第一天
+    month_str = datetime.now(timezone.utc).strftime('%Y-%m')
+    time = '{}-01 00:00:00'.format(month_str)
+    return datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+
+
+def get_cur_month_end():
+    # 获取当前月的最后一天
+    '''
+    param: month_str 月份，2021-04
+    '''
+    # return: 格式 %Y-%m-%d
+
+    month_str = datetime.now(timezone.utc).strftime('%Y-%m')
+    year, month = int(month_str.split('-')[0]), int(month_str.split('-')[1])
+    end = calendar.monthrange(year, month)[1]
+    time = '{}-{}-{} 23:59:59'.format(year, month, end)
+    return datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+
+
+def getAnalyTime():
+    '''
+    UTC 时间-年-月-日
+    访问记录接口
+    '''
+    year = datetime.now(timezone.utc).year
+    month = datetime.now(timezone.utc).month
+    day = datetime.now(timezone.utc).day
+    dataTime = datetime(year=year, month=month, day=day, tzinfo=timezone.utc)
+    return dataTime
+
+def utcTime():
+    
+    return datetime.now(timezone.utc)

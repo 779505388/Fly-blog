@@ -1,17 +1,22 @@
 {
     "blogConfig": {
+        "AVATAR": "https://fdn.geekzu.org/avatar/",
+        "IMAGE": "https://api.ixiaowai.cn/gqapi/gqapi.php/",
         "PORT": "5000",
+        "articleItem": 6,
         "blogName": "\u5c71\u4e2d\u5ba2",
         "domainName": "https://.gynl.xyz",
-        "articleItem":5,
-        "AVATAR":"https://fdn.geekzu.org/avatar/",
-        "IMAGE":"https://api.ixiaowai.cn/gqapi/gqapi.php"
+        "register": true
+    },
+    "other": {
+        "email": ""
     },
     "userInfo": {
         "BILIBILI": "https://www.bilibili.com",
-        "EMAIL": "@gmail.com",
+        "EMAIL": "",
         "GITHUB": "https://www.github.com",
         "QQ": "",
-        "ZHIHU": "https://www.zhihu.com"
+        "ZHIHU": "https://www.zhihu.com",
+        "register": true
     }
 }

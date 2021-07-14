@@ -40,12 +40,12 @@ python3 manage.py upgrade
 ## 注册账户
 
 
- 发送 json `ip:8080/api/v1/register/`
+ 
 
 ``` javascript
-//token=>在api/v1/token.py设置
+//注册完成后在配置中关闭注册！！
 
-{"token":"123456789","register":{"mail":"","username":"","password":""}}
+访问 ：ip:port/register
 
 ```
 

@@ -1,0 +1,119 @@
+<v-toolbar dense elevation='5' style="background-color: rgb(247, 247, 247);">
+  <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+
+  <v-toolbar-title>管理</v-toolbar-title>
+
+  <v-spacer></v-spacer>
+  <v-btn href="{{url_for('article.logout')}}" icon>
+    <v-icon>mdi-export</v-icon>
+  </v-btn>
+</v-toolbar>
+
+<v-navigation-drawer v-model="drawer" app temporary src="https://cdn.vuetifyjs.com/images/backgrounds/bg-2.jpg">
+  <v-list nav class="py-0 ">
+    <v-list-item two-line>
+      <v-list-item-avatar>
+        <img src="{{getInfo().blogConfig.AVATAR}}{{getInfo().other.email}}">
+      </v-list-item-avatar>
+
+      <v-list-item-content class="white--text">
+        <v-list-item-title><a href="/" style="text-decoration: none;color: white;">Blog</a></v-list-item-title>
+        <v-list-item-subtitle>Subtext</v-list-item-subtitle>
+      </v-list-item-content>
+    </v-list-item>
+
+    <v-divider></v-divider>
+
+    <v-list-item link href="{{url_for('admin.blog_dashboard')}}">
+      <v-list-item-icon>
+        <v-icon>mdi-view-dashboard</v-icon>
+      </v-list-item-icon>
+
+      <v-list-item-content>
+        <v-list-item-title>博客面板</v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
+    <v-list-item link href="{{url_for('admin.blog_list')}}">
+      <v-list-item-icon>
+        <v-icon>mdi-notebook-multiple</v-icon>
+      </v-list-item-icon>
+
+      <v-list-item-content>
+        <v-list-item-title>博客文章</v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
+    <v-list-item link href="{{url_for('admin.blog_write')}}">
+      <v-list-item-icon>
+        <v-icon>mdi-file-edit-outline</v-icon>
+      </v-list-item-icon>
+
+      <v-list-item-content>
+        <v-list-item-title>写作</v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
+    <v-list-item link href="{{url_for('admin.blog_comment')}}">
+      <v-list-item-icon>
+        <v-icon>mdi-comment</v-icon>
+      </v-list-item-icon>
+
+      <v-list-item-content>
+        <v-list-item-title>评论</v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
+    <v-list-item link href="{{url_for('admin.blog_category')}}">
+      <v-list-item-icon>
+        <v-icon>mdi-format-list-bulleted-square</v-icon>
+      </v-list-item-icon>
+
+      <v-list-item-content>
+        <v-list-item-title>分类</v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
+    <v-list-item link href="{{url_for('admin.py_link')}}">
+      <v-list-item-icon>
+        <v-icon>mdi-link-variant</v-icon>
+      </v-list-item-icon>
+
+      <v-list-item-content>
+        <v-list-item-title>友链</v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
+    <v-list-item link href="{{url_for('admin.blog_log')}}">
+      <v-list-item-icon>
+        <v-icon>mdi-file-multiple</v-icon>
+      </v-list-item-icon>
+
+      <v-list-item-content>
+        <v-list-item-title>日志</v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
+    <v-list-item link href="{{url_for('admin.blog_tag')}}">
+      <v-list-item-icon>
+        <v-icon>mdi-tag-outline</v-icon>
+      </v-list-item-icon>
+
+      <v-list-item-content>
+        <v-list-item-title>标签</v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
+    <v-list-item link href="{{url_for('admin.blog_set')}}">
+      <v-list-item-icon>
+        <v-icon>mdi-cogs</v-icon>
+      </v-list-item-icon>
+
+      <v-list-item-content>
+        <v-list-item-title>设置</v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
+    <v-list-item link href="{{url_for('admin.blog_about')}}">
+      <v-list-item-icon>
+        <v-icon>mdi-information-outline</v-icon>
+      </v-list-item-icon>
+
+      <v-list-item-content>
+        <v-list-item-title>关于</v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
+  </v-list>
+
+</v-navigation-drawer>

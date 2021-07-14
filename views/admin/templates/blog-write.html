@@ -1,62 +1,51 @@
 {% extends 'layout.html' %}
 {% block css %}
 <link rel="stylesheet" href="https://unpkg.com/editor.md@1.5.0/css/editormd.min.css">
-<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
 {% endblock css %}
 
 {% block title %}
-新建文章
+创作文章
 {% endblock title %}
 
+
 {% block content %}
-<div id="app">
-  <v-app>
-    <v-main>
-      <v-card class="mx-auto" max-width="1000">
-        <v-img class="white--text align-end" height="200px" src="https://cdn.vuetifyjs.com/images/cards/docks.jpg">
-          <v-card-title>{[name]}</v-card-title>
-        </v-img>
+<v-card class="mx-auto" max-width="1000">
+  <v-img class="white--text align-end" height="200px" src="https://cdn.vuetifyjs.com/images/cards/docks.jpg">
+    <v-card-title>{[name]}</v-card-title>
+  </v-img>
 
-        <v-card-subtitle class="pb-0">{[slug]}</v-card-subtitle>
+  <v-card-subtitle class="pb-0">{[slug]}</v-card-subtitle>
 
-        <v-card-text class="text--primary">
-          <v-text-field v-model='name' clearable placeholder="文章标题" :rules="rules"></v-text-field>
-          <v-text-field v-model='slug' clearable placeholder="内容概述" :rules="rules"></v-text-field>
-          <v-text-field v-model='enUrl' clearable placeholder="自定义URL" :rules="rules"></v-text-field>
-          <v-text-field v-model='img' clearable placeholder="文章图片"></v-text-field>
-          <v-select :items="{{getCategory()}}" placeholder="文章类型" v-model='category'></v-select>
-          <v-combobox hint="按回车键添加标签" placeholder="添加标签" multiple persistent-hint small-chips v-model="tags">
-          </v-combobox>
+  <v-card-text class="text--primary">
+    <v-text-field v-model='name' clearable placeholder="文章标题" :rules="rules"></v-text-field>
+    <v-text-field v-model='slug' clearable placeholder="内容概述" :rules="rules"></v-text-field>
+    <v-text-field v-model='enUrl' clearable placeholder="自定义URL" :rules="rules"></v-text-field>
+    <v-text-field v-model='img' clearable placeholder="文章图片"></v-text-field>
+    <v-select :items="{{getCategory()}}" placeholder="文章类型" v-model='category'></v-select>
+    <v-combobox hint="按回车键添加标签" placeholder="添加标签" multiple persistent-hint small-chips v-model="tags">
+    </v-combobox>
 
-          <div id="layout" class="editor">
-            <div id="test-editormd" style="margin-top: 20px;">
-              <textarea v-model='text' name="editormd"></textarea>
-            </div>
-            <textarea v-model='template' id="template" name="template" style="display: none;"></textarea>
-          </div>
-        </v-card-text>
+    <div id="layout" class="editor">
+      <div id="test-editormd" style="margin-top: 20px;z-index: 0;">
+        <textarea v-model='text' name="editormd"></textarea>
+      </div>
+      <textarea v-model='template' id="template" name="template" style="display: none;"></textarea>
+    </div>
+  </v-card-text>
 
-        <v-card-actions>
+  <v-card-actions>
 
-          <v-btn class="float-right" @click="putAricle" block color="blue lighten-1" text>
-            提交
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-main>
-  </v-app>
-</div>
-
+    <v-btn class="float-right" @click="putAricle" block color="blue lighten-1" text>
+      提交
+    </v-btn>
+  </v-card-actions>
+</v-card>
 {% endblock content %}
 
 {% block js %}
+<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
 
 <script>
   new Vue({
@@ -65,6 +54,7 @@
     vuetify: new Vuetify(),
     data: () => ({
       csrftoken: "{{csrf_token()}}",
+      drawer: false,
       rules: [
         value => !!value || '必填！',
       ],
@@ -74,23 +64,22 @@
       img: "",
       category: "",
       tags: [],
-      template:'',
-      text:''
-
+      template: '',
+      text: ''
     }),
 
     computed: {
 
     },
     mounted() {
-     this.mdInit()
+      this.mdInit()
     },
     watch: {
 
     },
 
     created() {
-
+     
     },
 
     methods: {
@@ -141,7 +130,7 @@
         }
       });
       }
-    },
+    }
   })
 </script>
 {% endblock js %}

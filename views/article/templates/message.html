@@ -32,9 +32,9 @@
     </div>
     <!-- 卡片头部，包含头像、标题、副标题 -->
     <div class="mdui-card-header">
-      <img class="mdui-card-header-avatar" src="https://fdn.geekzu.org/avatar/4c2438980628fb7f544281db606d34b0" />
+      <img class="mdui-card-header-avatar" src="{{getInfo().blogConfig.AVATAR}}{{getInfo().other.email}}" />
       <div class="mdui-card-header-title">山中客</div>
-      <div class="mdui-card-header-subtitle">发表时间：</div>
+      <div class="mdui-card-header-subtitle">想对我说些什么呢</div>
       <div class="mdui-card-menu">
         <button id="share" class="mdui-btn mdui-btn-icon "><i class="mdui-icon material-icons ">share</i></button>
       </div>
@@ -144,7 +144,7 @@
 
       {% for comment in comment_data %}
       <div class="vcard" id="{{comment.uuid}}"><img class="vimg"
-          src="https://gravatar.loli.net/avatar/{{comment.hash_email}}">
+          src="{{getInfo().blogConfig.AVATAR}}{{comment.hash_email}}">
         <div class="vh">
           <div class="vhead"><a class="vnick" rel="nofollow" href="{{comment.link}}"
               target="_blank">{{comment.nick}}</a>

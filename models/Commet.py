@@ -1,5 +1,5 @@
 from extension import db
-from datetime import datetime
+from datetime import datetime, timezone
 import hashlib
 import uuid
 
@@ -8,6 +8,11 @@ def Md5(email):
     md = hashlib.md5()  # 构造一个md5
     md.update(email.encode())
     return md.hexdigest()
+
+
+def utcTime():
+    '''返回utc时间'''
+    return datetime.utcnow
 
 
 class Comment(db.Model):
@@ -19,7 +24,7 @@ class Comment(db.Model):
     parent_name = db.Column(db.String(500), nullable=True)
     user_id = db.Column(db.Integer, nullable=True, index=True)
     agent = db.Column(db.String(500), nullable=False)
-    created = db.Column(db.DateTime, default=datetime.now)
+    created = db.Column(db.DateTime, default=datetime.utcnow)
     comment_type = db.Column(db.String(300), nullable=False)
     guest_name = db.Column(db.String(200), nullable=False)
     guest_email = db.Column(db.String(300), nullable=False)
@@ -40,7 +45,6 @@ class Comment(db.Model):
         user_id = kwargs.get("user_id")
         agent = kwargs.get("agent")
         comment_type = kwargs.get('comment_type')
-
         self.parent_name = kwargs.get('parent_name')
         self.parent_uuid = kwargs.get('parent_uuid')
         self.user_id = user_id

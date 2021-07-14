@@ -1,49 +1,44 @@
 {% extends 'layout.html' %}
 {% block css %}
-<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
 {% endblock css %}
 
 {% block title %}
-文章列表
+博客文章
 {% endblock title %}
 
-
 {% block content %}
-<div id="app">
-  <v-app>
-    <v-main>
-      <v-data-table :headers="headers" :items="artcleList" item-key="id" class="elevation-1">
-        <template v-slot:item.handle="{ item }">
-          <v-icon small class="mr-2" @click='editArticle(item)'>
-            mdi-pencil
-          </v-icon>
-          <v-icon small @click='deleteArticle(item)'>
-            mdi-delete
-          </v-icon>
-        </template>
-      </v-data-table>
-      <v-snackbar top right :color='snackbarColor' v-model="snackbar" :timeout="timeout">
-        {[snackbarText ]}
-      </v-snackbar>
-    </v-main>
-  </v-app>
-</div>
+
+<v-card>
+  <v-data-table :headers="headers" :items="artcleList" item-key="id" class="elevation-1">
+    <template v-slot:item.handle="{ item }">
+      <v-icon small class="mr-2" @click='editArticle(item)'>
+        mdi-pencil
+      </v-icon>
+      <v-icon small @click='deleteArticle(item)'>
+        mdi-delete
+      </v-icon>
+    </template>
+  </v-data-table>
+  <v-snackbar top right :color='snackbarColor' v-model="snackbar" :timeout="timeout">
+    {[snackbarText ]}
+  </v-snackbar>
+</v-card>
+
+
 {% endblock content %}
 
 {% block js %}
-<script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+
+
 <script>
-  var app = new Vue({
+  new Vue({
     delimiters: ['{[', ']}'],
-    el: "#app",
+    el: '#app',
     vuetify: new Vuetify(),
-    data: {
+    data: () => ({
       csrftoken: "{{csrf_token()}}",
+      drawer: false,
       artcleList: [],
       deleteList: [],
       headers: [{
@@ -81,7 +76,18 @@
       snackbarText: '',
       timeout: 1700,
       snackbarColor: ''
+    }),
+
+    computed: {
+
     },
+    mounted() {
+
+    },
+    watch: {
+
+    },
+
     created() {
       axios
         .post("{{url_for('admin.blog_list')}}", {}, {
@@ -96,9 +102,7 @@
           console.log(error);
         });
     },
-    updated() {
 
-    },
     methods: {
       editArticle(item) {
         console.log(item);

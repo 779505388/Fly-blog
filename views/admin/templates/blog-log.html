@@ -1,9 +1,6 @@
 {% extends 'layout.html' %}
 {% block css %}
-<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+
 {% endblock css %}
 
 {% block title %}
@@ -11,22 +8,21 @@
 {% endblock title %}
 
 {% block content %}
-<div id="app">
-  <v-app>
-    <v-main>
-      <v-card class="mx-auto" max-width='900'>
-        <v-data-table :headers="headers" :items="logs" :items-per-page="10" class="elevation-1"></v-data-table>
-      </v-card>
-    </v-main>
-  </v-app>
-</div>
-
+<v-card class="mx-auto pa-3"  max-width='900'style="margin-top: 50px;">
+  <div class="text-start v-card--material__heading mb-n6 v-sheet theme--dark elevation-6 yellow darken-2
+  pa-7"
+    style="width: 100%;top: -40px;position: relative;">
+    <div class="display-2 font-weight-light"> 博客日志 </div>
+    <div class="subtitle-1 font-weight-light"> Blog log </div>
+    <!---->
+  </div>
+  <v-data-table min-height='500' :headers="headers" :items="logs" :items-per-page="10" class="elevation-1"></v-data-table>
+  <v-btn color="primary" @click='deleteLog' block>清除日志</v-btn>
+</v-card>
 {% endblock content %}
 
 {% block js %}
-<script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+
 
 <script>
   new Vue({
@@ -35,11 +31,11 @@
     vuetify: new Vuetify(),
     data: () => ({
       csrftoken: "{{csrf_token()}}",
+      drawer: false,
       logs: [],
       headers: [{
         text: '日志内容',
         align: 'start',
-        sortable: false,
         value: 'value',
       }, ]
     }),
@@ -72,7 +68,19 @@
           }
         });
       },
-
+      deleteLog(){
+        var flag = confirm('确定清除日志？')
+        if (flag) {
+          axios.delete('{{url_for("admin.blog_log")}}', {
+            headers: {
+              'X-CSRFToken': this.csrftoken,
+            },
+          }).then(res => {
+            console.log(res.data);
+            this.logs = []
+          });
+        }
+      }
     }
   })
 </script>

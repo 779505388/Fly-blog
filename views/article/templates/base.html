@@ -7,6 +7,7 @@
   <meta name="renderer" content="webkit" />
   <meta name="force-rendering" content="webkit" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  {% include '/include/meta.html' ignore missing %}
   <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
   <link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
@@ -61,11 +62,11 @@
     <button id="drawer-btn" class="mdui-btn mdui-btn-icon mdui-ripple "><i
         class="mdui-icon material-icons">menu</i></button>
     <div class="mdui-drawer mdui-color-white mdui-drawer-close" id="drawer">
-      <ul class="mdui-list "  mdui-collapse="{accordion: true}">
+      <ul class="mdui-list " mdui-collapse="{accordion: true}">
         <div>
           <a href="{{url_for('article.login')}}">
-            <img class="mdui-img-circle mdui-center" src="{{getInfo().blogConfig.AVATAR}}4c2438980628fb7f544281db606d34b0"
-            alt="头像" srcset="">
+            <img class="mdui-img-circle mdui-center" src="{{getInfo().blogConfig.AVATAR}}{{getInfo().other.email}}"
+              alt="头像" srcset="">
           </a>
           <div>
 
@@ -84,7 +85,8 @@
         </div>
         <div class="list-web">
           <div class="list-item">
-            <a class=" " href="{{getInfo().blogConfig.GITHUB}}"><i class="fa fa-github  fa-2x" aria-hidden="true"></i></a>
+            <a class=" " href="{{getInfo().blogConfig.GITHUB}}"><i class="fa fa-github  fa-2x"
+                aria-hidden="true"></i></a>
           </div>
           <div class="list-item">
             <a class=""><i class="fa fa-envelope-o fa-2x" aria-hidden="true"></i></a>
@@ -102,8 +104,8 @@
         <li class="mdui-divider"></li>
         <li class="mdui-list-item mdui-ripple">
           <i class="mdui-list-item-icon mdui-icon material-icons">home</i>
-            <a href="{{url_for('article.home')}}" class="mdui-list-item-content">首页</a>
-          
+          <a href="{{url_for('article.home')}}" class="mdui-list-item-content">首页</a>
+
         </li>
         <li class="mdui-list-item mdui-ripple">
           <i class="mdui-list-item-icon mdui-icon material-icons">inbox</i>
@@ -118,10 +120,6 @@
           <a href="{{url_for('article.message')}}" class="mdui-list-item-content">留言</a>
         </li>
         <li class="mdui-list-item mdui-ripple">
-          <i class="mdui-list-item-icon mdui-icon material-icons">format_quote</i>
-          <div class="mdui-list-item-content">说说</div>
-        </li>
-        <li class="mdui-list-item mdui-ripple">
           <i class="mdui-list-item-icon mdui-icon material-icons">label_outline</i>
           <a class="mdui-list-item-content" href="{{url_for('article.tags')}}">标签</a>
         </li>
@@ -133,15 +131,16 @@
           </div>
           <ul class="mdui-collapse-item-body mdui-list mdui-list-dense">
             {% for i in getCategory() %}
-              <a class="mdui-list-item mdui-ripple" href="{{url_for('article.category',category=i)}}"> {{i}} </a>
+            <a class="mdui-list-item mdui-ripple" href="{{url_for('article.category',category=i)}}"> {{i}} </a>
             {% endfor %}
           </ul>
         </li>
         <li class="mdui-divider"></li>
         <li class="mdui-list-item mdui-ripple">
           <i class="mdui-list-item-icon mdui-icon material-icons">info_outline</i>
-          <div class="mdui-list-item-content">关于</div>
+          <a class="mdui-list-item-content" href="{{url_for('article.about')}}">关于</a>
         </li>
+        {% block search %} {% endblock search %}
       </ul>
     </div>
 
@@ -155,9 +154,9 @@
     </div>
 
   </div>
-{% block pagination %}
+  {% block pagination %}
 
-{% endblock pagination %}
+  {% endblock pagination %}
   <div class=" mdui-container-fluid footer mdui-shadow-3">
     <div class="mdui-col-xs-12 mdui-col-sm-4 mdui-col-md-4 mdui-col-lg-4 mdui-col-xl-4 "></div>
     <div class="mdui-col-xs-12 mdui-col-sm-4 mdui-col-md-4 mdui-col-lg-4 mdui-col-xl-4 ">
@@ -200,6 +199,33 @@
 
             {% endblock js %}
             <script src="{{url_for('.static',filename='js/base.js')}}"></script>
+            {% include '/include/script.html' ignore missing %}
+            {{ moment.include_moment(local_js='https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js')}}
+            {{ moment.locale('zh-cn') }}
+            <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+            <script aynsc>
+              var myDate = new Date();
+              var viewTime = myDate.toLocaleDateString();
+              if (localStorage.getItem('viewTime') !== viewTime) {
+                axios.get('/api/v1/analytics/')
+                  .then(function (response) {
+                    console.log(response.data);
+                    localStorage.setItem('viewTime', viewTime)
+                  })
+                  .catch(function (error) {
+                    console.log(error);
+                  });
+              }
+            </script>
+            <script>
+              $('#search').bind('keypress', function (event) {
+                if (event.keyCode == "13") {
+                  event.preventDefault();
+                  window.location.href="search/" + $('#search').val()
+                }
+              });
+            </script>
 </body>
 
 </html>

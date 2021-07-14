@@ -9,6 +9,12 @@
 {% endblock css %}
 
 
+{% block search %} 
+<li class="mdui-list-item mdui-ripple">
+  <i class="mdui-list-item-icon mdui-icon material-icons">search</i>
+  <input id="search" class="mdui-textfield-input" type="text" placeholder="    搜索" />
+</li>
+{% endblock search %}
 
 {% block content %}
 
@@ -31,8 +37,8 @@
     </a>
   </div>
   <div class="mdui-card-actions">
-    <button class="mdui-btn mdui-ripple" disabled><i class="mdui-icon material-icons">access_time</i>{{content.created}}</button>
-    <a class=" mdui-ripple a-category" ">{{content.category}}</a>
+    <button class="mdui-btn mdui-ripple" disabled><i class="mdui-icon material-icons">access_time</i>{{moment(content.created).format('YYYY-M-D, H:mm')}}</button>
+    <a style="text-decoration: none;" href="{{url_for('article.category',category=content.category)}}" class=" mdui-ripple a-category" ">{{content.category}}</a>
         <a href="{{url_for('article.post',url=content.url_en)}}" class=" mdui-btn mdui-ripple mdui-ripple read-more-btn ">阅读更多</a>
   </div>
     </div>
