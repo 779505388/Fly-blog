@@ -44,7 +44,6 @@
     <!---->
   </div>
   <v-card-subtitle class="pb-0"></v-card-subtitle>
-
   <v-card-text class="text--primary">
     <v-text-field clearable label='博客的名字' v-model='blogName' placeholder="博客名" :rules="rules"></v-text-field>
     <v-text-field clearable label='域名，生成站点地图' v-model='domain' placeholder="域名" :rules="rules"></v-text-field>
@@ -59,7 +58,6 @@
       提交修改
     </v-btn>
     </v-card-actions>
-
 </v-card>
 
 <v-snackbar v-model="snackbar" :timeout='3000' text right top :color='snackColor'>
