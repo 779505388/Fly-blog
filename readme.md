@@ -11,7 +11,9 @@ web: [光阴逆旅](https://flask.gynl.xyz/)
 ![2](https://raw.githubusercontent.com/779505388/Fly-blog/master/example/%E6%88%AA%E5%B1%8F2021-03-27%E4%B8%8B%E5%8D%889.35.52.png)
 ![3](https://raw.githubusercontent.com/779505388/Fly-blog/master/example/%E6%88%AA%E5%B1%8F2021-03-27%E4%B8%8B%E5%8D%889.37.42.png)
 ![4](https://raw.githubusercontent.com/779505388/Fly-blog/master/example/%E6%88%AA%E5%B1%8F2021-03-27%E4%B8%8B%E5%8D%889.37.59.png)
-
+![GITGUB提交预览](https://github.com/779505388/Fly-blog/blob/master/example/%E6%88%AA%E5%B1%8F2021-07-15%E4%B8%8A%E5%8D%8811.23.04.png?raw=true)
+![登陆页面](https://github.com/779505388/Fly-blog/blob/master/example/%E6%88%AA%E5%B1%8F2021-07-15%E4%B8%8A%E5%8D%8811.24.32.png?raw=true)
+![后台管理页面](https://github.com/779505388/Fly-blog/blob/master/example/%E6%88%AA%E5%B1%8F2021-07-15%E4%B8%8A%E5%8D%8811.25.30.png?raw=true)
 # 使用方法
 
 ## 安装相关包
