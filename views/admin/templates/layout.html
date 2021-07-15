@@ -1,15 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-cmn-Hans">
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="{{url_for('.static',filename='css/layout.css')}}">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
   {% block css %}
 
   {% endblock css %}
+  <style>
+    .v-main__wrap {
+      background-color: rgb(247, 247, 247);
+    }
+
+    .v-toolbar__content {
+      background-color: white;
+    }
+
+    header {
+      background-color: rgb(247, 247, 247);
+    }
+  </style>
   <title>
     {% block title %}
 
@@ -18,58 +31,24 @@
 </head>
 
 <body>
-  <input type="checkbox" id="check">
-  <label for="check">
-    <i id="checkbtn"> <img src="{{url_for('.static',filename='image/svg/right.svg')}}" alt=""></i>
-    <i id=checkcancel> <img src="{{url_for('.static',filename='image/svg/cancel.svg')}}" alt=""></i>
-  </label>
-  <div class="sidebar">
-    <header><a style="text-decoration: none;color: white;" href="{{url_for('article.home')}}">BLOG</a></header>
-    <ul>
-      <li>
-        <a href="{{url_for('admin.blog_info')}}"> <img src="{{url_for('.static',filename='image/svg/span.svg')}}">
-          面板</a>
-      </li>
-      <li>
-        <a href="{{url_for('admin.blog_list')}}"><img src="{{url_for('.static',filename='image/svg/article.svg')}}"
-            alt=""> 文章</a>
-      </li>
-      <li>
-        <a href="{{url_for('admin.blog_write')}}"> <img src="{{url_for('.static',filename='image/svg/Write.svg')}}"
-            alt=""> 写作</a>
-      </li>
-      <li>
-        <a href="{{url_for('admin.blog_comment')}}"><img src="{{url_for('.static',filename='image/svg/comment.svg')}}"
-            alt="">评论</a>
-      </li>
-      <li>
-        <a href="{{url_for('admin.blog_category')}}"> <img src="{{url_for('.static',filename='image/svg/category.svg')}}" alt=""> 分类</a>
-      </li>
-      <li>
-        <a href="{{url_for('admin.blog_log')}}"> <img src="{{url_for('.static',filename='image/svg/log.svg')}}" alt=""> 日志</a>
-      </li>
-      <li>
-        <a href="{{url_for('admin.py_link')}}"> <img src="{{url_for('.static',filename='image/svg/link.svg')}}"
-            alt=""> 友链</a>
-      </li>
-      <li>
-        <a href="{{url_for('admin.blog_set')}}"> <img src="{{url_for('.static',filename='image/svg/options.svg')}}"
-            alt=""> 设置</a>
-      </li>
-      <li>
-        <a href=""> <img src="{{url_for('.static',filename='image/svg/about.svg')}}" alt=""> 关于</a>
-      </li>
-    </ul>
-  </div>
 
   <div class="contianer main">
-    {% block content %}
+    <div id="app">
+      <v-app>
+        {% include '/include/bar.html' ignore missing %}
+        <v-main>
 
-    {% endblock content %}
+          {% block content %}
+
+          {% endblock content %}
+        </v-main>
+      </v-app>
+    </div>
   </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
   {% block js %}
 
   {% endblock js %}

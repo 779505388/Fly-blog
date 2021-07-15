@@ -12,6 +12,9 @@
 
 
 {% block content %}
+<div id="app">
+    <v-app>
+        <v-main>
             <v-data-table v-model="selected" :headers="headers" :items="desserts" item-key="id" show-select
                 class="elevation-1">
             </v-data-table>
@@ -19,11 +22,16 @@
             <v-snackbar top right :color='snackbarColor' v-model="snackbar" :timeout="timeout">
                 {[snackbarText ]}
             </v-snackbar>
-
+        </v-main>
+    </v-app>
+</div>
 {% endblock content %}
 
 {% block js %}
-
+<script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
 <script>
     var app = new Vue({
         delimiters: ['{[', ']}'],
@@ -31,7 +39,6 @@
         vuetify: new Vuetify(),
         data: {
             csrftoken: "{{csrf_token()}}",
-            drawer: false,
             selected: [],
             headers: [{
                     text: 'ID',

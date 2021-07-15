@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}
+{{info.blogConfig.blogName}} - 标签云
+{% endblock title %}
+
+
+
+{% block css %}
+
+{% endblock css %}
+
+
+{% block content %}
+<div style="margin-top: 30px;"></div>
+   {% for tag in tags %}
+   
+      <a href="{{url_for('article.tag',url=tag.name)}}" class="mdui-btn mdui-ripple">{{tag.name}}</a>
+
+   {% endfor %}
+</div>
+{% endblock content %}
+
+
+
+{% block js %}
+
+{% endblock js %}

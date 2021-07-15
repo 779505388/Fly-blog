@@ -1,0 +1,311 @@
+{% extends 'layout.html' %}
+{% block css %}
+
+{% endblock css %}
+
+{% block title %}
+博客信息
+{% endblock title %}
+
+{% block content %}
+
+<v-container fluid>
+  <v-row>
+    <v-col xs="12" cols='12' sm="6" md='3' lg='3' xl='3'>
+      <v-card class="pa-3 mx-auto" style="margin-top: 45px;" max-width='450'>
+        <v-row>
+          <v-col cols='5'>
+            <div class="text-start v-card--material__heading mb-n6 v-sheet theme--dark elevation-6 pa-7"
+              style="width: 96px;top: -40px;position: relative;background-image: linear-gradient(-225deg, #22E1FF 0%, #1D8FE1 48%, #625EB1 100%);">
+              <v-icon x-large dark>mdi-harddisk</v-icon>
+            </div>
+          </v-col>
+          <v-col cols='7'>
+            <v-card-subtitle style="color: grey;" class="pb-0 pa-0 mr-4 text-right"> 存储空间</v-card-subtitle>
+            <v-card-text class="text--primary text-h5 text-right"> {[disk]} GB </v-card-text>
+          </v-col>
+        </v-row>
+
+        <v-card-actions></v-card-actions>
+      </v-card>
+    </v-col>
+
+    <v-col xs="12" cols='12' sm="6" md='3' lg='3' xl='3'>
+      <v-card class="pa-3 mx-auto" style="margin-top: 45px;" max-width='450'>
+        <v-row>
+          <v-col cols='5'>
+            <div class="text-start v-card--material__heading mb-n6 v-sheet theme--dark elevation-6 pa-7"
+              style="width: 96px;top: -40px;position: relative;background-image: linear-gradient(to top, #48c6ef 0%, #6f86d6 100%);">
+              <v-icon x-large dark>mdi-comment-multiple</v-icon>
+            </div>
+          </v-col>
+          <v-col cols='7'>
+            <v-card-subtitle style="color: grey;" class="pb-0 pa-0 mr-4 text-right"> 本月评论</v-card-subtitle>
+            <v-card-text class="text--primary text-h5 text-right">+ {[comment]}</v-card-text>
+          </v-col>
+        </v-row>
+        <v-card-actions> </v-card-actions>
+      </v-card>
+    </v-col>
+
+    <v-col xs="12" cols='12' sm="6" md='3' lg='3' xl='3'>
+      <v-card class="pa-3 mx-auto" style="margin-top: 45px;" max-width='450'>
+
+        <v-row>
+          <v-col cols='5'>
+            <div class="text-start v-card--material__heading mb-n6 v-sheet theme--dark elevation-6 success pa-7"
+              style="width: 96px;top: -40px;position: relative;background-image: linear-gradient(-20deg, #00cdac 0%, #8ddad5 100%);">
+              <v-icon x-large dark>mdi-equalizer</v-icon>
+            </div>
+          </v-col>
+          <v-col cols='7'>
+            <v-card-subtitle style="color: grey;" class="pb-0 pa-0 mr-4 text-right">今日访问</v-card-subtitle>
+            <v-card-text class="text--primary text-h5 text-right">+ {[views]} </v-card-text>
+          </v-col>
+        </v-row>
+        <v-card-actions></v-card-actions>
+      </v-card>
+    </v-col>
+
+    <v-col xs="12" cols='12' sm="6" md='3' lg='3' xl='3'>
+      <v-card class="pa-3 mx-auto" style="margin-top: 45px;" max-width='450'>
+
+        <v-row>
+          <v-col cols='5'>
+            <div class="text-start v-card--material__heading mb-n6 v-sheet theme--dark elevation-6 success pa-7"
+              style="width: 96px;top: -40px;position: relative;background-image: linear-gradient(to right, #f9d423 0%, #ff4e50 100%);">
+              <v-icon x-large dark>mdi-alert-circle-outline</v-icon>
+            </div>
+          </v-col>
+          <v-col cols='7'>
+            <v-card-subtitle style="color: grey;" class="pb-0 pa-0 mr-4 text-right"> 内存使用</v-card-subtitle>
+            <v-card-text class="text--primary text-h5 text-right">{[memory]} GB </v-card-text>
+          </v-col>
+        </v-row>
+        <v-card-actions></v-card-actions>
+      </v-card>
+    </v-col>
+  </v-row>
+
+  <v-card class="mx-auto pa-3" style="margin-top: 70px;">
+    <div class="text-start v-card--material__heading mb-n6 v-sheet theme--dark elevation-6 purple  pa-7"
+      style="width: 100%;top: -70px;position: relative;">
+      <div id="main" style="width: 100%;height:250px;"></div>
+    </div>
+    <div class="title font-weight-light mb-2">近七天访问人数</div>
+    <div class="subheading font-weight-light grey--text">Number of visitors in the last seven days
+ </div>
+  </v-card>
+
+  <v-row>
+    <v-col xs="12" cols='12' sm="12" md='6' lg='6' xl='6'>
+      <v-card class="mx-auto pa-3" max-width="900" style="margin-top: 50px;">
+        <div class="text-start v-card--material__heading mb-n6 v-sheet theme--dark elevation-6 blue  pa-7"
+          style="width: 100%;top: -40px;position: relative;">
+          <div class="display-2 font-weight-light"> 最近评论 </div>
+          <div class="subtitle-1 font-weight-light"> Recent comments </div>
+        </div>
+        <v-card-subtitle class="pb-0"></v-card-subtitle>
+        <v-simple-table>
+          <template v-slot:default>
+            <thead>
+              <tr>
+                <th class="text-left">回复内容</th>
+                <th class="text-left">回复时间</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in comments" :key="item.created">
+                <td>{[ item.text ]}</td>
+                <td>{[formatDate(item.created)]}</td>
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
+
+      </v-card>
+    </v-col>
+    <v-col xs="12" cols='12' sm="12" md='6' lg='6' xl='6'>
+      <v-card class="mx-auto pa-3" max-width="900" style="margin-top: 50px;">
+        <div class="text-start v-card--material__heading mb-n6 v-sheet theme--dark elevation-6 success  pa-7"
+          style="width: 100%;top: -40px;position: relative;">
+          <div class="display-2 font-weight-light"> 最近文章 </div>
+          <div class="subtitle-1 font-weight-light">Recent articles </div>
+        </div>
+        <v-card-subtitle class="pb-0"></v-card-subtitle>
+        <v-simple-table>
+          <template v-slot:default>
+            <thead>
+              <tr>
+                <th class="text-left">文章标题</th>
+                <th class="text-left">发布时间</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in articles" :key="item.created">
+                <td>{[ item.title ]}</td>
+                <td>{[formatDate(item.created) ]}</td>
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
+      </v-card>
+    </v-col>
+  </v-row>
+
+
+
+</v-container>
+{% endblock content %}
+
+{% block js %}
+<script src="https://unpkg.com/@antv/g2@4.1.19/dist/g2.min.js"></script>
+<script>
+  new Vue({
+    delimiters: ['{[', ']}'],
+    el: '#app',
+    vuetify: new Vuetify(),
+    data: () => ({
+      csrftoken: "{{csrf_token()}}",
+      memory: '',
+      disk: '',
+      comment:0,
+      comments:[],
+      articles:[],
+      views:0,
+      drawer: false,
+      desserts: [{
+          name: 'Frozen Yogurt',
+          calories: 159,
+        },
+        {
+          name: 'Ice cream sandwich',
+          calories: 237,
+        },
+        {
+          name: 'Honeycomb',
+          calories: 408,
+        },
+        {
+          name: 'Donut',
+          calories: 452,
+        },
+        {
+          name: 'KitKat',
+          calories: 518,
+        },
+        {
+          name: 'Honeycomb',
+          calories: 408,
+        },
+        {
+          name: 'Donut',
+          calories: 452,
+        },
+        {
+          name: 'KitKat',
+          calories: 518,
+        },
+      ]
+    }),
+
+    computed: {
+
+    },
+    mounted() {
+      
+      this.getData()
+    },
+    watch: {
+
+    },
+
+    created() {
+
+    },
+
+    methods: {
+      getData() {
+        axios.post('{{url_for("admin.blog_dashboard")}}', {}, {
+          headers: {
+            'X-CSRFToken': this.csrftoken,
+          },
+        }).then(res => {
+          console.log(res);
+          this.disk = res.data.data.disk,
+            this.memory = res.data.data.memory
+            this.comment= res.data.data.comment
+            this.comments = res.data.data.comments
+            this.articles = res.data.data.articles
+            this.views = res.data.data.views
+            this.g2(res.data.data.timeData)
+        });
+      },
+      // 这是一个定时器
+      formatDate(date) {
+        return moment(date).format('YYYY-M-D H:mm:ss')
+      },
+      g2(timeData) {
+
+        var chart = new G2.Chart({
+          container: 'main',
+          autoFit: true,
+          height: 400,
+          padding: [20, 0, 35, 30]
+        });
+        const data = timeData
+        chart.data(data);
+        chart.scale('mun', {
+          nice: true,
+        });
+
+        chart.interaction('active-region');
+        chart.axis('day', {
+          tickLine: null,
+          line: {
+            style: {
+              stroke: 'white'
+            }
+          },
+          label: {
+            style: {
+              stroke: 'white',
+              fill: 'white'
+            }
+          }
+        });
+        chart.axis('mun', {
+          tickLine: null,
+          line: {
+            style: {
+              stroke: 'white'
+            }
+          },
+          label: {
+            style: {
+              stroke: 'white',
+              fill: 'white'
+            }
+          }
+        });
+        chart.tooltip({
+          showCrosshairs: true, // 展示 Tooltip 辅助线
+          shared: true,
+          title: (title, datum) => {
+            return title
+          },
+          customItems: (items) => {
+            items[0].name = '访问人次'
+            items[0].mappingData.color = '#9c27b0'
+            return items;
+          },
+        });
+        chart.line().position('day*mun').color('white');
+
+        chart.render();
+      }
+    },
+
+  })
+</script>
+{% endblock js %}

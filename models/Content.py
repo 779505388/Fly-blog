@@ -1,6 +1,6 @@
 from extension import db
-from datetime import datetime
-
+from datetime import datetime, timezone
+from jieba.analyse import ChineseAnalyzer
 
 article_tag = db.Table('article_tag',
                        db.Column('article_id', db.Integer, db.ForeignKey(
@@ -21,9 +21,9 @@ class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(200), unique=True, nullable=False)
     slug = db.Column(db.String(400), unique=True, nullable=False)
-    created = db.Column(db.DateTime, nullable=False, default=datetime.now)
-    modified = db.Column(db.DateTime, default=datetime.now,
-                         onupdate=datetime.now)
+    created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    modified = db.Column(db.DateTime, default=datetime.utcnow,
+                         onupdate=datetime.utcnow)
     user_id = db.Column(db.Integer,  nullable=False)
     url_en = db.Column(db.String(200), unique=True, nullable=False)
     image_url = db.Column(db.String(100), nullable=True)
@@ -32,7 +32,8 @@ class Article(db.Model):
     like_count = db.Column(db.Integer, nullable=True)
     views = db.Column(db.Integer, nullable=True)
     __searchable__ = ["text", "title",
-                      "slug", "url_en", "id"]
+                      "slug", "url_en"]
+    __msearch_analyzer__ = ChineseAnalyzer()
     tags = db.relationship('Tag', secondary=article_tag,
                            backref=db.backref('articles', lazy="dynamic"),
                            lazy="dynamic")
@@ -80,7 +81,7 @@ class Tag(db.Model):
     __tablename__ = 'tag'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(300), nullable=False)
-    created = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     def save(self):
         try:
@@ -100,6 +101,14 @@ class Tag(db.Model):
             print(error)
             return False
 
+    def updata(self):
+        try:
+            db.session.commit()
+            return True
+        except Exception as error:
+            print(error)
+            return False
+
     def to_json(self):
         dict = self.__dict__
         if "_sa_instance_state" in dict:
@@ -111,7 +120,7 @@ class Category(db.Model):
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(300), nullable=False)
-    created = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     def save(self):
         try:

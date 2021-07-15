@@ -27,7 +27,7 @@
         <div class="panel-main__content">
 
           <a href="{{url_for('article.home')}}" title="前往 博客首页！"><img
-              src="https://fdn.geekzu.org/avatar/4c2438980628fb7f544281db606d34b0?size=200" width="150"
+              src="{{getInfo().blogConfig.AVATAR}}{{getInfo().other.email}}?size=200" width="150"
               alt="Noisky logo" class="panel-cover__logo logo"></a>
           <h1 class="panel-cover__title panel-title"><a href="{{url_for('article.home')}}"
               title="link to homepage for noisky">关于</a></h1>
@@ -40,7 +40,7 @@
           <p class="panel-cover__description">欢迎来到我的个人世界!</p>
 
 
-          <p class="footer">关于我 © 2019 | Power by 404.life
+          <p class="footer">关于我 © 2021 | Power by 404.life
           </p>
 
           <div class="navigation-wrapper">

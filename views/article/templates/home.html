@@ -9,9 +9,26 @@
 {% endblock css %}
 
 
+{% block search %} 
+<li class="mdui-list-item mdui-ripple" >
+  <i class="mdui-list-item-icon mdui-icon material-icons">search</i>
+  <input id="search" class="mdui-textfield-input" type="text" placeholder="    搜索" />
+</li>
+{% endblock search %}
+
+{% block github %}
+{% if page==1%}
+<div class="mdui-card"  style="margin-top:45px;background-image: linear-gradient(120deg, #89f7fe 0%, #66a6ff 100%);">
+  <div style="text-align: center;">
+    <i style="margin-top: 25px;margin-bottom: 20px;" class="fa fa-github  fa-5x"
+  aria-hidden="true"></i>
+  </div>
+  <div class=""  id="github_container"></div>
+</div>
+{% endif %}
+{% endblock github %}
 
 {% block content %}
-
 {% for content in contents %}
 
 
@@ -25,14 +42,14 @@
     <div class="mdui-card-media-covered">
       <div class="mdui-card-primary">
         <div class="mdui-card-primary-title">{{content.title}}</div>
-        <div class="mdui-card-primary-subtitle">{{content.slug}}</div>
       </div>
     </div>
     </a>
   </div>
+  <div class="mdui-card-content" style="color: rgb(143, 143, 143);">{{content.slug}}</div>
   <div class="mdui-card-actions">
-    <button class="mdui-btn mdui-ripple" disabled><i class="mdui-icon material-icons">access_time</i>{{content.created}}</button>
-    <a class=" mdui-ripple a-category" ">{{content.category}}</a>
+    <button class="mdui-btn mdui-ripple" style="color: rgb(143, 143, 143);" disabled>{{moment(content.created).format('YYYY-M-D, H:mm')}}</button>
+    <a style="text-decoration: none;" href="{{url_for('article.category',category=content.category)}}" class=" mdui-ripple a-category" ">{{content.category}}</a>
         <a href="{{url_for('article.post',url=content.url_en)}}" class=" mdui-btn mdui-ripple mdui-ripple read-more-btn ">阅读更多</a>
   </div>
     </div>
@@ -49,5 +66,5 @@
 
 
 {% block js %}
-
+<script src="{{url_for('.static',filename='js/githubcalendar.js')}}"></script>
 {% endblock js %}

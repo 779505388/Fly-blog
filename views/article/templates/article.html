@@ -6,6 +6,8 @@
 
 
 {% block css %}
+<meta name="keywords" content="{% for tag in content.tags %}{{tag.name}},{% endfor %}">
+<meta name="description" content="{{content.slug}}">
 <link rel="stylesheet" href="{{url_for('.static',filename='css/article.css')}}">
 <link rel="stylesheet" href="https://unpkg.com/editor.md@1.5.0/css/editormd.min.css">
 {% endblock css %}
@@ -32,9 +34,9 @@
     </div>
     <!-- 卡片头部，包含头像、标题、副标题 -->
     <div class="mdui-card-header">
-      <img class="mdui-card-header-avatar" src="{{getInfo().blogConfig.AVATAR}}4c2438980628fb7f544281db606d34b0" />
+      <img class="mdui-card-header-avatar" src="{{getInfo().blogConfig.AVATAR}}{{getInfo().other.email}}" />
       <div class="mdui-card-header-title">山中客</div>
-      <div class="mdui-card-header-subtitle">发表时间：{{content.created|string()|truncate(13,end="")}}</div>
+      <div class="mdui-card-header-subtitle">发表时间：{{moment(content.created).format('YYYY-M-D，H:mm') }}</div>
       <div class="mdui-card-menu">
         <button id="share" class="mdui-btn mdui-btn-icon "><i class="mdui-icon material-icons ">share</i></button>
       </div>
@@ -82,7 +84,7 @@
             <input class="mdui-col-lg-4 mdui-col-md-4 mdui-col-sm-4 mdui-col-xs-12 vinput" name="mail" placeholder="邮箱"
               class="vmail vinput" type="email">
             <input class="mdui-col-lg-4 mdui-col-md-4 mdui-col-sm-4 mdui-col-xs-12 vinput" name="link"
-              placeholder="网址(http://)" class="vlink vinput" type="text">
+              placeholder="网址(https://)" class="vlink vinput" type="text">
             <input style="display: none;" name="parent" type="text">
             <input style="display: none;" name="articleId" value="{{content.id}}" type="text">
             <input style="display: none;" name="parent_uuid" type="text">
@@ -122,7 +124,7 @@
             <div class="vhead"><a class="vnick" rel="nofollow" href="{{comment.link}}"
                 target="_blank">{{comment.nick}}</a>
               <span class="vsys">{{comment.agent}}</span> <span class="vsys">Windows 10.0</span></div>
-            <div class="vmeta"><span class="vtime">{{comment.created}}</span><span class="vat">回复</span></div>
+            <div class="vmeta"><span class="vtime">{{moment(comment.created).format('YYYY-M-D, H:mm') }}</span><span class="vat">回复</span></div>
             <div class="vcontent">
               <p>
                 {{comment.text}}
@@ -132,12 +134,10 @@
             <div class="vquote">
               {% for i in comment.c_comment_data %}
               <div class="vcard" id="{{i.uuid}}"><img class="vimg"
-                  src="https://gravatar.loli.net/avatar/{{i.hash_email}}">
+                  src="{{getInfo().blogConfig.AVATAR}}{{i.hash_email}}">
                 <div class="vh">
                   <div class="vhead">
                     <a class="vnick" rel="nofollow" href="{{i.link}}">{{i.nick}}</a>
-                    <span class="vsys">Edge 87.0.664.75</span>
-                    <span class="vsys">Windows
                       10.0</span>
                   </div>
                   <div class="vmeta">
@@ -281,7 +281,8 @@ $('.vsubmit').click(function () {
 })
 
 $('#captcha').click(()=>{
-    $('#captcha').attr("src", '/api/v1/captcha/');
+  console.log('sdsad');
+    $('#captcha').attr("src", '/api/v1/captcha/?' + new Date().getTime());
 })
 
 $('#review-btn').click(()=>{

@@ -79,7 +79,7 @@ $('.vsubmit').click(function () {
 })
 
 $('#captcha').click(()=>{
-    $('#captcha').attr("src", '/api/v1/captcha/');
+    $('#captcha').attr("src", '/api/v1/captcha/?'+new Date().getTime());
 })
 
 $('#review-btn').click(()=>{

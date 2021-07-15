@@ -24,7 +24,7 @@ class User(db.Model):
         self.mail_hash = Md5(mail)
         self.mail = mail
         self.username = username
-        self .password = bcrypt.generate_password_hash(password)
+        self.password = bcrypt.generate_password_hash(password)
 
     def check_password(self, password):
         print(password)
@@ -33,6 +33,14 @@ class User(db.Model):
     def save_on(self):
         try:
             db.session.add(self)
+            db.session.commit()
+            return True
+        except Exception as error:
+            print(error)
+            return False
+
+    def updata(self):
+        try:
             db.session.commit()
             return True
         except Exception as error:
