@@ -110,35 +110,39 @@
 
       },
       deleteArticle(item) {
-        axios
-          .delete("{{url_for('admin.blog_list')}}", {
-            data: {
-              "article": [item]
-            },
-            headers: {
-              'X-CSRFToken': this.csrftoken,
-            }
+        console.log(item);
+        var flag = confirm('确定删除本篇文章？')
+        if (flag) {
+          axios
+            .delete("{{url_for('admin.blog_list')}}", {
+              data: {
+                "article": [item]
+              },
+              headers: {
+                'X-CSRFToken': this.csrftoken,
+              }
 
-          })
-          .then(response => {
-            if (response.data.status === "success") {
-              this.artcleList = response.data.data
-              this.snackbar = true
-              this.snackbarColor = response.data.status
-              this.snackbarText = response.data.message
-            } else {
-              this.snackbar = true
-              this.snackbarColor = response.data.status
-              this.snackbarText = response.data.message
-            }
-          })
-          .catch(function (error) { // 请求失败处理
+            })
+            .then(response => {
+              if (response.data.status === "success") {
+                this.artcleList = response.data.data
+                this.snackbar = true
+                this.snackbarColor = response.data.status
+                this.snackbarText = response.data.message
+              } else {
+                this.snackbar = true
+                this.snackbarColor = response.data.status
+                this.snackbarText = response.data.message
+              }
+            })
+            .catch(function (error) { // 请求失败处理
 
-            this.snackbar = true
-            this.snackbarColor = 'error'
-            this.snackbarText = error
-            console.log(error);
-          });
+              this.snackbar = true
+              this.snackbarColor = 'error'
+              this.snackbarText = error
+              console.log(error);
+            });
+        }
         this.deleteList = []
       }
     }

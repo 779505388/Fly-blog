@@ -34,7 +34,7 @@
                                 <v-list-item-content>
                                     <v-text-field v-model.trim='email' :rules="[rules.required, rules.email]"
                                         type='email' label="邮箱" outlined dense></v-text-field>
-                                    <v-text-field v-model.trim='password' :rules="[rules.required]"
+                                    <v-text-field v-model.trim='password' :rules="[rules.required]" label="密码"
                                         :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
                                         :type="showPassword ? 'text' : 'password'"
                                         @click:append="showPassword = !showPassword" outlined dense></v-text-field>

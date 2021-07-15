@@ -5,7 +5,7 @@ from models.Content import Article, Tag, Category
 from models.User import User
 from models.Commet import Comment
 from models.Other import PyLink
-from datetime import datetime, time,timezone
+from datetime import datetime, time, timezone
 from tool import login_required, sys_name, get_month_range, get_month_days, Md5
 from extension import scheduler, search, csrf
 import requests
@@ -358,36 +358,31 @@ def comment():
     return 'aa'
 
 
-@article.route("/interval/")
-# 站点地图半小时刷新
-def interval_job():
-    contents = Article.query.all()
-    header = '<?xml version="1.0" encoding="UTF-8"?> ' + '\n' + \
-        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
-    footer = '</urlset>'
-    data_contents = ""
-    if sys_name() == "Windows":
-        path = r".\views\article\static\sitemap.xml"
-    else:
-        path = "./views/article/static/sitemap.xml"
-    with open(path, "w+") as f:
-        for content in contents:
-            data = "<url>\n" + "<loc>http://{}/article/{}</loc>".format(
-                "www.gynl.xyz", content.url_en) + "\n" + \
-                "<lastmod>{}</lastmod>".format(content.modified)+"\n" +\
-                "<priority>0.8</priority>" + "\n" + "</url>" + "\n"
-            data_contents = data_contents + data
-        xml_contents = header + "\n" + data_contents + "\n" + footer
-        f.write(xml_contents)
-
-    return "ok"
-
 
 @scheduler.task('interval', id='do_job_1', seconds=1800)
-def job1():
-    date = requests.get("http://127.0.0.1:5000/interval/")
-    print(date)
-    # 循环任务，每30min秒循环一次
+# 站点地图更新任务，30min一次
+def siteMap():
+    with scheduler.app.app_context():
+        info = current_app.config.get("INFO")
+        contents = Article.query.all()
+        header = '<?xml version="1.0" encoding="UTF-8"?> ' + '\n' + \
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+        footer = '</urlset>'
+        data_contents = ""
+        if sys_name() == "Windows":
+            path = r".\views\article\static\sitemap.xml"
+        else:
+            path = "./views/article/static/sitemap.xml"
+        with open(path, "w+") as f:
+            for content in contents:
+                data = "<url>\n" + "<loc>{}/article/{}</loc>".format(
+                    info.get('blogConfig').get('domainName'), content.url_en) + "\n" + \
+                    "<lastmod>{}</lastmod>".format(content.modified)+"\n" +\
+                    "<priority>0.8</priority>" + "\n" + "</url>" + "\n"
+                data_contents = data_contents + data
+            xml_contents = header + "\n" + data_contents + "\n" + footer
+            f.write(xml_contents)
+            current_app.logger.info("更新站点地图任务完成")
 
 
 @article.route("/search/<keyword>", methods=["GET", "POST"])
@@ -401,13 +396,13 @@ def search(keyword):
         start = (page-1)*page_content
         end = start + page_content
         pagination = Article.query.msearch(keyword).order_by(Article.created.desc()).paginate(
-        page, per_page=page_content, error_out=False)
+            page, per_page=page_content, error_out=False)
         contents = Article.query.msearch(keyword).order_by(
             Article.created.desc()).slice(start, end)
-        
         articles = []
         for c in contents:
-            category = c.category[0].name if len(c.category.all()) > 0 else '未分类'
+            category = c.category[0].name if len(
+                c.category.all()) > 0 else '未分类'
             data = {'category': category, "url_en": c.url_en,
                     'created': c.created, 'slug': c.slug, 'title': c.title}
             articles.append(data)
