@@ -1,7 +1,6 @@
-
 # Fly-blog
 
-基于Flask + Vue 构建的博客应用
+基于 Flask + Vue 构建的博客应用
 
 web: [光阴逆旅](https://flask.gynl.xyz/)
 
@@ -17,15 +16,15 @@ web: [光阴逆旅](https://flask.gynl.xyz/)
 
 ## 安装相关包
 
-` pip3 install -r requirements.txt `
+`pip3 install -r requirements.txt`
 
-## 配置config 文件夹
+## 配置 config 文件夹
 
 修改 config.py ,config.json
 
 ## 配置数据库 （Mysql）
 
-``` python
+```python
 
 python3 manage.py init
 python3 manage.py migrate
@@ -35,17 +34,13 @@ python3 manage.py upgrade
 
 ## 运行
 
-` python3 serve.py `
+`python3 serve.py`
 
 ## 注册账户
 
-
- 
-
-``` javascript
+```javascript
 //注册完成后在配置中关闭注册！！
 
 访问 ：ip:port/register
 
 ```
-
