@@ -48,7 +48,7 @@
   </div>
   <div class="mdui-card-content" style="color: rgb(143, 143, 143);">{{content.slug}}</div>
   <div class="mdui-card-actions">
-    <button class="mdui-btn mdui-ripple" style="color: rgb(143, 143, 143);" disabled>{{moment(content.created).format('YYYY-M-D, H:mm')}}</button>
+    <button class="mdui-btn mdui-ripple" style="color: rgb(143, 143, 143);" disabled>{{moment(content.created).format('YYYY-M-D  H:mm')}}</button>
     <a style="text-decoration: none;" href="{{url_for('article.category',category=content.category)}}" class=" mdui-ripple a-category" ">{{content.category}}</a>
         <a href="{{url_for('article.post',url=content.url_en)}}" class=" mdui-btn mdui-ripple mdui-ripple read-more-btn ">阅读更多</a>
   </div>

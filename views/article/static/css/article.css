@@ -217,6 +217,7 @@ article#comments #valine_container>i {
 #valine_container .vcards .vhead a.vnick {
     color: #ff9800;
     font-weight: bold;
+    text-decoration: none;
 }
 
 #valine_container .vcards .vhead a.vnick:hover {
@@ -280,6 +281,7 @@ article#comments #valine_container>i {
     color: #2196f3;
     line-height: inherit;
     transition: all 0.28s ease;
+    text-decoration: none;
     -moz-transition: all 0.28s ease;
     -webkit-transition: all 0.28s ease;
     -o-transition: all 0.28s ease;

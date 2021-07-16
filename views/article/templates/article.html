@@ -36,7 +36,7 @@
     <div class="mdui-card-header">
       <img class="mdui-card-header-avatar" src="{{getInfo().blogConfig.AVATAR}}{{getInfo().other.email}}" />
       <div class="mdui-card-header-title">山中客</div>
-      <div class="mdui-card-header-subtitle">发表时间：{{moment(content.created).format('YYYY-M-D，H:mm') }}</div>
+      <div class="mdui-card-header-subtitle">发表时间：{{moment(content.created).format('YYYY-M-D  H:mm') }}</div>
       <div class="mdui-card-menu">
         <button id="share" class="mdui-btn mdui-btn-icon "><i class="mdui-icon material-icons ">share</i></button>
       </div>
@@ -116,15 +116,21 @@
       <div class="vload-top text-center" style="display:none;"><i class="vspinner" style="width:30px;height:30px;"></i>
       </div>
       <div class="vcards">
-
         {% for comment in comment_data %}
-        <div class="vcard" id="{{comment.uuid}}"><img class="vimg"
+        <div class="vcard" ">
+          <img class="vimg"
             src="{{getInfo().blogConfig.AVATAR}}{{comment.hash_email}}">
           <div class="vh">
-            <div class="vhead"><a class="vnick" rel="nofollow" href="{{comment.link}}"
-                target="_blank">{{comment.nick}}</a>
-              <span class="vsys">{{comment.agent}}</span> <span class="vsys">Windows 10.0</span></div>
-            <div class="vmeta"><span class="vtime">{{moment(comment.created).format('YYYY-M-D, H:mm') }}</span><span class="vat">回复</span></div>
+            <div class="vhead">
+              <a class="vnick" id="{{comment.uuid}}" rel="nofollow" href="{{comment.link}}"
+                target="_blank">{{comment.nick}}
+              </a>
+              <span class="vsys">{{comment.agent}}</span>
+            </div>
+            <div class="vmeta">
+              <span class="vtime">{{moment(comment.created).format('YYYY-M-D  H:mm')}}</span>
+              <span class="vat" >回复</span>
+            </div>
             <div class="vcontent">
               <p>
                 {{comment.text}}
@@ -133,15 +139,14 @@
             <div class="vreply-wrapper"></div>
             <div class="vquote">
               {% for i in comment.c_comment_data %}
-              <div class="vcard" id="{{i.uuid}}"><img class="vimg"
-                  src="{{getInfo().blogConfig.AVATAR}}{{i.hash_email}}">
+              <div class="vcard" id="{{i.uuid}}"><img class="vimg" src="{{getInfo().blogConfig.AVATAR}}{{i.hash_email}}">
                 <div class="vh">
-                  <div class="vhead">
-                    <a class="vnick" rel="nofollow" href="{{i.link}}">{{i.nick}}</a>
-                      10.0</span>
-                  </div>
+                  <div class="vhead"><a class="vnick" rel="nofollow" href="{{comment.link}}"
+                    target="_blank">{{i.nick}}</a>
+                  <span class="vsys">{{i.agent}}</span>
+                </div>
                   <div class="vmeta">
-                    <span class="vtime">{{i.created}}</span>
+                    <span class="vtime">{{moment(i.created).format('YYYY-M-D  H:mm')}}</span>
                     <span class="vat">回复</span>
                   </div>
                   <div class="vcontent">
@@ -154,7 +159,7 @@
                 </div>
               </div>
               {% endfor %}
-
+  
             </div>
           </div>
         </div>
@@ -185,34 +190,38 @@
     $('input[name="nick"]').val(localStorage.getItem('nick'))
     $('input[name="mail"]').val(localStorage.getItem('mail'))
     $('input[name="link"]').val(localStorage.getItem('link'))
-      var Editor = editormd.markdownToHTML("editormd-preview-container", {
+    var Editor = editormd.markdownToHTML("editormd-preview-container", {
       tocm: true, // Using [TOCM]
       tex: true, // 开启科学公式TeX语言支持，默认关闭
       flowChart: true, // 开启流程图支持，默认关闭
       sequenceDiagram: true,
       htmlDecode: "style,script,iframe",
       taskList: true,
-  })
- 
-  })
+    })
 
-  
+  })
 </script>
 <script>
- 
 $('.vat').click(function () {
     let comment = ($(this).parent().parent().children('.vreply-wrapper')[0]);
     $(comment).append($('.vwrap')[0])
     let nick = ($(this).parent().parent().children('.vhead').children('.vnick').html());
+    let uuid = $(this).parent().parent().children('.vhead').children('.vnick').attr('id')
+    console.log(uuid);
+    if (!uuid){
+        uuid = $(this).parent().parent().parent().parent().parent().children('.vhead').children('.vnick').attr('id')
+    }
     $('#veditor').attr('placeholder', '@ ' + nick);
     $('input[name="parent"]').val(null)
     $('input[name="captcha"]').val(null)
     $('#veditor').val(null)
-    $('input[name="parent_uuid"]').val($(this).parent().parent().parent().attr('id'));
-    $('input[name="parent_name"]').val($(this).parent().parent().children('.vhead').children('.vnick').html());
+    $('input[name="parent_uuid"]').val(uuid);
+    console.log(uuid);
+    $('input[name="parent_name"]').val(nick);
 })
 
-$('.vsubmit').click(function () {
+
+  $('.vsubmit').click(function () {
     console.log('asdsa');
     let type = 'review'
     let parentId = $('input[name="parent"]').val()
@@ -225,67 +234,67 @@ $('.vsubmit').click(function () {
     let parent_name = $('input[name="parent_name"]').val()
     let articleId = $('input[name="articleId"]').val()
     if (!nick) {
-        mdui.snackbar({
-            message: '昵称为空',
-            position: 'right-top'
-        });
-        return false
+      mdui.snackbar({
+        message: '昵称为空',
+        position: 'right-top'
+      });
+      return false
     }
     if (!mail) {
-        mdui.snackbar({
-            message: '邮箱为空',
-            position: 'right-top'
-        });
-        return false
+      mdui.snackbar({
+        message: '邮箱为空',
+        position: 'right-top'
+      });
+      return false
     }
     if (!text) {
-        mdui.snackbar({
-            message: '回复内容为空',
-            position: 'right-top'
-        });
-        return false
+      mdui.snackbar({
+        message: '回复内容为空',
+        position: 'right-top'
+      });
+      return false
     }
     if (!captcha) {
-        mdui.snackbar({
-            message: '验证码为空',
-            position: 'right-top'
-        });
-        return false
+      mdui.snackbar({
+        message: '验证码为空',
+        position: 'right-top'
+      });
+      return false
     }
     let data = {
-        nick,
-        mail,
-        link,
-        text,
-        captcha,
-        type,
-        parentId,
-        articleId,
-        parent_name,
-        parent_uuid
+      nick,
+      mail,
+      link,
+      text,
+      captcha,
+      type,
+      parentId,
+      articleId,
+      parent_name,
+      parent_uuid
     }
 
-    $.post("/comment/", data, function (data, status)  {
-        if(data.status ==='success') {
-            localStorage.setItem('nick', nick);
-            localStorage.setItem('mail', mail);
-            localStorage.setItem('link', link);
-            location.reload();
-        }else{
-            mdui.snackbar({
-                message: data.message,
-                position: 'right-top'
-            })
-        }
+    $.post("/comment/", data, function (data, status) {
+      if (data.status === 'success') {
+        localStorage.setItem('nick', nick);
+        localStorage.setItem('mail', mail);
+        localStorage.setItem('link', link);
+        location.reload();
+      } else {
+        mdui.snackbar({
+          message: data.message,
+          position: 'right-top'
+        })
+      }
     });
-})
+  })
 
-$('#captcha').click(()=>{
-  console.log('sdsad');
+  $('#captcha').click(() => {
+    console.log('sdsad');
     $('#captcha').attr("src", '/api/v1/captcha/?' + new Date().getTime());
-})
+  })
 
-$('#review-btn').click(()=>{
+  $('#review-btn').click(() => {
     $('.vpanel')[0].append($('.vwrap')[0])
     $('#veditor').attr('placeholder', '想对我说些什么呢');
     $('input[name="parent"]').val(null)
@@ -293,7 +302,7 @@ $('#review-btn').click(()=>{
     $('#veditor').val(null)
     $('input[name="parent_uuid"]').val(null);
     $('input[name="parent_name"]').val(null);
-})
+  })
 </script>
 
 

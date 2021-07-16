@@ -3,13 +3,18 @@ $('.vat').click(function () {
     let comment = ($(this).parent().parent().children('.vreply-wrapper')[0]);
     $(comment).append($('.vwrap')[0])
     let nick = ($(this).parent().parent().children('.vhead').children('.vnick').html());
+    let uuid = $(this).parent().parent().children('.vhead').children('.vnick').attr('id')
+    if (!uuid){
+        uuid = $(this).parent().parent().parent().parent().parent().children('.vhead').children('.vnick').attr('id')
+    }
     $('#veditor').attr('placeholder', '@ ' + nick);
     $('input[name="parent"]').val(null)
     $('input[name="captcha"]').val(null)
     $('#veditor').val(null)
-    $('input[name="parent_uuid"]').val($(this).parent().parent().parent().attr('id'));
-    $('input[name="parent_name"]').val($(this).parent().parent().children('.vhead').children('.vnick').html());
+    $('input[name="parent_uuid"]').val(uuid);
+    $('input[name="parent_name"]').val(nick);
 })
+
 
 $('.vsubmit').click(function () {
     let type = 'message'

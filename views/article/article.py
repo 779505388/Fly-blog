@@ -1,6 +1,7 @@
 from flask import url_for, render_template, Blueprint, request, jsonify, redirect,\
     session, current_app, send_from_directory, make_response
 from flask_paginate import Pagination
+from sqlalchemy import not_, or_
 from models.Content import Article, Tag, Category
 from models.User import User
 from models.Commet import Comment
@@ -8,8 +9,6 @@ from models.Other import PyLink
 from datetime import datetime, time, timezone
 from tool import login_required, sys_name, get_month_range, get_month_days, Md5
 from extension import scheduler, search, csrf
-import requests
-import os
 from datetime import timedelta
 article = Blueprint("article", __name__,
                     template_folder="../../views/article/templates/",
@@ -94,6 +93,7 @@ def post(url):
                 'parent_id': comment.id,
                 'c_comment_data': c_comment_data
             })
+        print(comment_data)
         return render_template("article.html", **locals())
     else:
         articleList = [i.id for i in posts]
@@ -139,7 +139,6 @@ def post(url):
                 'parent_id': comment.id,
                 'c_comment_data': c_comment_data
             })
-
         return render_template("article.html", **locals())
 
 
@@ -253,7 +252,7 @@ def sitemap():
 # 404错误
 def server_404(e):
     print(e)
-    current_app.logger.exception("404错误:------------------------",e)
+    current_app.logger.exception("404错误:------------------------", e)
     return render_template("404.html"), 404
 
 
@@ -357,7 +356,6 @@ def comment():
             return {'status': 'error', 'message': '验证码错误'}
 
     return 'aa'
-
 
 
 @scheduler.task('interval', id='do_job_1', seconds=1800)
@@ -468,7 +466,8 @@ def message():
     # 留言
     info = current_app.config.get("INFO")
     comments = Comment.query.order_by(
-        Comment.created.desc()).filter_by(comment_type='message').all()
+        Comment.created.desc()).filter_by(comment_type='message').filter(
+            not_( Comment.parent_name != None)).all()
     comment_data = []
     comment_mun = 0
     for comment in comments:

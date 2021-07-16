@@ -197,6 +197,7 @@
 #valine_container .vcards .vhead a.vnick {
     color: #ff9800;
     font-weight: bold;
+    text-decoration: none;
 }
 
 #valine_container .vcards .vhead a.vnick:hover {
@@ -257,6 +258,7 @@
 }
 
 #valine_container .vcards .vcontent a {
+    text-decoration: none;
     color: #2196f3;
     line-height: inherit;
     transition: all 0.28s ease;
@@ -267,7 +269,7 @@
 
 #valine_container .vcards .vcontent a:hover {
     color: #ff5722;
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 #valine_container .vcards .vcontent p {

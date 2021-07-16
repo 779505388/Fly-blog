@@ -128,8 +128,8 @@
             <img id="captcha" style="float: left;height: 36px;margin-top: 5px;cursor: pointer;" src="/api/v1/captcha/"
               alt="验证图片" srcset="">
           </div>
-          <input class="mdui-col-lg-4 mdui-col-md-4 mdui-col-sm-4 mdui-col-xs-6 vinput" name="captcha"
-            placeholder="验证码" style="margin-top: 5px;" class="vnick vinput" type="text">
+          <input class="mdui-col-lg-4 mdui-col-md-4 mdui-col-sm-4 mdui-col-xs-6 vinput" name="captcha" placeholder="验证码"
+            style="margin-top: 5px;" class="vnick vinput" type="text">
           <div class="vcol vcol-70 text-right mdui-col-lg-4 mdui-col-md-4 mdui-col-sm-4 mdui-col-xs-12"><button
               type="button" title="Cmd|Ctrl+Enter" style="margin-top: 5px;"
               class="vsubmit vbtn mdui-float-right mdui-btn-block">提交</button></div>
@@ -143,13 +143,20 @@
     <div class="vcards">
 
       {% for comment in comment_data %}
-      <div class="vcard" id="{{comment.uuid}}"><img class="vimg"
+      <div class="vcard" ">
+        <img class="vimg"
           src="{{getInfo().blogConfig.AVATAR}}{{comment.hash_email}}">
         <div class="vh">
-          <div class="vhead"><a class="vnick" rel="nofollow" href="{{comment.link}}"
-              target="_blank">{{comment.nick}}</a>
-            <span class="vsys">{{comment.agent}}</span> <span class="vsys">Windows 10.0</span></div>
-          <div class="vmeta"><span class="vtime">{{comment.created}}</span><span class="vat">回复</span></div>
+          <div class="vhead">
+            <a class="vnick" id="{{comment.uuid}}" rel="nofollow" href="{{comment.link}}"
+              target="_blank">{{comment.nick}}
+            </a>
+            <span class="vsys">{{comment.agent}}</span>
+          </div>
+          <div class="vmeta">
+            <span class="vtime">{{moment(comment.created).format('YYYY-M-D  H:mm')}}</span>
+            <span class="vat" >回复</span>
+          </div>
           <div class="vcontent">
             <p>
               {{comment.text}}
@@ -158,11 +165,14 @@
           <div class="vreply-wrapper"></div>
           <div class="vquote">
             {% for i in comment.c_comment_data %}
-            <div class="vcard" id="{{i.uuid}}"><img class="vimg"
-                src="{{getInfo().blogConfig.AVATAR}}{{i.hash_email}}">
+            <div class="vcard" id="{{i.uuid}}"><img class="vimg" src="{{getInfo().blogConfig.AVATAR}}{{i.hash_email}}">
               <div class="vh">
+                <div class="vhead"><a class="vnick" rel="nofollow" href="{{comment.link}}"
+                  target="_blank">{{i.nick}}</a>
+                <span class="vsys">{{i.agent}}</span>
+              </div>
                 <div class="vmeta">
-                  <span class="vtime">{{i.created}}</span>
+                  <span class="vtime">{{moment(i.created).format('YYYY-M-D  H:mm')}}</span>
                   <span class="vat">回复</span>
                 </div>
                 <div class="vcontent">
@@ -184,7 +194,7 @@
     <div class="vload-bottom text-center" style="display: none;"><i class="vspinner"
         style="width:30px;height:30px;"></i></div>
     <div class="vempty" style="display:none;"></div>
-    <div class="vpower txt-right">仿 <a href="https://valine.js.org" target="_blank">Valine</a><br>    </div>
+    <div class="vpower txt-right">仿 <a href="https://valine.js.org" target="_blank">Valine</a><br> </div>
   </div>
 </div>
 
@@ -194,7 +204,7 @@
 {% block js %}
 <script src="{{url_for('.static',filename='js/message.js')}}"></script>
 <script>
-   $(document).ready(()=>{
+  $(document).ready(() => {
     $('input[name="nick"]').val(localStorage.getItem('nick'))
     $('input[name="mail"]').val(localStorage.getItem('mail'))
     $('input[name="link"]').val(localStorage.getItem('link'))
