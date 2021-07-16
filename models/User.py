@@ -1,6 +1,7 @@
 from extension import db
 from extension import bcrypt
 from tool import Md5
+from flask import current_app
 
 
 class User(db.Model):
@@ -30,19 +31,31 @@ class User(db.Model):
         print(password)
         return bcrypt.check_password_hash(self.password, password)
 
-    def save_on(self):
+    def save(self):
         try:
             db.session.add(self)
             db.session.commit()
-            return True
+            current_app.logger.info('用户保存成功')
+            return {'status': True}
         except Exception as error:
-            print(error)
-            return False
+            current_app.logger.error('用户保存错误{}：'.format(error))
+            return {'status': False, "message": error}
 
     def updata(self):
         try:
             db.session.commit()
-            return True
+            current_app.logger.info('用户更新成功')
+            return {'status': True}
         except Exception as error:
-            print(error)
-            return False
+            current_app.logger.error('用户更新错误{}：'.format(error))
+            return {'status': False, "message": error}
+
+    def delete(self):
+        try:
+            db.session.delete(self)
+            db.session.commit()
+            current_app.logger.info('用户删除成功')
+            return {'status': True}
+        except Exception as error:
+            current_app.logger.error('用户删除错误{}：'.format(error))
+            return {'status': False, "message": error}

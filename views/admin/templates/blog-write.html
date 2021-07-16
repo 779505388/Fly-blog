@@ -41,6 +41,16 @@
     </v-btn>
   </v-card-actions>
 </v-card>
+
+<v-snackbar v-model="snackbar" :timeout='3000' text right top :color='snackColor'>
+  {[ snackText ]}
+
+  <template v-slot:action="{ attrs }">
+    <v-btn color="blue" text v-bind="attrs" @click="snackbar = false">
+      Close
+    </v-btn>
+  </template>
+</v-snackbar>
 {% endblock content %}
 
 {% block js %}
@@ -65,7 +75,10 @@
       category: "",
       tags: [],
       template: '',
-      text: ''
+      text: '',
+      snackbar:false,
+      snackText:'',
+      snackColor:'',
     }),
 
     computed: {
@@ -83,6 +96,11 @@
     },
 
     methods: {
+      snackBar(text,color){
+       this.snackbar=!this.snackbar
+       this.snackText =text
+       this.snackColor=color
+     } ,
       putAricle() {
         axios.post('{{url_for("admin.blog_write")}}', {
           title: this.name,
@@ -99,7 +117,12 @@
           },
         }).then(res => {
           if (res.data.status ==='success'){
-            window.location.href ="{{url_for('article.home')}}"
+            this.snackBar(res.data.message,res.data.status)
+            setTimeout(()=>{
+              window.location.href ="{{url_for('article.home')}}"
+            },2000)
+          }else{
+            this.snackBar(res.data.message,res.data.status)
           }
         });
       },

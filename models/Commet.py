@@ -2,17 +2,12 @@ from extension import db
 from datetime import datetime, timezone
 import hashlib
 import uuid
-
+from flask import current_app
 
 def Md5(email):
     md = hashlib.md5()  # 构造一个md5
     md.update(email.encode())
     return md.hexdigest()
-
-
-def utcTime():
-    '''返回utc时间'''
-    return datetime.utcnow
 
 
 class Comment(db.Model):
@@ -64,19 +59,30 @@ class Comment(db.Model):
         try:
             db.session.add(self)
             db.session.commit()
-            return True
+            current_app.logger.info('评论保存成功')
+            return {'status': True}
         except Exception as error:
-            print(error)
-            return False
+            current_app.logger.error('评论保存错误{}：'.format(error))
+            return {'status': False, "message": error}
 
     def delete(self):
         try:
             db.session.delete(self)
             db.session.commit()
-            return True
+            current_app.logger.info('评论删除成功')
+            return {'status': True}
         except Exception as error:
-            print(error)
-            return False
+            current_app.logger.error('评论删除错误{}：'.format(error))
+            return {'status': False, "message": error}
+
+    def updata(self):
+        try:
+            db.session.commit()
+            current_app.logger.info('评论更新成功')
+            return {'status': True}
+        except Exception as error:
+            current_app.logger.error('评论更新错误{}：'.format(error))
+            return {'status': False, "message": error}
 
     def to_json(self):
         dict = self.__dict__

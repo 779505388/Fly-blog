@@ -20,6 +20,7 @@ admin = Blueprint("admin", __name__,
 
 @admin.route("/admin/dashboard/", methods=['GET', "POST"])
 @login_required
+# 博客信息
 def blog_dashboard():
     if request.method == 'GET':
         return render_template("blog-dashboard.html")
@@ -55,11 +56,11 @@ def blog_dashboard():
                          'memory': data.get('memory_used')+'/'+data.get('memory_total'),
                          'comment': comment, 'comments': comments, 'articles': articles,
                          'views': view.views, 'timeData': views}})
-# 博客信息
 
 
 @admin.route("/admin/blog-write/", methods=["POST", "GET"])
 @login_required
+# 创建新文章
 def blog_write():
     if request.method == 'POST':
         data = request.get_json()
@@ -76,13 +77,11 @@ def blog_write():
                           image_url=image_url,
                           text=text, template=template
                           )
-        print(tags)
         for i in tags:
             blogTag = Tag().query.filter(Tag.name == i).first()
             if blogTag:
                 article.tags.append(blogTag)
                 db.session.add(blogTag)
-                print(blogTag)
             else:
                 blogTag = Tag(name=i)
                 article.tags.append(blogTag)
@@ -95,15 +94,13 @@ def blog_write():
             blogCategory = Category(name=post_type)
             article.category.append(blogCategory)
             db.session.add(blogCategory)
-        db.session.add(article)
-        db.session.commit()
-        # if content.save():
-        current_app.logger.info("发布文章成功")
-        return jsonify({'status': "success"})
+        save = article.save()
+        if save.get('status'):
+            return jsonify({'status': "success", 'message': '文章修改成功'})
+        else:
+            return jsonify({'status': "error", 'message':str(save.get('message'))})
     else:
         return render_template("blog-write.html", **locals())
-
-# 创建新文章
 
 
 @admin.route("/admin/blog-list/", methods=["GET", "POST", "DELETE"])
@@ -119,26 +116,22 @@ def blog_list():
         return jsonify(data_list)
     elif request.method == 'DELETE':
         data = request.get_json()
-        print(data)
         if len(data["article"]) != 0:
             for article_id in data["article"]:
-
                 content = Article.query.filter(
                     Article.id == article_id.get('id')).first()
-                print('eeeeeee', content)
-                if content.delete():
+                delete = content.delete()
+                if delete.get('status'):
                     content_list = Article.query.all()
                     data_list = []
                     for data in content_list:
                         data_list.append(data.to_json())
-                    current_app.logger.info("文章删除成功")
                     return jsonify({'status': "success",
                                     "message": ' 删除成功！', 'data': data_list})
                 else:
-                    return jsonify({'status': "error", "message": ' 删除错误！'})
+                    return jsonify({'status': "error", "message": str(delete.get("message"))})
 
         return jsonify({"ok": "ok"})
-# 文章列表
 
 
 @admin.route("/admin/blog-modify/<int:url>", methods=["GET", "POST", "PUT"])
@@ -158,7 +151,6 @@ def blog_modify(url):
         url_en = data.get("enUrl")
         image_url = data.get("img")
         template = data.get("template")
-        print(data)
         content = Article.query.filter_by(id=url).first()
         for tag in content.tags:
             content.tags.remove(tag)
@@ -184,20 +176,18 @@ def blog_modify(url):
             db.session.add(blogCategory)
         content.title = title
         content.slug = slug
-        # content.post_type = post_type
         content.text = text
         content.url_en = url_en
-        # content.tags = tags
         content.image_url = image_url
         content.template = template
-        if content.updata():
-            current_app.logger.info("文章修改成功")
+        updata = content.updata()
+        if updata.get('status'):
             return jsonify({'status': "success",
                             "message": ' 修改成功！'})
 
         else:
-            current_app.logger.info("文章修改失败")
-            return "错误", 302
+            return jsonify({'status': "error",
+                            "message": str(updata.get('message'))})
 
     elif request.method == "POST":
         content = Article.query.filter(
@@ -215,6 +205,7 @@ def blog_modify(url):
 
 @admin.route("/admin/blog-delete/", methods=["GET", "POST"])
 @login_required
+# 删除文章
 def blog_delete():
     if request.method == "GET":
         return redirect(url_for("admin.blog_list"))
@@ -224,16 +215,15 @@ def blog_delete():
             for article_id in data["article"]:
                 content = Article.query.filter(
                     Article.id == article_id).first()
-                if content.delete():
+                delete = content.delete()
+                if delete.get('status'):
                     print("ok")
             content_list = Article.query.all()
             data_list = []
             for data in content_list:
                 data_list.append(data.to_json())
-            current_app.logger.info("文章删除成功")
             return jsonify(data_list)
         return jsonify({"ok": "ok"})
-# 删除文章
 
 
 @admin.route("/admin/blog-set/", methods=["GET", "POST", "PUT"])
@@ -244,14 +234,12 @@ def blog_set():
         return render_template("blog-set.html")
     elif request.method == "POST":
         data = current_app.config["INFO"]
-        print(data)
         user = User.query.filter(User.id == session.get('user_id')).first()
         return jsonify({'data': data, 'username': user.username, 'email': user.mail})
     elif request.method == "PUT":
         data = request.get_json().get('data')
         info = current_app.config["INFO"]
         if request.get_json().get('type') == 'userInfo':
-            print(data)
             user = User.query.filter(User.id == session.get('user_id')).first()
             if data.get('oldPassword') and data.get('newPassword'):  # 新旧密码存在
                 if user.check_password(data.get('oldPassword')):
@@ -262,7 +250,8 @@ def blog_set():
                                     "message": ' 密码错误！'})
             user.username = data.get('username')
             user.mail = data.get('email')
-            if user.updata():
+            updata = user.updata()
+            if updata.get('status'):
                 info['other']['email'] = Md5(data.get('email'))
                 # 修改email的hash
                 from config.rw_json import write_json
@@ -271,14 +260,12 @@ def blog_set():
                                 "message": ' 修改用户信息成功！'})
             else:
                 return jsonify({'status': "error",
-                                "message": ' 修改失败！'})
+                                "message": str(updata.get('message'))})
         elif request.get_json().get('type') == 'blogConfig':
             from config.rw_json import write_json
             data = request.get_json().get('data').get('data')
             current_app.config["INFO"] = data
             write_json(current_app.config["INFO"])
-
-            current_app.logger.info("博客配置修改成功")
             return jsonify({'status': "success", "message": ' 修改用成功！'})
 
 
@@ -311,8 +298,8 @@ def blog_comment():
             comment = Comment.query.filter(
                 Comment.id == data.get("id")
             ).first()
-            print(comment)
-            if comment.delete():
+            delete = comment.delete()
+            if delete.get('status'):
                 status["success"] += 1
             else:
                 status["error"] += 1
@@ -327,11 +314,10 @@ def blog_comment():
                          "guest_name": comment.guest_name,
                          "post_id": comment.post_id,
                          "uuid": comment.uuid})
-        current_app.logger.info("评论删除成功")
         return jsonify({"data": data, "status": status})
 
 
-@admin.route('/admin/log/', methods=['GET', 'POST',"DELETE"])
+@admin.route('/admin/log/', methods=['GET', 'POST', "DELETE"])
 @login_required
 # 博客日志
 def blog_log():
@@ -374,15 +360,15 @@ def py_link_handle():
         blog_data = request.get_json()
         py = PyLink(name=blog_data.get('name'), link=blog_data.get('link'),
                     avatar=blog_data.get('avatar'), brief=blog_data.get('brief'))
-
-        if py.save():
+        save = py.save()
+        if save.get('status'):
             py_links = PyLink.query.all()
             data = []
             for i in py_links:
                 data.append(i.to_json())
             return jsonify({'data': data, 'message': 'success'})
         else:
-            return jsonify({'message': 'error'})
+            return jsonify({'message': str(save.get('message'))})
     elif request.method == "PUT":
         blog_data = request.get_json()
         py = PyLink.query.filter(PyLink.id == blog_data.get('id')).first()
@@ -390,26 +376,27 @@ def py_link_handle():
         py.link = blog_data.get('link')
         py.avatar = blog_data.get('avatar')
         py.brief = blog_data.get('brief')
-        try:
-            db.session.commit()
+        updata = py.updata()
+        if updata.get('status'):
             py_links = PyLink.query.all()
             data = []
             for i in py_links:
                 data.append(i.to_json())
             return jsonify({"data": data, 'message': 'success'})
-        except:
-            return jsonify({'message': "error"})
+        else:
+            return jsonify({'message': str(updata.get('message'))})
     elif request.method == "DELETE":
         blog_data = request.get_json()
         py = PyLink.query.filter(PyLink.id == blog_data.get('id')).first()
-        if py.delete():
+        delete = py.delete()
+        if delete.get('status'):
             py_links = PyLink.query.all()
             data = []
             for i in py_links:
                 data.append(i.to_json())
             return jsonify({'data': data, 'message': 'success'})
         else:
-            return jsonify({'message': 'error'})
+            return jsonify({'message': str(delete.get('message'))})
 
 
 @admin.route('/admin/category/')
@@ -434,19 +421,21 @@ def blog_category_handle():
         return jsonify(categorys)
     elif request.method == "POST":
         category = Category(name=request.get_json().get('category'))
-        db.session.add(category)
-        db.session.commit()
-        categoryData = Category.query.all()
-        categorys = []
-        for i in categoryData:
-            categorys.append({'id': i.id, 'name': i.name})
-        return jsonify(categorys)
+        save = category.save()
+        if save.get('status'):
+            categoryData = Category.query.all()
+            categorys = []
+            for i in categoryData:
+                categorys.append({'id': i.id, 'name': i.name})
+            return jsonify(categorys)
+        else:
+            return jsonify({'message':str(save.get('message'))})
     elif request.method == "PUT":
         data = request.get_json().get('category')
         category = Category.query.filter_by(id=data.get('id')).first()
         category.name = data.get('name')
-        if category.updata():
-
+        updata = category.updata()
+        if updata.get('status'):
             categoryData = Category.query.all()
             categorys = []
             for i in categoryData:
@@ -459,11 +448,12 @@ def blog_category_handle():
             for i in categoryData:
                 categorys.append({'id': i.id, 'name': i.name})
             return jsonify({'status': "error",
-                            "message": ' 修改失败！', 'data': categorys})
+                            "message": str(updata.get('message')), 'data': categorys})
     elif request.method == "DELETE":
         id = request.get_json().get('id')
         category = Category.query.filter_by(id=id).first()
-        if category.delete():
+        delete = category.delete()
+        if delete.get('status'):
             categoryData = Category.query.all()
             categorys = []
             for i in categoryData:
@@ -471,7 +461,7 @@ def blog_category_handle():
             return jsonify({'status': "success",
                             "message": ' 修改成功！', 'data': categorys})
     return jsonify({'status': "error",
-                    "message": ' 修改失败！'})
+                    "message": str(delete.get('message'))})
 
 
 @admin.route('/admin/tag', methods=['POST', 'GET', 'PUT', 'DELETE'])
@@ -490,8 +480,8 @@ def blog_tag():
         data = request.get_json().get('tag')
         tag = Tag.query.filter_by(id=data.get('id')).first()
         tag.name = data.get('name')
-        if tag.updata():
-
+        updata = tag.updata()
+        if updata.get('status'):
             tagData = Tag.query.all()
             tags = []
             for i in tagData:
@@ -504,18 +494,21 @@ def blog_tag():
             for i in tagData:
                 tags.append({'id': i.id, 'name': i.name})
             return jsonify({'status': "error",
-                            "message": ' 修改失败！', 'data': tags})
+                            "message": str(updata.get('message')), 'data': tags})
     elif request.method == "DELETE":
         id = request.get_json().get('id')
         tag = Tag.query.filter_by(id=id).first()
-        if tag.delete():
+        delete = tag.delete()
+        if delete.get('status'):
             tagData = Tag.query.all()
             tags = []
             for i in tagData:
                 tags.append({'id': i.id, 'name': i.name})
             return jsonify({'status': "success",
                             "message": ' 修改成功！', 'data': tags})
-
+        else:
+            return jsonify({'status': "error",
+                            "message": str(delete.get('message'))})
 
 @admin.route('/admin/about', methods=['POST', 'GET', 'PUT'])
 @login_required
@@ -559,3 +552,5 @@ def blog_about():
             meta = f.write(meta)
         return jsonify({'status': "success",
                         "message": ' 修改成功！'})
+
+

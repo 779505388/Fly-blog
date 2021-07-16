@@ -1,6 +1,8 @@
+from flask.globals import current_app
 from extension import db
 from datetime import datetime, timezone
 from tool import getAnalyTime
+from flask import current_app
 
 
 class PyLink(db.Model):
@@ -15,19 +17,30 @@ class PyLink(db.Model):
         try:
             db.session.add(self)
             db.session.commit()
-            return True
+            current_app.logger.info('友链保存成功')
+            return {'status': True}
         except Exception as error:
-            print(error)
-            return False
+            current_app.logger.error('友链保存错误{}：'.format(error))
+            return {'status': False, "message": error}
+
+    def updata(self):
+        try:
+            db.session.commit()
+            current_app.logger.info('友链更新成功')
+            return {'status': True}
+        except Exception as error:
+            current_app.logger.error('友链更新错误{}：'.format(error))
+            return {'status': False, "message": error}
 
     def delete(self):
         try:
             db.session.delete(self)
             db.session.commit()
-            return True
+            current_app.logger.info('友链删除成功')
+            return {'status': True}
         except Exception as error:
-            print(error)
-            return False
+            current_app.logger.error('友链删除错误{}：'.format(error))
+            return {'status': False, "message": error}
 
     def to_json(self):
         dict = self.__dict__
@@ -45,27 +58,30 @@ class View(db.Model):
         try:
             db.session.add(self)
             db.session.commit()
-            return True
+            current_app.logger.info('访问记录保存成功')
+            return {'status': True}
         except Exception as error:
-            print(error)
-            return False
+            current_app.logger.error('访问记录保存错误{}：'.format(error))
+            return {'status': False, "message": error}
 
     def delete(self):
         try:
             db.session.delete(self)
             db.session.commit()
-            return True
+            current_app.logger.info('访问记录删除成功')
+            return {'status': True}
         except Exception as error:
-            print(error)
-            return False
+            current_app.logger.error('访问记录删除错误{}：'.format(error))
+            return {'status': False, "message": error}
 
     def updata(self):
         try:
             db.session.commit()
-            return True
+            current_app.logger.info('访问记录更新成功')
+            return {'status': True}
         except Exception as error:
-            print(error)
-            return False
+            current_app.logger.error('访问记录更新错误{}：'.format(error))
+            return {'status': False, "message": error}
 
     def to_json(self):
         dict = self.__dict__

@@ -170,12 +170,12 @@ def login():
                 return jsonify({'status': "success",
                                 "message": '登陆成功，欢迎回来！'})
             else:
-                current_app.logger.info("登陆博客失败-密码错误")
+                current_app.logger.warning("登陆博客失败-密码错误")
                 return jsonify({'status': "error",
                                 "message": '密码或者用户名错误！'})
         else:
             # 密码或者用户名错误
-            current_app.logger.info("登陆博客失败-户名错误")
+            current_app.logger.warning("登陆博客失败-户名错误")
             return jsonify({'status': "error",
                             "message": '密码或者用户名错误！'})
 
@@ -252,21 +252,21 @@ def sitemap():
 @article.app_errorhandler(404)
 # 404错误
 def server_404(e):
-    current_app.logger.info("404错误")
+    print(e)
+    current_app.logger.exception("404错误:------------------------",e)
     return render_template("404.html"), 404
 
 
 @article.app_errorhandler(500)
 # 500错误
 def server_500(e):
-    current_app.logger.info("500错误")
+    current_app.logger.exception("500错误:------------------------")
     return render_template("500.html"), 500
 
 
 @article.route("/logout/", methods=["GET", "POST"])
 # 退出登录
 @login_required
-# 退出登录
 def logout():
     current_app.logger.info("退出登陆")
     session.clear()
@@ -315,7 +315,6 @@ def archive():
 @article.route("/comment/", methods=["POST", "GET"])
 # 评论
 def comment():
-    print(request.method)
     if request.method == "POST":
         if session.get('imageCode').lower() == request.form.get('captcha').lower():
             nick = request.form.get('nick')
@@ -337,10 +336,11 @@ def comment():
                                  text=text, web_site=link,
                                  show_status=True, parent_uuid=parent_uuid,
                                  parent_name=parent_name, parent_id=parent_id)
-                if review.save():
+                save = review.save()
+                if save.get('status'):
                     return jsonify({'status': 'success'})
                 else:
-                    return jsonify({'status': 'error', 'message': '服务器发生错误！'})
+                    return jsonify({'status': 'error', 'message': '服务器发生错误'})
             else:
 
                 review = Comment(post_id=article_id, user_id=user_id,
@@ -348,10 +348,11 @@ def comment():
                                  guest_name=nick, guest_email=mail,
                                  text=text, web_site=link,
                                  show_status=True)
-                if review.save():
+                save = review.save()
+                if save.get('status'):
                     return jsonify({'status': 'success'})
                 else:
-                    return jsonify({'status': 'error', 'message': '服务器发生固执'})
+                    return jsonify({'status': 'error', 'message': '服务器发生错误'})
         else:
             return {'status': 'error', 'message': '验证码错误'}
 

@@ -1,6 +1,7 @@
 from extension import db
-from datetime import datetime, timezone
+from datetime import datetime
 from jieba.analyse import ChineseAnalyzer
+from flask import current_app
 
 article_tag = db.Table('article_tag',
                        db.Column('article_id', db.Integer, db.ForeignKey(
@@ -45,27 +46,30 @@ class Article(db.Model):
         try:
             db.session.add(self)
             db.session.commit()
-            return True
+            current_app.logger.info('文章保存成功')
+            return {'status': True}
         except Exception as error:
-            print(error)
-            return False
+            current_app.logger.error('文章保存错误{}：'.format(error))
+            return {'status': False, "message": error}
 
     def updata(self):
         try:
             db.session.commit()
-            return True
+            current_app.logger.info('文章更新成功')
+            return {'status': True}
         except Exception as error:
-            print(error)
-            return False
+            current_app.logger.error('文章保存错误{}：'.format(error))
+            return {'status': False, "message": error}
 
     def delete(self):
         try:
             db.session.delete(self)
             db.session.commit()
-            return True
+            current_app.logger.info('文章删除成功')
+            return {'status': True}
         except Exception as error:
-            print(error)
-            return False
+            current_app.logger.error('文章删除错误{}：'.format(error))
+            return {'status': False, "message": error}
 
     def to_json(self):
         dict = self.__dict__
@@ -87,27 +91,30 @@ class Tag(db.Model):
         try:
             db.session.add(self)
             db.session.commit()
-            return True
+            current_app.logger.info('标签保存成功')
+            return {'status': True}
         except Exception as error:
-            print(error)
-            return False
+            current_app.logger.error('标签保存错误{}'.format(error))
+            return {'status': False, "message": error}
 
     def delete(self):
         try:
             db.session.delete(self)
             db.session.commit()
-            return True
+            current_app.logger.info('标签删除成功')
+            return {'status': True}
         except Exception as error:
-            print(error)
-            return False
+            current_app.logger.error('标签删除错误{}'.format(error))
+            return {'status': False, "message": error}
 
     def updata(self):
         try:
             db.session.commit()
-            return True
+            current_app.logger.info('标签更新成功')
+            return {'status': True}
         except Exception as error:
-            print(error)
-            return False
+            current_app.logger.error('标签更新错误{}'.format(error))
+            return {'status': False, "message": error}
 
     def to_json(self):
         dict = self.__dict__
@@ -126,27 +133,30 @@ class Category(db.Model):
         try:
             db.session.add(self)
             db.session.commit()
-            return True
+            current_app.logger.info('文章分类保存成功')
+            return {'status': True}
         except Exception as error:
-            print(error)
-            return False
+            current_app.logger.error('文章分类保存错误{}'.format(error))
+            return {'status': False, "message": error}
 
     def delete(self):
         try:
             db.session.delete(self)
             db.session.commit()
-            return True
+            current_app.logger.info('文章分类删除成功')
+            return {'status': True}
         except Exception as error:
-            print(error)
-            return False
+            current_app.logger.error('文章分类删除错误{}'.format(error))
+            return {'status': False, "message": error}
 
     def updata(self):
         try:
             db.session.commit()
-            return True
+            current_app.logger.info('文章分类更新成功')
+            return {'status': True}
         except Exception as error:
-            print(error)
-            return False
+            current_app.logger.error('文章分类更新错误{}'.format(error))
+            return {'status': False, "message": error}
 
     def to_json(self):
         dict = self.__dict__
