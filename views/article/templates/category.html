@@ -18,7 +18,7 @@
 
 <div class="mdui-card blog-container">
   <div class="mdui-card-media">
-    <a href="{{url_for('article.post',url=content.id)}}">
+    <a href="{{url_for('article.post',url=content.url_en)}}">
       <img class="mdui-img-fluid blog-img lazy"
       src="https://cdn.jsdelivr.net/npm/typecho_joe_theme@4.3.5/assets/img/lazyload.jpg"
       data-original="https://pro.gynl.xyz/2020/02/13/9708696674528.png" />
@@ -33,7 +33,7 @@
   <div class="mdui-card-actions">
     <button class="mdui-btn mdui-ripple" disabled><i class="mdui-icon material-icons">access_time</i>{{moment(content.created).format('YYYY-M-D, H:mm')}}</button>
     <a class=" mdui-ripple a-category" ">{{content.post_type}}</a>
-        <a href="{{url_for('article.post',url=content.id)}}" class=" mdui-btn mdui-ripple mdui-ripple read-more-btn ">阅读更多</a>
+        <a href="{{url_for('article.post',url=content.url_en)}}" class=" mdui-btn mdui-ripple mdui-ripple read-more-btn ">阅读更多</a>
   </div>
     </div>
   {% endfor %}

@@ -1,4 +1,4 @@
-from extension import bcrypt, db
+from extension import bcrypt, db, cache
 from flask import (Blueprint, current_app, jsonify, redirect, render_template,
                    request, session, url_for)
 from flask_wtf.csrf import generate_csrf
@@ -96,9 +96,10 @@ def blog_write():
             db.session.add(blogCategory)
         save = article.save()
         if save.get('status'):
+            cache.clear()
             return jsonify({'status': "success", 'message': '文章修改成功'})
         else:
-            return jsonify({'status': "error", 'message':str(save.get('message'))})
+            return jsonify({'status': "error", 'message': str(save.get('message'))})
     else:
         return render_template("blog-write.html", **locals())
 
@@ -126,6 +127,7 @@ def blog_list():
                     data_list = []
                     for data in content_list:
                         data_list.append(data.to_json())
+                        cache.clear()
                     return jsonify({'status': "success",
                                     "message": ' 删除成功！', 'data': data_list})
                 else:
@@ -182,6 +184,7 @@ def blog_modify(url):
         content.template = template
         updata = content.updata()
         if updata.get('status'):
+            cache.clear()
             return jsonify({'status': "success",
                             "message": ' 修改成功！'})
 
@@ -222,6 +225,7 @@ def blog_delete():
             data_list = []
             for data in content_list:
                 data_list.append(data.to_json())
+            cache.clear()
             return jsonify(data_list)
         return jsonify({"ok": "ok"})
 
@@ -314,6 +318,7 @@ def blog_comment():
                          "guest_name": comment.guest_name,
                          "post_id": comment.post_id,
                          "uuid": comment.uuid})
+        cache.clear()
         return jsonify({"data": data, "status": status})
 
 
@@ -366,6 +371,7 @@ def py_link_handle():
             data = []
             for i in py_links:
                 data.append(i.to_json())
+                cache.clear()
             return jsonify({'data': data, 'message': 'success'})
         else:
             return jsonify({'message': str(save.get('message'))})
@@ -382,6 +388,7 @@ def py_link_handle():
             data = []
             for i in py_links:
                 data.append(i.to_json())
+            cache.clear()
             return jsonify({"data": data, 'message': 'success'})
         else:
             return jsonify({'message': str(updata.get('message'))})
@@ -394,6 +401,7 @@ def py_link_handle():
             data = []
             for i in py_links:
                 data.append(i.to_json())
+            cache.clear()
             return jsonify({'data': data, 'message': 'success'})
         else:
             return jsonify({'message': str(delete.get('message'))})
@@ -427,9 +435,10 @@ def blog_category_handle():
             categorys = []
             for i in categoryData:
                 categorys.append({'id': i.id, 'name': i.name})
+            cache.clear()
             return jsonify(categorys)
         else:
-            return jsonify({'message':str(save.get('message'))})
+            return jsonify({'message': str(save.get('message'))})
     elif request.method == "PUT":
         data = request.get_json().get('category')
         category = Category.query.filter_by(id=data.get('id')).first()
@@ -440,6 +449,7 @@ def blog_category_handle():
             categorys = []
             for i in categoryData:
                 categorys.append({'id': i.id, 'name': i.name})
+            cache.clear()
             return jsonify({'status': "success",
                             "message": ' 修改成功！', 'data': categorys})
         else:
@@ -458,6 +468,7 @@ def blog_category_handle():
             categorys = []
             for i in categoryData:
                 categorys.append({'id': i.id, 'name': i.name})
+            cache.clear()
             return jsonify({'status': "success",
                             "message": ' 修改成功！', 'data': categorys})
     return jsonify({'status': "error",
@@ -486,6 +497,7 @@ def blog_tag():
             tags = []
             for i in tagData:
                 tags.append({'id': i.id, 'name': i.name})
+            cache.clear()
             return jsonify({'status': "success",
                             "message": ' 修改成功！', 'data': tags})
         else:
@@ -504,11 +516,13 @@ def blog_tag():
             tags = []
             for i in tagData:
                 tags.append({'id': i.id, 'name': i.name})
+            cache.clear()
             return jsonify({'status': "success",
                             "message": ' 修改成功！', 'data': tags})
         else:
             return jsonify({'status': "error",
                             "message": str(delete.get('message'))})
+
 
 @admin.route('/admin/about', methods=['POST', 'GET', 'PUT'])
 @login_required
@@ -552,5 +566,3 @@ def blog_about():
             meta = f.write(meta)
         return jsonify({'status': "success",
                         "message": ' 修改成功！'})
-
-

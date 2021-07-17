@@ -32,3 +32,9 @@ class DevConfig():
     WHOOSH_BASE = 'whoosh_index'
     MSEARCH_ENABLE = True
     TEMPLATES_AUTO_RELOAD = True  # 刷新模板
+
+    # flask-caching setting
+    CACHE_TYPE = 'SimpleCache'  # RedisCache
+    CACHE_REDIS_HOST = '127.0.0.1',
+    CACHE_REDIS_PORT = 6379
+    CACHE_KEY_PREFIX = 'FlyBlog'

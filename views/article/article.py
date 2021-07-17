@@ -7,8 +7,9 @@ from models.User import User
 from models.Commet import Comment
 from models.Other import PyLink
 from datetime import datetime, time, timezone
-from tool import login_required, sys_name, get_month_range, get_month_days, Md5
-from extension import scheduler, search, csrf
+from tool import login_required, sys_name, get_month_range, get_month_days, Md5,\
+    cache_key
+from extension import scheduler, search, csrf,cache
 from datetime import timedelta
 article = Blueprint("article", __name__,
                     template_folder="../../views/article/templates/",
@@ -21,8 +22,9 @@ article = Blueprint("article", __name__,
 
 @article.route("/home/")
 @article.route("/")
+@article.route("/index/")
+@cache.cached(make_cache_key=cache_key)
 def home():
-
     info = current_app.config.get("INFO")
     page = request.args.get("page", type=int, default=1)
     page_content = info.get('blogConfig').get('articleItem')
@@ -46,6 +48,7 @@ def home():
 
 @article.route("/article/<int:url>")
 @article.route("/article/<url>")
+@cache.cached()
 def post(url):
     pages = []
     posts = Article.query.all()
@@ -93,7 +96,6 @@ def post(url):
                 'parent_id': comment.id,
                 'c_comment_data': c_comment_data
             })
-        print(comment_data)
         return render_template("article.html", **locals())
     else:
         articleList = [i.id for i in posts]
@@ -206,6 +208,7 @@ def register():
 
 
 @article.route("/category/<category>/")
+@cache.cached()
 # 文章分类
 def category(category):
     info = current_app.config.get("INFO")
@@ -251,8 +254,7 @@ def sitemap():
 @article.app_errorhandler(404)
 # 404错误
 def server_404(e):
-    print(e)
-    current_app.logger.exception("404错误:------------------------", e)
+    current_app.logger.warning("404错误:访问页面不存在")
     return render_template("404.html"), 404
 
 
@@ -273,6 +275,7 @@ def logout():
 
 
 @article.route("/archive/", methods=["GET"])
+@cache.cached()
 # 归档数据
 def archive():
     info = current_app.config.get("INFO")
@@ -337,6 +340,7 @@ def comment():
                                  parent_name=parent_name, parent_id=parent_id)
                 save = review.save()
                 if save.get('status'):
+                    cache.clear()
                     return jsonify({'status': 'success'})
                 else:
                     return jsonify({'status': 'error', 'message': '服务器发生错误'})
@@ -349,6 +353,7 @@ def comment():
                                  show_status=True)
                 save = review.save()
                 if save.get('status'):
+                    cache.clear()
                     return jsonify({'status': 'success'})
                 else:
                     return jsonify({'status': 'error', 'message': '服务器发生错误'})
@@ -423,6 +428,7 @@ def search(keyword):
 
 
 @article.route("/tags/", methods=["GET"])
+@cache.cached()
 def tags():
     # 标签云
     info = current_app.config.get("INFO")
@@ -431,6 +437,7 @@ def tags():
 
 
 @article.route("/tag/<url>", methods=["GET"])
+@cache.cached()
 def tag(url):
     # 标签页面
     info = current_app.config.get("INFO")
@@ -454,6 +461,7 @@ def tag(url):
 
 
 @article.route("/py-link/")
+@cache.cached()
 def py_link():
     # 友情链接
     info = current_app.config.get("INFO")
@@ -462,6 +470,7 @@ def py_link():
 
 
 @article.route("/message/")
+@cache.cached()
 def message():
     # 留言
     info = current_app.config.get("INFO")
