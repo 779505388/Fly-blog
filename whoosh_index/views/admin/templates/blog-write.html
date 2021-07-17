@@ -1,0 +1,159 @@
+{% extends 'layout.html' %}
+{% block css %}
+<link rel="stylesheet" href="https://unpkg.com/editor.md@1.5.0/css/editormd.min.css">
+
+{% endblock css %}
+
+{% block title %}
+创作文章
+{% endblock title %}
+
+
+{% block content %}
+<v-card class="mx-auto" max-width="1000">
+  <v-img class="white--text align-end" height="200px" src="https://cdn.vuetifyjs.com/images/cards/docks.jpg">
+    <v-card-title>{[name]}</v-card-title>
+  </v-img>
+
+  <v-card-subtitle class="pb-0">{[slug]}</v-card-subtitle>
+
+  <v-card-text class="text--primary">
+    <v-text-field v-model='name' clearable placeholder="文章标题" :rules="rules"></v-text-field>
+    <v-text-field v-model='slug' clearable placeholder="内容概述" :rules="rules"></v-text-field>
+    <v-text-field v-model='enUrl' clearable placeholder="自定义URL" :rules="rules"></v-text-field>
+    <v-text-field v-model='img' clearable placeholder="文章图片"></v-text-field>
+    <v-select :items="{{getCategory()}}" placeholder="文章类型" v-model='category'></v-select>
+    <v-combobox hint="按回车键添加标签" placeholder="添加标签" multiple persistent-hint small-chips v-model="tags">
+    </v-combobox>
+
+    <div id="layout" class="editor">
+      <div id="test-editormd" style="margin-top: 20px;z-index: 0;">
+        <textarea v-model='text' name="editormd"></textarea>
+      </div>
+      <textarea v-model='template' id="template" name="template" style="display: none;"></textarea>
+    </div>
+  </v-card-text>
+
+  <v-card-actions>
+
+    <v-btn class="float-right" @click="putAricle" block color="blue lighten-1" text>
+      提交
+    </v-btn>
+  </v-card-actions>
+</v-card>
+
+<v-snackbar v-model="snackbar" :timeout='3000' text right top :color='snackColor'>
+  {[ snackText ]}
+
+  <template v-slot:action="{ attrs }">
+    <v-btn color="blue" text v-bind="attrs" @click="snackbar = false">
+      Close
+    </v-btn>
+  </template>
+</v-snackbar>
+{% endblock content %}
+
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.min.js"></script>
+
+<script>
+  new Vue({
+    delimiters: ['{[', ']}'],
+    el: '#app',
+    vuetify: new Vuetify(),
+    data: () => ({
+      csrftoken: "{{csrf_token()}}",
+      drawer: false,
+      rules: [
+        value => !!value || '必填！',
+      ],
+      name: '',
+      slug: "",
+      enUrl: "",
+      img: "",
+      category: "",
+      tags: [],
+      template: '',
+      text: '',
+      snackbar:false,
+      snackText:'',
+      snackColor:'',
+    }),
+
+    computed: {
+
+    },
+    mounted() {
+      this.mdInit()
+    },
+    watch: {
+
+    },
+
+    created() {
+     
+    },
+
+    methods: {
+      snackBar(text,color){
+       this.snackbar=!this.snackbar
+       this.snackText =text
+       this.snackColor=color
+     } ,
+      putAricle() {
+        axios.post('{{url_for("admin.blog_write")}}', {
+          title: this.name,
+          slug: this.slug,
+          tags:this.tags,
+          category:this.category,
+          enUrl:this.enUrl,
+          img:this.img,
+          template:this.template,
+          text:this.text
+        }, {
+          headers: {
+            'X-CSRFToken': this.csrftoken,
+          },
+        }).then(res => {
+          if (res.data.status ==='success'){
+            this.snackBar(res.data.message,res.data.status)
+            setTimeout(()=>{
+              window.location.href ="{{url_for('article.home')}}"
+            },2000)
+          }else{
+            this.snackBar(res.data.message,res.data.status)
+          }
+        });
+      },
+      mdInit(){
+        var testEditor;
+      testEditor = editormd("test-editormd", {
+        placeholder: '开始创作吧',
+        width: "100%",
+        height: 740,
+        syncScrolling: "single",
+        path: "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/", //你的path路径（原资源文件中lib包在我们项目中所放的位置）
+        theme: "dark", //工具栏主题
+        previewTheme: "neat", //预览主题
+        editorTheme: "neat", //编辑主题
+        saveHTMLToTextarea: true,
+        emoji: true,
+        taskList: true,
+        tocm: true, // Using [TOCM]
+        tex: true, // 开启科学公式TeX语言支持，默认关闭
+        flowChart: true, // 开启流程图支持，默认关闭
+        sequenceDiagram: true, // 开启时序/序列图支持，默认关闭,
+        toolbarIcons: function () { //自定义工具栏，后面有详细介绍
+          return editormd.toolbarModes['full']; // full, simple, mini
+        },
+        onchange:()=>{
+          this.template=testEditor.getPreviewedHTML(),
+              this.text=testEditor.getMarkdown()
+        }
+      });
+      }
+    }
+  })
+</script>
+{% endblock js %}

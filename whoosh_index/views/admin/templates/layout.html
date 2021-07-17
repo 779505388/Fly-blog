@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+  {% block css %}
+
+  {% endblock css %}
+  <style>
+    .v-main__wrap {
+      background-color: rgb(247, 247, 247);
+    }
+
+    .v-toolbar__content {
+      background-color: white;
+    }
+
+    header {
+      background-color: rgb(247, 247, 247);
+    }
+  </style>
+  <title>
+    {% block title %}
+
+    {% endblock title %}
+  </title>
+</head>
+
+<body>
+
+  <div class="contianer main">
+    <div id="app">
+      <v-app>
+        {% include '/include/bar.html' ignore missing %}
+        <v-main>
+
+          {% block content %}
+
+          {% endblock content %}
+        </v-main>
+      </v-app>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  {% block js %}
+
+  {% endblock js %}
+</body>
+
+</html>

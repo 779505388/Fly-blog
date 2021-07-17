@@ -1,0 +1,97 @@
+{% extends 'layout.html' %}
+{% block css %}
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+{% endblock css %}
+
+{% block title %}
+文章分类管理
+{% endblock title %}
+
+{% block content %}
+<div id="app">
+  <v-app>
+    <v-main>
+      <v-card class="mx-auto" max-width='900'>
+        <v-sparkline :value="cpu_percent" :gradient="gradient" :smooth="radius || false" :padding="padding"
+          :line-width="width" :stroke-linecap="lineCap" :gradient-direction="gradientDirection" :fill="fill"
+          :type="type" :auto-line-width="autoLineWidth" auto-line-width auto-draw></v-sparkline>
+       
+      </v-card>
+    </v-main>
+  </v-app>
+</div>
+
+{% endblock content %}
+
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+
+<script>
+  const gradients = [
+    ['#222'],
+    ['#42b3f4'],
+    ['red', 'orange', 'yellow'],
+    ['purple', 'violet'],
+    ['#00c6ff', '#F0F', '#FF0'],
+    ['#f72047', '#ffd200', '#1feaea'],
+  ]
+  new Vue({
+    delimiters: ['{[', ']}'],
+    el: '#app',
+    vuetify: new Vuetify(),
+    data: () => ({
+      width: 2,
+      radius: 10,
+      padding: 8,
+      lineCap: 'round',
+      gradient: gradients[5],
+      cpu_percent: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      gradientDirection: 'top',
+      gradients,
+      fill: false,
+      type: 'trend',
+      autoLineWidth: false,
+      csrftoken: "{{csrf_token()}}",
+    }),
+
+    computed: {
+
+    },
+    mounted() {
+      this.timer()
+    },
+    watch: {
+
+    },
+
+    created() {
+
+    },
+
+    methods: {
+      getData() {
+        axios.post('{{url_for("admin.blog_info")}}', {}, {
+          headers: {
+            'X-CSRFToken': this.csrftoken,
+          },
+        }).then(res => {
+          this.cpu_percent.shift()
+
+          this.cpu_percent.push(res.data['cpu_percent'])
+        });
+      },
+      // 这是一个定时器
+      timer() {
+        return setInterval(() => {
+          this.getData()
+        }, 2500)
+      }
+    }
+  })
+</script>
+{% endblock js %}

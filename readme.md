@@ -28,9 +28,9 @@ web: [光阴逆旅](https://flask.gynl.xyz/)
 
 ```python
 
-python3 manage.py init
-python3 manage.py migrate
-python3 manage.py upgrade
+python3 manage.py db init
+python3 manage.py db migrate
+python3 manage.py db upgrade
 
 ```
 

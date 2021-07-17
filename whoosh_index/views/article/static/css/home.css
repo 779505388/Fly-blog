@@ -1,0 +1,16 @@
+.blog-container{
+  margin-top: 60px;
+}
+.blog-img{
+  height: 250px;
+}
+.read-more-btn{
+  float: right;
+  color: rgb(53, 118, 240);
+}
+.a-category{
+  color: rgb(65, 65, 65);
+}
+.a-category:hover{
+  color: rgb(119, 119, 119);
+}

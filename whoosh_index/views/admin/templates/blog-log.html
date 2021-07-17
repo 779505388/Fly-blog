@@ -1,0 +1,87 @@
+{% extends 'layout.html' %}
+{% block css %}
+
+{% endblock css %}
+
+{% block title %}
+博客日志
+{% endblock title %}
+
+{% block content %}
+<v-card class="mx-auto pa-3"  max-width='900'style="margin-top: 50px;">
+  <div class="text-start v-card--material__heading mb-n6 v-sheet theme--dark elevation-6 yellow darken-2
+  pa-7"
+    style="width: 100%;top: -40px;position: relative;">
+    <div class="display-2 font-weight-light"> 博客日志 </div>
+    <div class="subtitle-1 font-weight-light"> Blog log </div>
+    <!---->
+  </div>
+  <v-data-table min-height='500' :headers="headers" :items="logs" :items-per-page="10" class="elevation-1"></v-data-table>
+  <v-btn color="primary" @click='deleteLog' block>清除日志</v-btn>
+</v-card>
+{% endblock content %}
+
+{% block js %}
+
+
+<script>
+  new Vue({
+    delimiters: ['{[', ']}'],
+    el: '#app',
+    vuetify: new Vuetify(),
+    data: () => ({
+      csrftoken: "{{csrf_token()}}",
+      drawer: false,
+      logs: [],
+      headers: [{
+        text: '日志内容',
+        align: 'start',
+        value: 'value',
+      }, ]
+    }),
+
+    computed: {
+
+    },
+    mounted() {
+      this.getLog()
+    },
+    watch: {
+
+    },
+
+    created() {
+
+    },
+
+    methods: {
+      getLog() {
+        axios.post('{{url_for("admin.blog_log")}}', {}, {
+          headers: {
+            'X-CSRFToken': this.csrftoken,
+          },
+        }).then(res => {
+          for (let i of res.data.data) {
+            this.logs.push({
+              value: i
+            })
+          }
+        });
+      },
+      deleteLog(){
+        var flag = confirm('确定清除日志？')
+        if (flag) {
+          axios.delete('{{url_for("admin.blog_log")}}', {
+            headers: {
+              'X-CSRFToken': this.csrftoken,
+            },
+          }).then(res => {
+            console.log(res.data);
+            this.logs = []
+          });
+        }
+      }
+    }
+  })
+</script>
+{% endblock js %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{info.blogConfig.blogName}} - 友链
+{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{{url_for('.static',filename='css/py-link.css')}}">
+
+{% endblock css %}
+
+
+
+{% block content %}
+
+<div class="py-link mdui-container-fluid">
+{% for py in pys %}
+
+    <div class='mdui-col-lg-3 mdui-col-md-4 mdui-col-sm-6 mdui-col-xs-12'>
+        <a href="{{py.link}}" style="text-decoration: none ;color: rgb(121, 121, 121);">
+            <div class="py-content mdui-center mdui-hoverable" mdui-tooltip="{content: 'dadwa'}">
+
+                <div>
+                    <img style="display: inline;float: left;" width="70px" height="70px"
+                        src="{{py.avatar}}" alt="">
+                </div>
+                <div style="display:inline;height: 70px;max-width: 230px;">
+                    <div style="padding-top: 1px;">
+                        <h3 class="mdui-text-center" style="margin-top: 10px;">{{py.name}}</h3>
+                    </div>
+                    <p class="mdui-text-truncate mdui-text-center">{{py.brief}}</p>
+                </div>
+
+            </div>
+        </a>
+    </div>
+{% endfor %}
+</div>
+
+
+{% endblock content %}

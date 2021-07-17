@@ -12,17 +12,18 @@ class DevConfig():
     RESTFUL_JSON = dict(ensure_ascii=False)
     INFO = read_json()
     USER_EMAIL_HASH = ''
-    USERNAME = ""  # your name
-    PASSWORD = ""  # your passwo
+    USERNAME = "root"
+    PASSWORD = "740125lhs"
     HOST = "127.0.0.1"
     PORT = "3306"
-    DB = "flask"  # 数据库名
+    DB = "flask"
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://{}:{}@{}:{}/{}?charset=utf8'.format(
         USERNAME, PASSWORD, HOST, PORT, DB
     )
     BLOGNAME = INFO["blogConfig"]["blogName"]
-    SECRET_KEY = "teryhedhhr"  # 一定要修改！！
+    SECRET_KEY = "sadad232@42134@!>?"
     WTF_CSRF_SECRET_KEY = os.urandom(24)
+
     SCHEDULER_API_ENABLED = True
     WHOOSH_ENABLE = True
     MSEARCH_BACKEND = 'whoosh'

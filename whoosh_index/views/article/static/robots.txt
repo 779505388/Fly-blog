@@ -1,0 +1,4 @@
+Sitemap: http://www.gynl.xyz/sitemap.xml
+Allow: /sitemap.hxml
+Disallow: /admin/
+Disallow: /login/
