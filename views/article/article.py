@@ -17,13 +17,11 @@ article = Blueprint("article", __name__,
                     static_url_path="/article/"
                     )
 
-# 首页
 
-
-@article.route("/home/")
 @article.route("/")
-@article.route("/index/")
-@cache.cached(make_cache_key=cache_key)
+@article.route('/index/')
+# @cache.cached(make_cache_key=cache_key)
+# 首页
 def home():
     info = current_app.config.get("INFO")
     page = request.args.get("page", type=int, default=1)
@@ -39,7 +37,7 @@ def home():
         category = c.category[0].name if len(c.category.all()) > 0 else '未分类'
         data = {'category': category, "url_en": c.url_en,
                 'created': c.created, 'slug': c.slug, 'title': c.title,
-                'image_url':c.image_url}
+                'image_url': c.image_url}
         articles.append(data)
     contents = articles
     return render_template("home.html", **locals())
@@ -233,6 +231,7 @@ def category(category):
 def about():
     return render_template("about.html", **locals())
 
+
 @article.route('/favicon.ico')
 def favicon():
     if sys_name() == "Windows":
@@ -240,6 +239,7 @@ def favicon():
     else:
         path = "../views/article/static"
     return send_from_directory(path, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 
 @article.route("/robots.txt/")
 # robots.txt
@@ -398,7 +398,7 @@ def siteMap():
             current_app.logger.info("更新站点地图任务完成")
 
 
-@article.route("/search/<keyword>", methods=["GET", "POST"])
+@article.route("/search/<keyword>/", methods=["GET", "POST"])
 def search(keyword):
     if request.method == "GET":
         info = current_app.config.get("INFO")

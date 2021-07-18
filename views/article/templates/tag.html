@@ -24,14 +24,17 @@
       data-original="{% if content.image_url %}{{content.image_url}}{% else %}{{getInfo().blogConfig.IMAGE}}{% endif %}" />
     <div class="mdui-card-media-covered">
       <div class="mdui-card-primary">
-        <div class="mdui-card-primary-title">{{content.title}}</div>
-        <div class="mdui-card-primary-subtitle">{{content.slug}}</div>
+        <div class="mdui-card-primary-title" style="text-shadow: 1px 1px 8px #444;font-size: 34px;line-height: 40px;">{{content.title}}</div>
       </div>
     </div>
     </a>
   </div>
+  <div class="mdui-card-content" style="color: rgb(143, 143, 143);">{{content.slug}}
+    <a style="text-decoration: none;color: #0080FF;margin-left: 10px;" href="{{url_for('article.post',url=content.url_en)}}" class="">阅读更多</a>
+  </div>
+  <div class="mdui-divider"></div>
   <div class="mdui-card-actions">
-    <button class="mdui-btn mdui-ripple" disabled><i class="mdui-icon material-icons">access_time</i>{{moment(content.created).format('YYYY-M-D, H:mm')}}</button>
+    <button class="mdui-btn mdui-ripple" disabled>{{moment(content.created).format('YYYY-M-D H:mm')}}</button>
     <a class=" mdui-ripple a-category" ">{{content.category}}</a>
         <a href="{{url_for('article.post',url=content.url_en)}}" class=" mdui-btn mdui-ripple mdui-ripple read-more-btn ">阅读更多</a>
   </div>
