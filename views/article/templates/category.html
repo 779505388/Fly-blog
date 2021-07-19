@@ -21,7 +21,7 @@
     <a href="{{url_for('article.post',url=content.url_en)}}">
       <img class="mdui-img-fluid blog-img lazy"
       src="https://cdn.jsdelivr.net/npm/typecho_joe_theme@4.3.5/assets/img/lazyload.jpg"
-      data-original="https://pro.gynl.xyz/2020/02/13/9708696674528.png" />
+      data-original="{% if content.image_url %}{{content.image_url}}{% else %}{{getInfo().blogConfig.IMAGE}}{% endif %}" />
     <div class="mdui-card-media-covered">
       <div class="mdui-card-primary">
         <div class="mdui-card-primary-title" style="text-shadow: 1px 1px 8px #444;font-size: 34px;line-height: 40px;">{{content.title}}</div>

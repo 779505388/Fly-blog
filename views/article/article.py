@@ -60,7 +60,6 @@ def post(url):
             url)-1] if 0 <= articleList.index(
             url)-1 else False
         content = Article.query.filter_by(url_en=url).first_or_404()
-        print(content.template)
         user = User.query.filter(User.id == content.user_id).first()
         comments = Comment.query.order_by(
             Comment.created.desc()).filter_by(post_id=content.id).all()
@@ -222,7 +221,8 @@ def category(category):
     pagination = articleData.order_by(Article.created.desc()).paginate(
         page, per_page=pageItem, error_out=False)
     contents = articleData.order_by(Article.created.desc()).slice(start, end)
-    contents = data.articles
+    # contents = data.articles
+    print(contents)
     return render_template("category.html", **locals())
 
 
