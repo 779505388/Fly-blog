@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@1.0.1/dist/css/mdui.min.css"
     integrity="sha384-cLRrMq39HOZdvE0j6yBojO4+1PrHfB7a9l5qLcmRm/fiWXYY+CndJPmyu5FV/9Tw" crossorigin="anonymous" />
   <link rel="stylesheet" href="{{url_for('.static',filename='css/base.css')}}">
-<link rel="icon" href="{{getInfo().blogConfig.AVATAR}}{{getInfo().other.email}}" type="image/x-icon">
+<link rel="icon" href="{{getInfo().blogConfig.AVATAR}}{{getInfo().other.email}}?s=32" type="image/x-icon">
   <script>
     /* 判断是否是ie浏览器 */
     function detectIE() {
@@ -84,24 +84,7 @@
           </div>
 
         </div>
-        <div class="list-web">
-          <div class="list-item">
-            <a class=" " href="{{getInfo().blogConfig.GITHUB}}"><i class="fa fa-github  fa-2x"
-                aria-hidden="true"></i></a>
-          </div>
-          <div class="list-item">
-            <a class=""><i class="fa fa-envelope-o fa-2x" aria-hidden="true"></i></a>
-          </div>
-          <div class="list-item">
-            <a class="mdui-btn mdui-btn-icon mdui-color-theme-accent mdui-ripple"><i
-                class="mdui-icon material-icons">add</i></a>
-          </div>
-          <div class="list-item">
-            <a class="mdui-btn mdui-btn-icon mdui-color-theme-accent mdui-ripple"><i
-                class="mdui-icon material-icons">add</i></a>
-          </div>
 
-        </div>
         <li class="mdui-divider"></li>
         <li class="mdui-list-item mdui-ripple">
           <i class="mdui-list-item-icon mdui-icon material-icons">home</i>
@@ -163,10 +146,29 @@
 
   {% endblock pagination %}
   <div class=" mdui-container-fluid footer mdui-shadow-3">
-    <div class="mdui-col-xs-12 mdui-col-sm-4 mdui-col-md-4 mdui-col-lg-4 mdui-col-xl-4 "></div>
     <div class="mdui-col-xs-12 mdui-col-sm-4 mdui-col-md-4 mdui-col-lg-4 mdui-col-xl-4 ">
-      <div class="copyright mdui-text-center">Copyright ©2021
-        光阴逆旅 </div>
+      <div class="mdui-text-center copyright">
+        <div class="list-web">
+          <div class="list-item">
+            <a class=" " href="{{getInfo().blogConfig.GITHUB}}"><i class="fa fa-github-square fa-2x"
+                aria-hidden="true"></i></a>
+          </div>
+          <div class="list-item">
+            <a class=" " href="{{getInfo().blogConfig.GITHUB}}"><i class="fa fa-envelope fa-2x"
+                aria-hidden="true"></i></a>
+          </div>
+          <div class="list-item">
+            <a class=" " href="{{getInfo().blogConfig.GITHUB}}"><i class="fa fa-qq fa-2x"
+                aria-hidden="true"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mdui-col-xs-12 mdui-col-sm-4 mdui-col-md-4 mdui-col-lg-4 mdui-col-xl-4 ">
+      <div class="copyright mdui-text-center">
+         Copyright ©2021  {{getInfo().blogConfig.blogName}} 
+        <a style="text-decoration: none;font-size: 15px;display: block;color: rgb(134 134 134);margin-top: 5px;" href="{{url_for('article.sitemap')}}">站点地图</a>
+      </div>
     </div>
     <div class="mdui-col-xs-12 mdui-col-sm-4 mdui-col-md-4 mdui-col-lg-4 mdui-col-xl-4">
       <div class="copyright mdui-text-center">

@@ -1,7 +1,10 @@
+from array import array
+from email import header
 from flask import url_for, render_template, Blueprint, request, jsonify, redirect,\
     session, current_app, send_from_directory, make_response
 from flask_paginate import Pagination
 from sqlalchemy import not_, or_
+from sqlalchemy.sql.expression import null
 from models.Content import Article, Tag, Category
 from models.User import User
 from models.Commet import Comment
@@ -14,7 +17,7 @@ from datetime import timedelta
 article = Blueprint("article", __name__,
                     template_folder="../../views/article/templates/",
                     static_folder="../../views/article/static/",
-                    static_url_path="/article/"
+                    static_url_path=''
                     )
 
 
@@ -245,19 +248,24 @@ def favicon():
 # robots.txt
 def robots():
     if sys_name() == "Windows":
-        path = r"..\views\article\static"
+        path = r"views\article\static\robots.txt"
     else:
-        path = "../views/article/static"
-    return send_from_directory(path, 'robots.txt')
+        path = "views/article/static/robots.txt"
+    response = make_response(open(path).read())
+    response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+    return response
 
 
-@article.route("/sitemap.xml/")
+@article.route('/sitemap.xml/')
 def sitemap():
     if sys_name() == "Windows":
-        path = r"..\views\article\static"
+        path = r"views\article\static\sitemap.xml"
     else:
-        path = "../views/article/static"
-    return send_from_directory(path, "sitemap.xml")
+        path = "views/article/static/sitemap.xml"
+    # data = send_from_directory(article.static_folder, request.path[1:])
+    response = make_response(open(path).read())
+    response.headers['Content-Type'] = 'application/xml'
+    return response
 
 
 @article.app_errorhandler(404)
@@ -372,30 +380,30 @@ def comment():
     return 'aa'
 
 
-@scheduler.task('interval', id='do_job_1', seconds=1800)
-# 站点地图更新任务，30min一次
-def siteMap():
-    with scheduler.app.app_context():
-        info = current_app.config.get("INFO")
-        contents = Article.query.all()
-        header = '<?xml version="1.0" encoding="UTF-8"?> ' + '\n' + \
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
-        footer = '</urlset>'
-        data_contents = ""
-        if sys_name() == "Windows":
-            path = r".\views\article\static\sitemap.xml"
-        else:
-            path = "./views/article/static/sitemap.xml"
-        with open(path, "w+") as f:
-            for content in contents:
-                data = "<url>\n" + "<loc>{}/article/{}</loc>".format(
-                    info.get('blogConfig').get('domainName'), content.url_en) + "\n" + \
-                    "<lastmod>{}</lastmod>".format(content.modified)+"\n" +\
-                    "<priority>0.8</priority>" + "\n" + "</url>" + "\n"
-                data_contents = data_contents + data
-            xml_contents = header + "\n" + data_contents + "\n" + footer
-            f.write(xml_contents)
-            current_app.logger.info("更新站点地图任务完成")
+# @scheduler.task('interval', id='do_job_1', seconds=1800)
+# # 站点地图更新任务，30min一次
+# def siteMap():
+#     with scheduler.app.app_context():
+#         info = current_app.config.get("INFO")
+#         contents = Article.query.all()
+#         header = '<?xml version="1.0" encoding="UTF-8"?> ' + '\n' + \
+#             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+#         footer = '</urlset>'
+#         data_contents = ""
+#         if sys_name() == "Windows":
+#             path = r".\views\article\static\sitemap.xml"
+#         else:
+#             path = "./views/article/static/sitemap.xml"
+#         with open(path, "w+") as f:
+#             for content in contents:
+#                 data = "<url>\n" + "<loc>{}/article/{}</loc>".format(
+#                     info.get('blogConfig').get('domainName'), content.url_en) + "\n" + \
+#                     "<lastmod>{}</lastmod>".format(content.modified)+"\n" +\
+#                     "<priority>0.8</priority>" + "\n" + "</url>" + "\n"
+#                 data_contents = data_contents + data
+#             xml_contents = header + "\n" + data_contents + "\n" + footer
+#             f.write(xml_contents)
+#             current_app.logger.info("更新站点地图任务完成")
 
 
 @article.route("/search/<keyword>/", methods=["GET", "POST"])
@@ -417,10 +425,10 @@ def search(keyword):
             category = c.category[0].name if len(
                 c.category.all()) > 0 else '未分类'
             data = {'category': category, "url_en": c.url_en,
-                    'created': c.created, 'slug': c.slug, 'title': c.title}
+                    'created': c.created, 'slug': c.slug,
+                    'title': c.title, 'image_url': c.image_url}
             articles.append(data)
         contents = articles
-        print(contents)
         return render_template("search.html", **locals())
     else:
         keyword = request.get_json()

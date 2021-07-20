@@ -5,7 +5,8 @@ from flask_caching import Cache
 from flask_apscheduler import APScheduler
 from flask_msearch import Search
 from jieba.analyse import ChineseAnalyzer
-from flask_wtf.csrf import CsrfProtect
+from flask_wtf.csrf import CSRFProtect
+
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
@@ -13,7 +14,7 @@ moment = Moment()
 cache = Cache()
 scheduler = APScheduler()
 search = Search(analyzer=ChineseAnalyzer())
-csrf = CsrfProtect()
+csrf = CSRFProtect()
 
 
 def config_init(app):

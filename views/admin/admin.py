@@ -97,7 +97,7 @@ def blog_write():
         save = article.save()
         if save.get('status'):
             cache.clear()
-            return jsonify({'status': "success", 'message': '文章修改成功'})
+            return jsonify({'status': "success", 'message': '文章提交成功'})
         else:
             return jsonify({'status': "error", 'message': str(save.get('message'))})
     else:

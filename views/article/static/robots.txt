@@ -1,4 +1,4 @@
-Sitemap: http://www.gynl.xyz/sitemap.xml
-Allow: /sitemap.hxml
+User-agent: *
 Disallow: /admin/
 Disallow: /login/
+Sitemap: http://www.gynl.xyz/sitemap.xml
