@@ -5,3 +5,6 @@
 =======
    *.html linguist-language=python
 >>>>>>> ee929d681b20cfbc13e2237eac6a355182a62dee
+__pycache__
+msearch
+whoosh_index
