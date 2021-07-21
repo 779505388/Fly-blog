@@ -9,8 +9,10 @@
 <meta name="keywords" content="{% for tag in content.tags %}{{tag.name}},{% endfor %}">
 <meta name="description" content="{{content.slug}}">
 <link rel="stylesheet" href="{{url_for('.static',filename='css/article.css')}}">
-<link rel="stylesheet" href="https://unpkg.com/editor.md@1.5.0/css/editormd.min.css">
-{% endblock css %}
+<link rel="stylesheet" href="{{url_for('.static',filename='css/GrayMac.min.css')}}">
+<link rel="stylesheet" href="{{url_for('.static',filename='css/editormd.min.css')}}">
+
+  {% endblock css %}
 
 
 {% block content %}
@@ -49,7 +51,6 @@
         {{content.template|safe()}}
       </div>
     </div>
-
     <div class="mdui-divider"></div>
 
     <div style="margin: 6px;">
@@ -117,8 +118,7 @@
       <div class="vcards">
         {% for comment in comment_data %}
         <div class="vcard" ">
-          <img class="vimg"
-            src="{{getInfo().blogConfig.AVATAR}}{{comment.hash_email}}">
+          <img class=" vimg" src="{{getInfo().blogConfig.AVATAR}}{{comment.hash_email}}">
           <div class="vh">
             <div class="vhead">
               <a class="vnick" id="{{comment.uuid}}" rel="nofollow" href="{{comment.link}}"
@@ -128,7 +128,7 @@
             </div>
             <div class="vmeta">
               <span class="vtime">{{moment(comment.created).format('YYYY-M-D  H:mm')}}</span>
-              <span class="vat" >回复</span>
+              <span class="vat">回复</span>
             </div>
             <div class="vcontent">
               <p>
@@ -138,12 +138,13 @@
             <div class="vreply-wrapper"></div>
             <div class="vquote">
               {% for i in comment.c_comment_data %}
-              <div class="vcard" id="{{i.uuid}}"><img class="vimg" src="{{getInfo().blogConfig.AVATAR}}{{i.hash_email}}">
+              <div class="vcard" id="{{i.uuid}}"><img class="vimg"
+                  src="{{getInfo().blogConfig.AVATAR}}{{i.hash_email}}">
                 <div class="vh">
                   <div class="vhead"><a class="vnick" rel="nofollow" href="{{comment.link}}"
-                    target="_blank">{{i.nick}}</a>
-                  <span class="vsys">{{i.agent}}</span>
-                </div>
+                      target="_blank">{{i.nick}}</a>
+                    <span class="vsys">{{i.agent}}</span>
+                  </div>
                   <div class="vmeta">
                     <span class="vtime">{{moment(i.created).format('YYYY-M-D  H:mm')}}</span>
                     <span class="vat">回复</span>
@@ -158,7 +159,7 @@
                 </div>
               </div>
               {% endfor %}
-  
+
             </div>
           </div>
         </div>
@@ -194,6 +195,7 @@
       tex: true, // 开启科学公式TeX语言支持，默认关闭
       flowChart: true, // 开启流程图支持，默认关闭
       sequenceDiagram: true,
+      previewCodeHighlight: false,
       htmlDecode: "style,script,iframe",
       taskList: true,
     })
@@ -201,14 +203,14 @@
   })
 </script>
 <script>
-$('.vat').click(function () {
+  $('.vat').click(function () {
     let comment = ($(this).parent().parent().children('.vreply-wrapper')[0]);
     $(comment).append($('.vwrap')[0])
     let nick = ($(this).parent().parent().children('.vhead').children('.vnick').html());
     let uuid = $(this).parent().parent().children('.vhead').children('.vnick').attr('id')
     console.log(uuid);
-    if (!uuid){
-        uuid = $(this).parent().parent().parent().parent().parent().children('.vhead').children('.vnick').attr('id')
+    if (!uuid) {
+      uuid = $(this).parent().parent().parent().parent().parent().children('.vhead').children('.vnick').attr('id')
     }
     $('#veditor').attr('placeholder', '@ ' + nick);
     $('input[name="parent"]').val(null)
@@ -217,7 +219,7 @@ $('.vat').click(function () {
     $('input[name="parent_uuid"]').val(uuid);
     console.log(uuid);
     $('input[name="parent_name"]').val(nick);
-})
+  })
 
 
   $('.vsubmit').click(function () {
@@ -303,6 +305,6 @@ $('.vat').click(function () {
     $('input[name="parent_name"]').val(null);
   })
 </script>
-
-
+<script src="{{url_for('.static',filename='js/prism.min.js')}}"></script>
+<script>Prism.highlightAll()</script>
 {% endblock js %}

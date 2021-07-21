@@ -24,12 +24,13 @@ article = Blueprint("article", __name__,
 
 @article.route("/")
 @article.route('/index/')
-# @cache.cached(make_cache_key=cache_key)
+@cache.cached(make_cache_key=cache_key)
 # 首页
 def home():
     info = current_app.config.get("INFO")
     page = request.args.get("page", type=int, default=1)
     page_content = info.get('blogConfig').get('articleItem')
+    print(page_content)
     total = Article.query.count()
     start = (page-1)*page_content
     end = start + page_content
@@ -242,7 +243,8 @@ def favicon():
         path = r"..\views\article\static"
     else:
         path = "../views/article/static"
-    return send_from_directory(path, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+    return send_from_directory(path, 'favicon.ico',
+                               mimetype='image/vnd.microsoft.icon')
 
 
 @article.route("/robots.txt")
