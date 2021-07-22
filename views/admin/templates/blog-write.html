@@ -10,23 +10,23 @@
 
 
 {% block content %}
-<v-card class="mx-auto" max-width="1000">
-  <v-img class="white--text align-end" height="200px" src="https://cdn.vuetifyjs.com/images/cards/docks.jpg">
+<v-card style="margin-top: 35px;" class="mx-auto" max-width="1000">
+  <v-img class="white--text align-end" height="275px" :src="img">
     <v-card-title>{[name]}</v-card-title>
   </v-img>
 
   <v-card-subtitle class="pb-0">{[slug]}</v-card-subtitle>
 
   <v-card-text class="text--primary">
-    <v-text-field v-model='name' clearable placeholder="文章标题" :rules="rules"></v-text-field>
-    <v-text-field v-model='slug' clearable placeholder="内容概述" :rules="rules"></v-text-field>
-    <v-text-field v-model='enUrl' clearable placeholder="自定义URL" :rules="rules"></v-text-field>
-    <v-text-field v-model='img' clearable placeholder="文章图片"></v-text-field>
-    <v-select :items="{{getCategory()}}" placeholder="文章类型" v-model='category'></v-select>
-    <v-combobox hint="按回车键添加标签" placeholder="添加标签" multiple persistent-hint small-chips v-model="tags">
+    <v-text-field v-model.trim='name' label="文章标题" :rules="rules"></v-text-field>
+    <v-text-field v-model.trim='slug' clearable label="内容概述" :rules="rules"></v-text-field>
+    <v-text-field v-model.trim='enUrl' clearable label="自定义URL" :rules="rules"></v-text-field>
+    <v-text-field v-model.lazy='img' clearable label="文章图片"></v-text-field>
+    <v-select :items="{{getCategory()}}" label="文章类型" v-model='category'></v-select>
+    <v-combobox hint="按回车键添加标签" label="添加标签" multiple persistent-hint small-chips v-model="tags">
     </v-combobox>
 
-    <div id="layout" class="editor">
+    <div id="layout" class="editor" >
       <div id="test-editormd" style="margin-top: 20px;z-index: 0;">
         <textarea v-model='text' name="editormd"></textarea>
       </div>
@@ -76,9 +76,9 @@
       tags: [],
       template: '',
       text: '',
-      snackbar:false,
-      snackText:'',
-      snackColor:'',
+      snackbar: false,
+      snackText: '',
+      snackColor: '',
     }),
 
     computed: {
@@ -86,73 +86,119 @@
     },
     mounted() {
       this.mdInit()
+      if (localStorage.getItem('saveStatus')){
+        this.getText()
+      }
+      setInterval(() => {
+        this.saveText() //2min定时保存任务
+      }, 120000)
+      // 保存文件
+      var _this = this;        
+      document.onkeydown = function(e) {            
+      let key = window.event.keyCode;            
+      if (key== 83 && event.ctrlKey) {//== 83 && event.ctrlKey
+            window.event.preventDefault() //关闭浏览器快捷键
+            _this.saveText();//;saveProject1()
+            }
+        };
     },
     watch: {
 
     },
 
     created() {
-     
+
     },
 
     methods: {
-      snackBar(text,color){
-       this.snackbar=!this.snackbar
-       this.snackText =text
-       this.snackColor=color
-     } ,
+      snackBar(text, color) {
+        this.snackbar = !this.snackbar
+        this.snackText = text
+        this.snackColor = color
+      },
       putAricle() {
         axios.post('{{url_for("admin.blog_write")}}', {
           title: this.name,
           slug: this.slug,
-          tags:this.tags,
-          category:this.category,
-          enUrl:this.enUrl,
-          img:this.img,
-          template:this.template,
-          text:this.text
+          tags: this.tags,
+          category: this.category,
+          enUrl: this.enUrl,
+          img: this.img,
+          template: this.template,
+          text: this.text
         }, {
           headers: {
             'X-CSRFToken': this.csrftoken,
           },
         }).then(res => {
-          if (res.data.status ==='success'){
-            this.snackBar(res.data.message,res.data.status)
-            setTimeout(()=>{
-              window.location.href ="{{url_for('article.home')}}"
-            },2000)
-          }else{
-            this.snackBar(res.data.message,res.data.status)
+          if (res.data.status === 'success') {
+            this.snackBar(res.data.message, res.data.status)
+            this.clearText()
+            setTimeout(() => {
+              window.location.href = "{{url_for('article.home')}}"
+            }, 2000)
+          } else {
+            this.snackBar(res.data.message, res.data.status)
           }
         });
       },
-      mdInit(){
+      mdInit() {
         var testEditor;
-      testEditor = editormd("test-editormd", {
-        placeholder: '开始创作吧',
-        width: "100%",
-        height: 740,
-        syncScrolling: "single",
-        path: "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/", //你的path路径（原资源文件中lib包在我们项目中所放的位置）
-        theme: "dark", //工具栏主题
-        previewCodeHighlight: false,
-        previewTheme: "neat", //预览主题
-        editorTheme: "neat", //编辑主题
-        saveHTMLToTextarea: true,
-        emoji: true,
-        taskList: true,
-        tocm: true, // Using [TOCM]
-        tex: true, // 开启科学公式TeX语言支持，默认关闭
-        flowChart: true, // 开启流程图支持，默认关闭
-        sequenceDiagram: true, // 开启时序/序列图支持，默认关闭,
-        toolbarIcons: function () { //自定义工具栏，后面有详细介绍
-          return editormd.toolbarModes['full']; // full, simple, mini
-        },
-        onchange:()=>{
-          this.template=testEditor.getPreviewedHTML(),
-              this.text=testEditor.getMarkdown()
-        }
-      });
+        testEditor = editormd("test-editormd", {
+          placeholder: '开始创作吧',
+          width: "100%",
+          height: 740,
+          syncScrolling: "single",
+          path: "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/", //你的path路径（原资源文件中lib包在我们项目中所放的位置）
+          theme: "dark", //工具栏主题
+          previewCodeHighlight: false,
+          previewTheme: "neat", //预览主题
+          editorTheme: "neat", //编辑主题
+          saveHTMLToTextarea: true,
+          emoji: true,
+          taskList: true,
+          tocm: true, // Using [TOCM]
+          tex: true, // 开启科学公式TeX语言支持，默认关闭
+          flowChart: true, // 开启流程图支持，默认关闭
+          sequenceDiagram: true, // 开启时序/序列图支持，默认关闭,
+          toolbarIcons: function () { //自定义工具栏，后面有详细介绍
+            return editormd.toolbarModes['full']; // full, simple, mini
+          },
+          onchange: () => {
+            this.template = testEditor.getPreviewedHTML(),
+              this.text = testEditor.getMarkdown()
+          }
+        });
+      },
+      saveText() {
+        localStorage.setItem('name', this.name ||'')
+        localStorage.setItem('slug', this.slug ||'')
+        localStorage.setItem('enUrl', this.enUrl ||'')
+        localStorage.setItem('img', this.img ||'')
+        localStorage.setItem('category', this.category ||'')
+        localStorage.setItem('tags', JSON.stringify(this.tags) ||'')
+        localStorage.setItem('text', this.text ||'')
+        localStorage.setItem('saveStatus', true)
+        this.snackBar('定时保存成功', 'success')
+      },
+      clearText() {
+        localStorage.removeItem('name')
+        localStorage.removeItem('slug')
+        localStorage.removeItem('enUrl')
+        localStorage.removeItem('img')
+        localStorage.removeItem('category')
+        localStorage.removeItem('tags')
+        localStorage.removeItem('text')
+        localStorage.setItem('saveStatus', false)
+      },
+      getText() {
+        this.name = localStorage.getItem('name')
+        this.slug = localStorage.getItem('slug')
+        this.enUrl = localStorage.getItem('enUrl')
+        this.img = localStorage.getItem('img')
+        this.category = localStorage.getItem('category')
+        this.tags = JSON.parse(localStorage.getItem('tags')||'[]')
+        this.text = localStorage.getItem('text')
       }
     }
   })

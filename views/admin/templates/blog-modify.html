@@ -9,19 +9,19 @@
 
 {% block content %}
 <v-card class="mx-auto" max-width="1000">
-  <v-img class="white--text align-end" height="200px" src="https://cdn.vuetifyjs.com/images/cards/docks.jpg">
+  <v-img class="white--text align-end" height="275px" :src="img">
     <v-card-title>{[name]}</v-card-title>
   </v-img>
 
   <v-card-subtitle class="pb-0">{[slug]}</v-card-subtitle>
 
   <v-card-text class="text--primary">
-    <v-text-field v-model='name' clearable placeholder="文章标题" :rules="rules"></v-text-field>
-    <v-text-field v-model='slug' clearable placeholder="内容概述" :rules="rules"></v-text-field>
-    <v-text-field v-model='enUrl' clearable placeholder="自定义URL" :rules="rules"></v-text-field>
-    <v-text-field v-model='img' clearable placeholder="文章图片"></v-text-field>
-    <v-select :items="{{getCategory()}}" placeholder="文章类型" v-model='category'></v-select>
-    <v-combobox hint="按回车键添加标签" placeholder="添加标签" multiple persistent-hint small-chips v-model="tags">
+    <v-text-field v-model.trim='name' clearable label="文章标题" :rules="rules"></v-text-field>
+    <v-text-field v-model.trim='slug' clearable label="内容概述" :rules="rules"></v-text-field>
+    <v-text-field v-model.trim='enUrl' clearable label="自定义URL" :rules="rules"></v-text-field>
+    <v-text-field v-model.lazy='img' clearable label="文章图片"></v-text-field>
+    <v-select :items="{{getCategory()}}" label="文章类型" v-model='category'></v-select>
+    <v-combobox hint="按回车键添加标签" label="添加标签" multiple persistent-hint small-chips v-model="tags">
     </v-combobox>
 
     <div id="layout" class="editor">
@@ -169,6 +169,9 @@
           onchange: () => {
             this.template = testEditor.getPreviewedHTML(),
               this.text = testEditor.getMarkdown()
+          },
+          onload:()=>{
+            this.template = testEditor.getPreviewedHTML()
           }
         });
       }

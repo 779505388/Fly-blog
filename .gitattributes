@@ -8,3 +8,5 @@
 __pycache__
 msearch
 whoosh_index
+FlyBlog.log
+migrations
