@@ -20,7 +20,7 @@ pre[class*=language-] {
 }
 
 pre[class*=language-] {
-    padding: .7em;
+    padding: .5em;
     margin: .5em 0;
     overflow: auto
 }

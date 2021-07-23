@@ -12,7 +12,7 @@
 </url>
 <url>
 <loc>https://www.gynl.xyz/article/code-light</loc>
-<lastmod>2021-07-21</lastmod>
+<lastmod>2021-07-23</lastmod>
 <priority>0.8</priority>
 </url>
 <url>
@@ -43,6 +43,11 @@
 <url>
 <loc>https://www.gynl.xyz/article/Flask-SQLAlchemy-default-time-setting-problem</loc>
 <lastmod>2021-07-22</lastmod>
+<priority>0.8</priority>
+</url>
+<url>
+<loc>https://www.gynl.xyz/article/Editor-md</loc>
+<lastmod>2021-07-23</lastmod>
 <priority>0.8</priority>
 </url>
 

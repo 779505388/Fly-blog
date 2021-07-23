@@ -1,3 +1,4 @@
+/*! Editor.md v1.5.0 | editormd.min.css | Open source online markdown editor. | MIT License | By: Pandao | https://github.com/pandao/editor.md | 2015-06-09 */
 @charset "UTF-8";
 
 /*! prefixes.scss v0.1.0 | Author: Pandao | https://github.com/pandao/prefixes.scss | MIT license | Copyright (c) 2015 */
@@ -745,6 +746,7 @@ only screen and (min-device-pixel-ratio:3) {
     margin-top: 35px
 }
 
+
 .editormd .CodeMirror-linenumbers {
     padding: 0 5px
 }
@@ -789,6 +791,7 @@ only screen and (min-device-pixel-ratio:3) {
  *  Font Awesome 4.3.0 by @davegandy - http://fontawesome.io - @fontawesome
  *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
  */
+
 
 .fa {
     font: normal normal normal 14px/1 FontAwesome;
@@ -3123,13 +3126,6 @@ only screen and (min-device-pixel-ratio:3) {
 }
 
 /*! prefixes.scss v0.1.0 | Author: Pandao | https://github.com/pandao/prefixes.scss | MIT license | Copyright (c) 2015 */
-@font-face {
-    font-family: editormd-logo;
-    src: url(../fonts/editormd-logo.eot?-5y8q6h);
-    src: url(.../fonts/editormd-logo.eot?#iefix-5y8q6h)format("embedded-opentype"), url(../fonts/editormd-logo.woff?-5y8q6h)format("woff"), url(../fonts/editormd-logo.ttf?-5y8q6h)format("truetype"), url(../fonts/editormd-logo.svg?-5y8q6h#icomoon)format("svg");
-    font-weight: 400;
-    font-style: normal
-}
 
 .editormd-logo,
 .editormd-logo-1x,
@@ -3314,10 +3310,6 @@ only screen and (min-device-pixel-ratio:3) {
 
 .markdown-body dd {
     margin-left: 0
-}
-
-.markdown-body code {
-    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace
 }
 
 .markdown-body .octicon {
@@ -3539,14 +3531,11 @@ only screen and (min-device-pixel-ratio:3) {
     box-sizing: border-box
 }
 
-.markdown-body code:after,
-.markdown-body code:before {
-    letter-spacing: -.2em;
-    content: "\00a0"
-}
+
 .markdown-body .highlight {
     margin-bottom: 16px
 }
+
 .markdown-body .pl-c {
     color: #969896
 }
@@ -3703,17 +3692,13 @@ only screen and (min-device-pixel-ratio:3) {
 .editormd-html-preview blockquote,
 .editormd-preview-container blockquote {
     color: #666;
-    border-left: 4px solid #ddd;
+    border-left: 4px solid rgb(38, 125, 255);
+    background-color: #edf6ff;
     padding-left: 20px;
     margin-left: 0;
     font-size: 14px;
-    font-style: italic
-}
-
-.editormd-html-preview p code,
-.editormd-preview-container p code {
-    margin-left: 5px;
-    margin-right: 4px
+    font-style: italic;
+    padding: 12px;
 }
 
 .editormd-html-preview abbr,
@@ -3727,6 +3712,12 @@ only screen and (min-device-pixel-ratio:3) {
     border: none;
     border-top: 1px solid #ddd;
     background: 0 0
+}
+
+.editormd-html-preview kbd,
+.editormd-preview-container kbd,
+  {
+    font-family: "YaHei Consolas Hybrid", Consolas, "Meiryo UI", "Malgun Gothic", "Segoe UI", "Trebuchet MS", Helvetica, monospace, monospace
 }
 
 .editormd-html-preview table thead tr,
@@ -3881,7 +3872,6 @@ projection {
     }
 }
 
-
 ol.linenums {
     margin-top: 0;
     margin-bottom: 0
@@ -3895,6 +3885,7 @@ li.L9 {
     background: #eee
 }
 
+
 .editormd-html-preview ol.linenums,
 .editormd-preview-container ol.linenums {
     color: #999;
@@ -3906,12 +3897,6 @@ li.L9 {
     list-style-type: decimal
 }
 
-.editormd-html-preview ol.linenums li code,
-.editormd-preview-container ol.linenums li code {
-    border: none;
-    background: 0 0;
-    padding: 0
-}
 
 .editormd-html-preview .editormd-toc-menu,
 .editormd-preview-container .editormd-toc-menu {
@@ -4084,6 +4069,10 @@ li.L9 {
     padding-left: 0
 }
 
+.markdown-body  {
+    line-height: 1.6
+}
+
 hr.editormd-page-break {
     border: 1px dotted #ccc;
     font-size: 0;
@@ -4142,6 +4131,8 @@ hr.editormd-page-break {
     color: #888;
     background-color: #2C2827
 }
+
+
 .editormd-preview-theme-dark .editormd-preview-container blockquote {
     color: #555;
     padding: .5em;
@@ -4160,17 +4151,6 @@ hr.editormd-page-break {
     background: #f90
 }
 
-.editormd-preview-theme-dark .editormd-preview-container code {
-    color: #fff;
-    border: none;
-    padding: 1px 3px;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    -ms-border-radius: 3px;
-    -o-border-radius: 3px;
-    border-radius: 3px;
-    background: #5A9600
-}
 
 .editormd-preview-theme-dark .editormd-preview-container table {
     border: none
@@ -4199,6 +4179,13 @@ hr.editormd-page-break {
     border-color: #222
 }
 
+.editormd-preview-theme-dark li.L1,
+.editormd-preview-theme-dark li.L3,
+.editormd-preview-theme-dark li.L5,
+.editormd-preview-theme-dark li.L7,
+.editormd-preview-theme-dark li.L9 {
+    background: 0 0
+}
 
 .editormd-preview-theme-dark [class*=editormd-logo] {
     color: #2196F3
@@ -4319,4 +4306,7 @@ hr.editormd-page-break {
 
 .editormd-theme-dark .CodeMirror {
     border-right: 1px solid rgba(0, 0, 0, .1)
+}
+code{
+    color: rgb(0, 119, 199);
 }

@@ -1,7 +1,6 @@
 {% extends 'layout.html' %}
 {% block css %}
-<link rel="stylesheet" href="https://unpkg.com/editor.md@1.5.0/css/editormd.min.css">
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/css/editormd.min.css">
 {% endblock css %}
 
 {% block title %}
@@ -26,7 +25,7 @@
     <v-combobox hint="按回车键添加标签" label="添加标签" multiple persistent-hint small-chips v-model="tags">
     </v-combobox>
 
-    <div id="layout" class="editor" >
+    <div id="layout" class="editor">
       <div id="test-editormd" style="margin-top: 20px;z-index: 0;">
         <textarea v-model='text' name="editormd"></textarea>
       </div>
@@ -56,7 +55,7 @@
 {% block js %}
 <script src="https://cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/editor.md@1.5.0/editormd.min.js"></script>
-
+<script></script>
 <script>
   new Vue({
     delimiters: ['{[', ']}'],
@@ -86,21 +85,21 @@
     },
     mounted() {
       this.mdInit()
-      if (localStorage.getItem('saveStatus')){
+      if (localStorage.getItem('saveStatus')) {
         this.getText()
       }
       setInterval(() => {
         this.saveText() //2min定时保存任务
       }, 120000)
       // 保存文件
-      var _this = this;        
-      document.onkeydown = function(e) {            
-      let key = window.event.keyCode;            
-      if (key== 83 && event.ctrlKey) {//== 83 && event.ctrlKey
-            window.event.preventDefault() //关闭浏览器快捷键
-            _this.saveText();//;saveProject1()
-            }
-        };
+      var _this = this;
+      document.onkeydown = function (e) {
+        let key = window.event.keyCode;
+        if (key == 83 && event.ctrlKey) { //== 83 && event.ctrlKey
+          window.event.preventDefault() //关闭浏览器快捷键
+          _this.saveText(); //;saveProject1()
+        }
+      };
     },
     watch: {
 
@@ -109,7 +108,6 @@
     created() {
 
     },
-
     methods: {
       snackBar(text, color) {
         this.snackbar = !this.snackbar
@@ -171,13 +169,13 @@
         });
       },
       saveText() {
-        localStorage.setItem('name', this.name ||'')
-        localStorage.setItem('slug', this.slug ||'')
-        localStorage.setItem('enUrl', this.enUrl ||'')
-        localStorage.setItem('img', this.img ||'')
-        localStorage.setItem('category', this.category ||'')
-        localStorage.setItem('tags', JSON.stringify(this.tags) ||'')
-        localStorage.setItem('text', this.text ||'')
+        localStorage.setItem('name', this.name || '')
+        localStorage.setItem('slug', this.slug || '')
+        localStorage.setItem('enUrl', this.enUrl || '')
+        localStorage.setItem('img', this.img || '')
+        localStorage.setItem('category', this.category || '')
+        localStorage.setItem('tags', JSON.stringify(this.tags) || '')
+        localStorage.setItem('text', this.text || '')
         localStorage.setItem('saveStatus', true)
         this.snackBar('定时保存成功', 'success')
       },
@@ -197,10 +195,11 @@
         this.enUrl = localStorage.getItem('enUrl')
         this.img = localStorage.getItem('img')
         this.category = localStorage.getItem('category')
-        this.tags = JSON.parse(localStorage.getItem('tags')||'[]')
+        this.tags = JSON.parse(localStorage.getItem('tags') || '[]')
         this.text = localStorage.getItem('text')
       }
     }
   })
 </script>
+
 {% endblock js %}
