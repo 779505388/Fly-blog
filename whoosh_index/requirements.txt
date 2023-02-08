@@ -12,7 +12,7 @@ cffi==1.12.3
 chardet==3.0.4
 Click==7.0
 colorama==0.4.0
-cryptography==3.4.7
+cryptography==39.0.1
 dnspython==2.1.0
 dodgy==0.2.1
 email-validator==1.1.2
